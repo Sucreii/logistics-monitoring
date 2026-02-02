@@ -8,7 +8,7 @@ export const HTTP_API = (): AxiosInstance => {
 
   const webAxiosInstance: AxiosInstance = axios.create({
     headers: defaultHeaders,
-    baseURL: process.env.VUE_APP_BASE_URL || '',
+    baseURL: process.env.VITE_APP_BASE_URL || '',
     withCredentials: true,
   });
 
