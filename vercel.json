@@ -2,15 +2,15 @@
   "routes": [
     {
       "src": "/",
-      "destination": "/"
+      "dest": "/"
     },
     {
       "src": "/drawer",
-      "destination": "/"
+      "dest": "/"
     },
     {
       "src": "/dashboard",
-      "destination": "/"
+      "dest": "/"
     }
   ]
 }
