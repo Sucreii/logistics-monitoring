@@ -3,7 +3,7 @@ import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client/core
 import { DefaultApolloClient } from '@vue/apollo-composable';
 
 const httpLink = createHttpLink({
-  uri: `${process.env.BASE_URL}/graphql`,
+  uri: `${process.env.VUE_APP_BASE_URL}/graphql`,
 });
 
 export const apolloClient = new ApolloClient({
