@@ -3,7 +3,7 @@
 
 import { defineConfig } from '#q-app/wrappers';
 
-export default defineConfig((/* ctx */) => {
+export default defineConfig((ctx) => {
   return {
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
     // preFetch: true,
@@ -39,9 +39,9 @@ export default defineConfig((/* ctx */) => {
       target: {
         browser: ['es2022', 'firefox115', 'chrome115', 'safari14'],
         node: 'node20',
-        env: {
-          VITE_BASE_URL: process.env.VITE_BASE_URL,
-        },
+      },
+      env: {
+        VITE_BASE_URL: process.env.VITE_BASE_URL,
       },
 
       typescript: {
