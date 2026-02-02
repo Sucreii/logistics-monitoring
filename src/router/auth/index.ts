@@ -5,7 +5,7 @@ export const AuthRoutes: RouteRecordRaw[] = [
     path: '/',
     children: [
       {
-        path: 'login',
+        path: '/',
         name: 'auth.page',
         component: () => import('src/pages/IndexPage.vue'),
       },

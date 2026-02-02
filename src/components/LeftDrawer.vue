@@ -73,7 +73,6 @@ provide('dummyNotificationItems', dummyNotificationContent);
 
         <div class="col-6 text-right q-pt-sm q-pr-md" v-if="authStore.roleLabel !== 'Viewer'">
           <AddButtonComponent />
-          <button style="background: red; color: white">I AM A TEST</button>
         </div>
       </div>
     </q-header>
