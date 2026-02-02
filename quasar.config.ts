@@ -30,6 +30,9 @@ export default defineConfig((/* ctx */) => {
       'material-icons',
       'material-symbols-outlined',
     ],
+    router: {
+      mode: 'history',
+    },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#build
     build: {
