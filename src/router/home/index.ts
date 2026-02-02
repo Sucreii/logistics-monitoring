@@ -2,7 +2,7 @@ import type { RouteRecordRaw } from 'vue-router';
 
 export const HomeRoutes: RouteRecordRaw[] = [
   {
-    path: '/dashboard',
+    path: '/drawer',
     component: () => import('src/components/LeftDrawer.vue'),
     meta: { requiresAuth: true },
     children: [
