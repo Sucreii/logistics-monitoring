@@ -1,14 +1,15 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { CreateNewShipmentFields } from 'src/utils';
+import { CreateAdditionalShipments } from 'src/utils';
+import { shipmentForm } from 'src/stores/AllPostReactive';
 
-const formData = ref<Record<string, string | number>>({});
+const shipInfo = ref(shipmentForm);
 </script>
 
 <template>
   <div class="row q-col-gutter-md">
     <div
-      v-for="field in CreateNewShipmentFields"
+      v-for="field in CreateAdditionalShipments"
       :class="['col-' + field.col, field.label]"
       :key="field.model"
       dense
@@ -20,9 +21,9 @@ const formData = ref<Record<string, string | number>>({});
 
         <div class="col-12">
           <q-input
-            v-model="formData[field.model]"
+            v-model="shipInfo[field.model as keyof typeof shipInfo]"
             :placeholder="field.placeholder"
-            :icon="field.icon"
+            :rules="field.rules"
             dense
             outlined
             clearable

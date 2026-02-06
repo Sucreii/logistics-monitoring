@@ -2,6 +2,4 @@
   <router-view />
 </template>
 
-<script setup lang="ts">
-console.log('My API URL is:', process.env.VITE_BASE_URL);
-</script>
+<script setup lang="ts"></script>

@@ -1,66 +1,138 @@
 <script lang="ts" setup>
-// import { ref } from 'vue'
-import { useDialogPluginComponent } from 'quasar'
-// import { CreateNewOrderFields } from 'src/utils/fields/create-new-orders'
-const { dialogRef } = useDialogPluginComponent()
+import { ref } from 'vue';
+import { useDialogPluginComponent } from 'quasar';
+import { useShipmentStore } from 'src/stores/ShipmentStore';
+import transitDetailsForm from 'src/components/stepper/TransitDetails.vue';
+import shipAdditionalForm from 'src/components/stepper/ShipAdditionalDetails.vue';
+import expensesInformationForm from 'src/components/stepper/ExpensesInfo.vue';
 
-// const formData = ref(
-//   CreateNewOrderFields.reduce(
-//     (acc, field) => {
-//       acc[field.model] = ''
-//       return acc
-//     },
-//     {} as Record<string, string>,
-//   ),
-// )
+const { dialogRef, onDialogHide } = useDialogPluginComponent();
+const shipmentStore = useShipmentStore();
+const step = ref(1);
+const loading = ref(false);
 
-// const onOKClick = () => {
-//   onDialogOK(formData.value)
-// }
+const nextStep = async () => {
+  if (step.value === 1) {
+    if (!transitFormRef.value) {
+      console.error('transitFormRef is undefined');
+      return;
+    }
 
-// const onCancelClick = () => {
-//   onDialogCancel()
-// }
+    step.value++;
+    return;
+  } else if (step.value === 2) {
+    if (!shipAddForm.value) {
+      console.error('shipAddForm is undefined');
+      return;
+    }
+
+    step.value++;
+    return;
+  } else if (step.value === 3) {
+    if (!shipFinanceFormRef.value || !shipFinanceFormRef.value.shipmentData) {
+      console.error('shipFinanceFormRef or formData is undefined.');
+      return;
+    }
+
+    console.log('shipFinanceFormRef.value.formData', shipFinanceFormRef.value.shipmentData);
+
+    try {
+      loading.value = true;
+      const response = await shipmentStore.createFinanceToApi(
+        shipFinanceFormRef.value.shipmentData,
+        String(shipFinanceFormRef.value.shipmentData?.shipmentId),
+      );
+
+      const allSuccess = Array.isArray(response) && response.every((res) => res?.status === 200);
+
+      if (allSuccess) {
+        console.log('success');
+      }
+    } catch (error) {
+      console.error('Error during Finance API call:', error);
+    } finally {
+      loading.value = false;
+    }
+  }
+};
+
+const transitFormRef = ref<InstanceType<typeof transitDetailsForm> | null>(null);
+const shipAddForm = ref<InstanceType<typeof shipAdditionalForm> | null>(null);
+const shipFinanceFormRef = ref<InstanceType<typeof expensesInformationForm> | null>(null);
 </script>
 
 <template>
-  <q-dialog ref="dialogRef">
+  <q-dialog ref="dialogRef" persistent>
     <q-card class="create-shipment-card">
       <q-card-section class="row items-center">
-        <div class="text-h6 text-primary">Create New Orders</div>
-        <q-space />
-        <!-- <q-btn icon="close" color="primary" flat round dense @click="onCancelClick" /> -->
-      </q-card-section>
-
-      <q-separator inset />
-
-      <q-card-section class="q-my-sm">
-        <div class="row q-col-gutter-md">
-          <!-- <div class="col-12" v-for="field in CreateNewOrderFields" :key="field.model" dense>
-            <div class="row">
-              <div class="col-12">
-                <div class="text-subtitle2 q-ml-xs text-grey-8">{{ field.label }}</div>
-              </div>
-              <div class="col-12">
-                <q-input v-model="formData[field.model]" :placeholder="field.label" outlined />
-              </div>
-            </div>
-          </div> -->
+        <div class="text-weight-bold text-h6 text-primary q-px-md">
+          Create New Transit <q-icon class="text-weight-bold" name="local_shipping" />
         </div>
+        <q-space />
+        <q-btn icon="close" color="primary" flat round dense @click="onDialogHide()" />
       </q-card-section>
 
-      <q-card-actions align="right" class="q-mx-sm q-pt-none q-pb-md">
-        <!-- <q-btn flat no-caps label="Cancel" color="primary" @click="onCancelClick" />
-        <q-btn no-caps label="Submit" color="primary" @click="onOKClick" /> -->
-      </q-card-actions>
+      <!-- <q-separator inset /> -->
+
+      <div class="q-px-md">
+        <q-stepper v-model="step" ref="stepper" color="primary" animated dense flat>
+          <q-step :name="1" title="Shipping Information" icon="settings" :done="step > 1">
+            <q-form @submit.prevent="nextStep">
+              <transitDetailsForm ref="transitFormRef" />
+            </q-form>
+          </q-step>
+
+          <q-step :name="2" title="Shipping Details" icon="sym_o_unknown_document" :done="step > 2">
+            <q-form @submit.prevent="nextStep">
+              <shipAdditionalForm ref="shipAddForm" />
+            </q-form>
+          </q-step>
+
+          <q-step
+            :name="3"
+            title=" Financial Report"
+            icon="sym_o_bar_chart_4_bars"
+            :done="step > 3"
+          >
+            <q-form @submit.prevent="nextStep">
+              <expensesInformationForm ref="shipFinanceFormRef" />
+            </q-form>
+          </q-step>
+
+          <!-- - - - - - - - - - - BUTTON - - - - - - - - - - -->
+          <template v-slot:navigation v-if="step < 3">
+            <q-stepper-navigation>
+              <q-btn
+                @click="nextStep"
+                color="primary"
+                :label="step === 4 ? 'Finish' : 'Continue'"
+                :loading="loading"
+              />
+              <!-- <q-btn
+                v-if="step > 1"
+                flat
+                color="primary"
+                @click="prevStep"
+                label="Back"
+                class="q-ml-sm"
+              /> -->
+            </q-stepper-navigation>
+          </template>
+        </q-stepper>
+      </div>
     </q-card>
   </q-dialog>
 </template>
 
 <style lang="scss" scoped>
 .create-shipment-card {
-  width: 700px;
+  width: 750px;
   max-width: 80vw;
   border-radius: 24px;
+
+  .scroll-area {
+    height: 600px;
+    max-width: 100%;
+  }
 }
 </style>

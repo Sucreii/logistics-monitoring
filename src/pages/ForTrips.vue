@@ -129,13 +129,14 @@ const getStatusIcon = (status: string) => {
 
 <template>
   <q-page>
+    <div class="q-px-md text-caption">
+      A streamlined interface to orchestrate trucking schedules, managing logistical parameters, and
+      cargo assignments.
+    </div>
+
     <div class="row q-pa-md q-gutter-y-md">
       <div class="col-12">
         <q-card flat bordered>
-          <q-card-section class="q-pb-none">
-            <div class="text-h6">I AM FOR TRIPS</div>
-          </q-card-section>
-
           <q-card-section>
             <filterForm />
           </q-card-section>

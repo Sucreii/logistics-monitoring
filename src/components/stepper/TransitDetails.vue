@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { CreateNewShipmentFields } from 'src/utils';
+import { CreateTransitDetailsFields } from 'src/utils';
 
 const formData = ref<Record<string, string | number>>({});
 </script>
@@ -8,7 +8,7 @@ const formData = ref<Record<string, string | number>>({});
 <template>
   <div class="row q-col-gutter-md">
     <div
-      v-for="field in CreateNewShipmentFields"
+      v-for="field in CreateTransitDetailsFields"
       :class="['col-' + field.col, field.label]"
       :key="field.model"
       dense

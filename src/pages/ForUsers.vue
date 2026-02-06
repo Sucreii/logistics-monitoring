@@ -17,11 +17,11 @@ const tableRows = computed(() => {
 
 const columns: QTableColumn[] = [
   { name: 'id', label: 'ID', field: 'id', align: 'left' },
+  { name: 'role', label: 'Role', field: (row) => row.role?.title ?? '', align: 'left' },
   { name: 'username', label: 'Username', field: 'username', align: 'left' },
   { name: 'first_name', label: 'First Name', field: 'first_name', align: 'left' },
   { name: 'middle_name', label: 'Middle Name', field: 'middle_name', align: 'left' },
   { name: 'last_name', label: 'Last Name', field: 'last_name', align: 'left' },
-  { name: 'password', label: 'Password', field: 'password', align: 'left' },
   { name: 'last_logged_in', label: 'Last logged In', field: 'last_logged_in', align: 'left' },
 ];
 </script>

@@ -1,127 +1,140 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
-import { useDialogPluginComponent } from 'quasar'
-import { useShipmentStore } from 'src/stores/ShipmentStore'
-import shipInformationForm from 'src/components/stepper/ShipInformation.vue'
-import expensesInformationForm from 'src/components/stepper/ExpensesInfo.vue'
+import { ref } from 'vue';
+import { QForm, useDialogPluginComponent } from 'quasar';
+import { useShipmentInfo } from 'src/stores/ShipmentStore';
+// import { useQuasar } from 'quasar';
+import shipAdditionalForm from 'src/components/stepper/ShipAdditionalDetails.vue';
+import expensesInformationForm from 'src/components/stepper/ExpensesInfo.vue';
 
-const { dialogRef, onDialogHide } = useDialogPluginComponent()
-const shipmentStore = useShipmentStore()
-const step = ref(1)
-const loading = ref(false)
+const { dialogRef, onDialogHide } = useDialogPluginComponent();
+const step = ref(1);
+const loading = ref(false);
+// const $q = useQuasar();
+const shipmentStore = useShipmentInfo();
+const FINAL_STEP = 2;
+const shipAddForm = ref<InstanceType<typeof QForm> | null>(null);
+const shipFinanceFormRef = ref<InstanceType<typeof QForm> | null>(null);
+console.log('shipAddForm ref:', shipAddForm.value);
+
+// const nextStep = async () => {
+//   // if (step.value === 1) {
+//   //   if (!shipFormRef.value) {
+//   //     console.error('shipFormRef is undefined');
+//   //     return;
+//   //   }
+
+//   //   step.value++;
+//   //   return;
+//   // } else
+//   if (step.value === 1) {
+//     const valid = await shipAddForm.value?.validate();
+//   if (!valid) return;
+//   step.value++;
+//   } else if (step.value === 2) {
+//     if (!shipFinanceFormRef.value || !shipFinanceFormRef.value.shipmentData) {
+//       console.error('shipFinanceFormRef or formData is undefined.');
+//       return;
+//     }
+
+//     console.log('shipFinanceFormRef.value.formData', shipFinanceFormRef.value.shipmentData);
+
+//     try {
+//       loading.value = true;
+//       const response = await shipmentStore.createFinanceToApi(
+//         shipFinanceFormRef.value.shipmentData,
+//         String(shipFinanceFormRef.value.shipmentData?.shipmentId),
+//       );
+
+//       const allSuccess = Array.isArray(response) && response.every((res) => res?.status === 200);
+
+//       if (allSuccess) {
+//         console.log('success');
+//       }
+//     } catch (error) {
+//       console.error('Error during Finance API call:', error);
+//     } finally {
+//       loading.value = false;
+//     }
+//   }
+// };
+
+// const shipFormRef = ref<InstanceType<typeof shipInformationForm> | null>(null);
 
 const nextStep = async () => {
   if (step.value === 1) {
-    if (!shipFormRef.value || !shipFormRef.value.formData) {
-      console.error('shipFormRef or formData is undefined.')
-      return
-    }
-
-    const formData = {
-      ...shipFormRef.value.formData,
-      volumeX: Number(shipFormRef.value.formData.volumeX),
-      volumeY: Number(shipFormRef.value.formData.volumeY),
-    }
+    console.log('shipAddForm', shipAddForm.value);
+    const valid = await shipAddForm.value?.validate();
 
     try {
-      loading.value = true
-      const response = await shipmentStore.createShipmentToApi(formData)
-      if (response.code === 201) {
-        step.value++
+      console.log('I AM INSIDE');
+    } catch (err) {
+      console.error('Post API declined, try again.', err);
+      if (!valid) {
+        console.warn('❌ step 1 validation failed');
+        return;
       }
-    } catch (error) {
-      console.error('Error during API calls:', error)
-    } finally {
-      loading.value = false
     }
+    step.value++;
   } else if (step.value === 2) {
-    if (!shipFinanceFormRef.value || !shipFinanceFormRef.value.shipmentData) {
-      console.error('shipFinanceFormRef or formData is undefined.')
-      return
-    }
+    // if (!shipAddForm) {
+    //   $q.notify({ type: 'warning', message: 'Please complete all fields.' });
+    //   return;
+    // }
 
-    console.log('shipFinanceFormRef.value.formData', shipFinanceFormRef.value.shipmentData)
-
-    try {
-      loading.value = true
-      const response = await shipmentStore.createFinanceToApi(
-        shipFinanceFormRef.value.shipmentData,
-        String(shipFinanceFormRef.value.shipmentData?.shipmentId),
-      )
-
-      const allSuccess = Array.isArray(response) && response.every((res) => res?.status === 200)
-
-      if (allSuccess) {
-        console.log('success')
-      }
-    } catch (error) {
-      console.error('Error during Finance API call:', error)
-    } finally {
-      loading.value = false
-    }
+    step.value++;
   }
-}
-
-const prevStep = () => {
-  if (step.value > 1) step.value--
-}
-
-const shipFormRef = ref<InstanceType<typeof shipInformationForm> | null>(null)
-
-const shipFinanceFormRef = ref<InstanceType<typeof expensesInformationForm> | null>(null)
+};
 </script>
 
 <template>
   <q-dialog ref="dialogRef" persistent>
     <q-card class="create-shipment-card">
       <q-card-section class="row items-center">
-        <div class="text-h6 text-primary">Create New Shipment <q-icon name="inventory_2" /></div>
+        <div class="text-weight-bold text-h6 text-primary q-px-md">
+          Create New Shipment <q-icon class="text-weight-bold" name="add_shopping_cart" />
+        </div>
         <q-space />
         <q-btn icon="close" color="primary" flat round dense @click="onDialogHide()" />
       </q-card-section>
-      <q-separator inset />
 
-      <div class="q-pa-md">
-        <q-stepper v-model="step" ref="stepper" color="primary" contracted animated dense flat>
-          <q-step 
-            :name="1" 
-            title="Information" 
-            icon="settings" 
-            :done="step > 1"
-          >
-            <q-form @submit.prevent="nextStep">
-              <shipInformationForm ref="shipFormRef" />
+      <!-- <q-separator inset /> -->
+
+      <div class="q-px-md">
+        <q-stepper v-model="step" ref="stepper" color="primary" animated dense flat>
+          <!-- <q-step :name="1" title="Shipping Information" icon="settings" :done="step > 1">
+			<q-form @submit.prevent="nextStep">
+			<shipInformationForm ref="shipFormRef" />
+			</q-form>
+		</q-step> -->
+
+          <q-step :name="1" title="Shipping Details" icon="sym_o_unknown_document" :done="step > 1">
+            <q-form ref="shipAddForm" @submit.prevent="nextStep">
+              <shipAdditionalForm />
             </q-form>
           </q-step>
 
           <q-step
             :name="2"
-            title="Finance"
-            caption="Optional"
-            icon="create_new_folder"
+            title=" Financial Report"
+            icon="sym_o_bar_chart_4_bars"
             :done="step > 2"
           >
-            <q-form @submit.prevent="nextStep">
-              <expensesInformationForm ref="shipFinanceFormRef" />
+            <q-form ref="shipFinanceFormRef" @submit.prevent="nextStep">
+              <expensesInformationForm />
             </q-form>
           </q-step>
 
-          <template v-slot:navigation v-if="step < 2">
+          <!-- - - - - - - - - - - BUTTON - - - - - - - - - - -->
+          <template v-slot:navigation>
             <q-stepper-navigation>
               <q-btn
-                @click="nextStep"
+                v-if="step === FINAL_STEP"
                 color="primary"
-                :label="step === 3 ? 'Finish' : 'Continue'"
-                :loading="loading"
+                label="Submit"
+                :loading="shipmentStore.loading"
+                @click="shipmentStore.submitShipment"
               />
-              <q-btn
-                v-if="step > 1"
-                flat
-                color="primary"
-                @click="prevStep"
-                label="Back"
-                class="q-ml-sm"
-              />
+              <q-btn v-else :loading="loading" color="primary" label="Proceed" @click="nextStep" />
             </q-stepper-navigation>
           </template>
         </q-stepper>
@@ -132,7 +145,7 @@ const shipFinanceFormRef = ref<InstanceType<typeof expensesInformationForm> | nu
 
 <style lang="scss" scoped>
 .create-shipment-card {
-  width: 1000px;
+  width: 750px;
   max-width: 80vw;
   border-radius: 24px;
 

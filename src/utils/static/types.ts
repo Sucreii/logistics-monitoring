@@ -24,6 +24,28 @@ export type FieldTypes = {
 
 export type ShipmentFieldTypes = {
   label: string;
+  placeholder: string;
+  model: string;
+  icon: string;
+  type: InputType;
+  col: string;
+  variant: string;
+  rules?: ((v: string | number | boolean | null | undefined) => boolean | string)[]; // Added rules
+};
+
+export type AdditionalShipmentTypes = {
+  label: string;
+  placeholder: string;
+  model: string;
+  type: InputType;
+  col: string;
+  variant: string;
+  rules?: ((v: string | number | boolean | null | undefined) => boolean | string)[]; // Added rules
+};
+
+export type TransitFieldTypes = {
+  label: string;
+  placeholder: string;
   model: string;
   icon: string;
   type: InputType;

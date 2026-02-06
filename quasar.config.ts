@@ -40,9 +40,9 @@ export default defineConfig((ctx) => {
         browser: ['es2022', 'firefox115', 'chrome115', 'safari14'],
         node: 'node20',
       },
-      env: {
-        VITE_BASE_URL: process.env.VITE_BASE_URL,
-      },
+      // env: {
+      //   VITE_BASE_URL: process.env.VITE_BASE_URL,
+      // },
 
       typescript: {
         strict: true,
