@@ -1,59 +1,35 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ref } from 'vue';
-import { storeToRefs } from 'pinia';
-import { useShipmentStore } from 'src/stores/ShipmentStore';
+import { CreateExpensesShipmentsFields } from 'src/utils';
 import { shipmentForm } from 'src/stores/AllPostReactive';
-// import { useShipmentInfo } from 'src/stores/ShipmentStore';
-
-const shipmentStore = useShipmentStore();
-const { shipmentData } = storeToRefs(shipmentStore);
-// const {finalSubmissionReport} = storeToRefs(useShipmentInfo);
-
-defineExpose({ shipmentData });
 
 const shipInfo = ref(shipmentForm);
-console.log('shipmentData', shipmentData.value);
-console.log('shipInfo.value', shipInfo.value);
-
-// const res = finalSubmissionReport()
+console.log('I am Expenses: ', shipInfo);
 </script>
 
 <template>
-  <div class="row q-col-gutter-x-md q-col-gutter-y-md">
-    <div class="col-6">
-      <div class="col-12 text-h6 text-center">Expense Information</div>
-      <div
-        class="row q-gutter-y-md q-col-gutter-x-sm q-col-gutter-y-sm"
-        v-for="item in shipmentData?.shipmentExpense"
-        :key="item.id"
-      >
-        <div class="col-6">
-          <q-input label="Name" v-model="item.name" outlined readonly />
+  <div class="row q-col-gutter-sm">
+    <div
+      v-for="field in CreateExpensesShipmentsFields"
+      :class="`col-${field.col}`"
+      :key="field.index"
+    >
+      <div class="row">
+        <div class="col-12">
+          <div class="text-subtitle3 text-grey-8">{{ field.label }}</div>
         </div>
-        <div class="col-6">
-          <q-input label="Value" v-model="item.value" outlined />
+
+        <div class="col-12">
+          <q-input
+            v-model.number="shipInfo.finances[field.index]!.value"
+            type="number"
+            placeholder="₱"
+            dense
+            outlined
+            clearable
+          />
         </div>
       </div>
     </div>
-
-    <div class="col-6">
-      <div class="col-12 text-h6 text-center">Revenue Information</div>
-      <div
-        class="row q-gutter-y-md q-col-gutter-x-sm q-col-gutter-y-sm"
-        v-for="item in shipmentData?.shipmentRevenue"
-        :key="item.id"
-      >
-        <div class="col-6">
-          <q-input label="Name" v-model="item.name" outlined readonly />
-        </div>
-        <div class="col-6">
-          <q-input label="Value" v-model="item.value" outlined />
-        </div>
-      </div>
-    </div>
-
-    <!-- <div class="col-12">
-      <q-btn color="primary" label="Finish" type="submit" />
-    </div> -->
   </div>
 </template>

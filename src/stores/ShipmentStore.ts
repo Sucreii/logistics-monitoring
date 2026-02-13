@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 import { HTTP_API } from 'src/boot/axios';
 import { apolloClient } from 'src/boot/apollo';
 import { shipmentForm } from 'src/stores/AllPostReactive';
-import { useQuasar } from 'quasar';
+// import { useQuasar } from 'quasar';
 import type { ShipmentListTypes, FinanceListTypes, ShipmentList } from 'src/utils/static/types';
 import gql from 'graphql-tag';
 
@@ -22,6 +22,13 @@ interface Users {
   last_name: string;
   password: string;
   last_logged_in: string;
+}
+
+interface Storables {
+  id: string;
+  type: string;
+  description: string;
+  date_created: string;
 }
 
 const GET_PAGINATED_SHIPMENTS = gql`
@@ -63,7 +70,43 @@ const GET_PAGINATED_USERS = gql`
   }
 `;
 
+const GET_PORT_STORABLES = gql`
+  query GetStorables($skip: Int!, $take: Int!, $type: String) {
+    storables(skip: $skip, take: $take, type: $type) {
+      totalCount
+      hasMore
+      items {
+        id
+        type
+        description
+        date_created
+      }
+    }
+  }
+`;
+
 const POST_NEW_SHIPMENTINFO = gql`
+  mutation CreateNewShipment($input: CreateShipmentInput!) {
+    createShipment(input: $input) {
+      id
+      blno
+      status
+      customer {
+        username
+      }
+      issuer {
+        username
+      }
+      financeSummary {
+        title
+        type
+        value
+      }
+    }
+  }
+`;
+
+const POST_NEW_USERSINFO = gql`
   mutation CreateNewShipment($input: CreateShipmentInput!) {
     createShipment(input: $input) {
       id
@@ -365,56 +408,128 @@ export const getAllUsers = defineStore('users', {
   },
 });
 
-export const useShipmentInfo = defineStore('shipment', {
+export const getAllPortStorables = defineStore('portStorables', {
+  state: () => ({
+    storables: [] as Storables[],
+    totalCount: 0,
+    hasMore: false,
+    loading: false,
+    skip: 0,
+    take: 50,
+  }),
+
+  actions: {
+    async fetchPortStores(type?: string) {
+      this.loading = true;
+      try {
+        const { data } = await apolloClient.query({
+          query: GET_PORT_STORABLES,
+          variables: {
+            skip: 0,
+            take: 50,
+            type: type || null,
+          },
+          fetchPolicy: 'network-only',
+        });
+
+        if (data?.storables?.items) {
+          this.storables = data.storables.items;
+        }
+        console.log('I AM GRAPHQL PORT RESPONSE: ', data.data);
+      } catch (error) {
+        console.error('Fetching Port Error: ', error);
+      } finally {
+        this.loading = false;
+      }
+    },
+  },
+});
+
+export const useShipmentInfo = defineStore('postShipment', {
   state: () => ({
     loading: false,
-    shipmentRequestPayload: 'hello im shipment value',
+  }),
+
+  actions: {
+    // async submitShipment() {
+    //   this.loading = true;
+    //   console.log(typeof shipmentForm.volumex, typeof shipmentForm.volumey);
+
+    //   try {
+    //     const { data } = await apolloClient.mutate({
+    //       mutation: POST_NEW_SHIPMENTINFO,
+    //       variables: {
+    //         input: {
+    //           ...shipmentForm,
+    //           volumex: Number(shipmentForm.volumex),
+    //           volumey: Number(shipmentForm.volumey),
+    //         },
+    //       },
+    //     });
+
+    //     console.log('Shipment created: ', data.createShipment);
+    //     return data.createShipment;
+    //   } catch (err) {
+    //     console.error(err);
+
+    //     throw err;
+    //   } finally {
+    //     this.loading = false;
+    //   }
+    // },
+    async submitShipment() {
+      const payload = {
+        ...shipmentForm,
+        estimated_time_arrival: new Date(shipmentForm.estimated_time_arrival).toISOString(),
+
+        finances: shipmentForm.finances.map((f) => ({
+          title: f.title,
+          type: f.type,
+          value: Number(f.value),
+        })),
+      };
+
+      const { data } = await apolloClient.mutate({
+        mutation: POST_NEW_SHIPMENTINFO,
+        variables: { input: payload },
+      });
+
+      return data.createShipment;
+    },
+  },
+});
+
+export const useUsersInfo = defineStore('postShipment', {
+  state: () => ({
+    loading: false,
   }),
 
   actions: {
     async submitShipment() {
-      const $q = useQuasar();
+      // const $q = useQuasar();
       this.loading = true;
+      console.log(typeof shipmentForm.volumex, typeof shipmentForm.volumey);
 
       try {
         const { data } = await apolloClient.mutate({
-          mutation: POST_NEW_SHIPMENTINFO,
+          mutation: POST_NEW_USERSINFO,
           variables: {
             input: {
               ...shipmentForm,
-              estimated_time_arrival: new Date(shipmentForm.estimated_time_arrival).toISOString(),
+              volumex: Number(shipmentForm.volumex),
+              volumey: Number(shipmentForm.volumey),
             },
           },
         });
-
-        $q.notify({
-          type: 'positive',
-          message: 'Shipment created successfully!',
-        });
-
+        console.log('New User created: ', data.createShipment);
         return data.createShipment;
       } catch (err) {
         console.error(err);
-
-        $q.notify({
-          type: 'negative',
-          message: 'Failed to create shipment',
-        });
 
         throw err;
       } finally {
         this.loading = false;
       }
     },
-
-    // async finalSubmissionReport() {
-    //   console.log('isLoading true');
-    //   try {
-    //   } catch (error) {
-    //     console.error('error expense', error);
-    //   } finally {
-    //     console.log('isLoading: false');
-    //   }
-    // },
   },
 });

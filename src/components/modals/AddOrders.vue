@@ -1,17 +1,17 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { useDialogPluginComponent } from 'quasar';
-import { useShipmentStore } from 'src/stores/ShipmentStore';
+// import { useShipmentStore } from 'src/stores/ShipmentStore';
 import transitDetailsForm from 'src/components/stepper/TransitDetails.vue';
 import shipAdditionalForm from 'src/components/stepper/ShipAdditionalDetails.vue';
 import expensesInformationForm from 'src/components/stepper/ExpensesInfo.vue';
 
 const { dialogRef, onDialogHide } = useDialogPluginComponent();
-const shipmentStore = useShipmentStore();
+// const shipmentStore = useShipmentStore();
 const step = ref(1);
 const loading = ref(false);
 
-const nextStep = async () => {
+const nextStep = () => {
   if (step.value === 1) {
     if (!transitFormRef.value) {
       console.error('transitFormRef is undefined');
@@ -28,31 +28,6 @@ const nextStep = async () => {
 
     step.value++;
     return;
-  } else if (step.value === 3) {
-    if (!shipFinanceFormRef.value || !shipFinanceFormRef.value.shipmentData) {
-      console.error('shipFinanceFormRef or formData is undefined.');
-      return;
-    }
-
-    console.log('shipFinanceFormRef.value.formData', shipFinanceFormRef.value.shipmentData);
-
-    try {
-      loading.value = true;
-      const response = await shipmentStore.createFinanceToApi(
-        shipFinanceFormRef.value.shipmentData,
-        String(shipFinanceFormRef.value.shipmentData?.shipmentId),
-      );
-
-      const allSuccess = Array.isArray(response) && response.every((res) => res?.status === 200);
-
-      if (allSuccess) {
-        console.log('success');
-      }
-    } catch (error) {
-      console.error('Error during Finance API call:', error);
-    } finally {
-      loading.value = false;
-    }
   }
 };
 

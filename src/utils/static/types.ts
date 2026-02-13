@@ -22,6 +22,14 @@ export type FieldTypes = {
   // col: number
 };
 
+export type FinanceItem = {
+  title: string;
+  type: 'number';
+  value: number | null;
+};
+
+export type ShipmentInputType = 'text' | 'number' | 'date' | 'password';
+
 export type ShipmentFieldTypes = {
   label: string;
   placeholder: string;
@@ -37,7 +45,26 @@ export type AdditionalShipmentTypes = {
   label: string;
   placeholder: string;
   model: string;
-  type: InputType;
+  type: ShipmentInputType | 'select';
+  col: string;
+  variant: string;
+  rules?: ((v: string | number | boolean | null | undefined) => boolean | string)[]; // Added rules
+};
+
+export type ExpensesShipmentTypes = {
+  label: string;
+  placeholder: string;
+  model: string;
+  type: number | string;
+  col: string;
+  variant: string; // Added rules
+};
+
+export type AdditionalUsersTypes = {
+  label: string;
+  placeholder: string;
+  model: string;
+  type: ShipmentInputType;
   col: string;
   variant: string;
   rules?: ((v: string | number | boolean | null | undefined) => boolean | string)[]; // Added rules

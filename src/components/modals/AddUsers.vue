@@ -1,25 +1,24 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { QForm, useDialogPluginComponent } from 'quasar';
-import { useShipmentInfo } from 'src/stores/ShipmentStore';
-import { useQuasar } from 'quasar';
-import shipAdditionalForm from 'src/components/stepper/ShipAdditionalDetails.vue';
-import expensesInformationForm from 'src/components/stepper/ExpensesInfo.vue';
-import finalAllDetails from 'src/components/stepper/ShipInfoDisplay.vue';
+import { QForm, useDialogPluginComponent, useQuasar, Loading, QSpinnerHourglass } from 'quasar';
+import { useCreateUserStore } from 'src/stores/UserStore';
+import { usersForm } from 'src/stores/AllPostReactive';
+import usersAddForm from 'src/components/stepper/UsersAdd.vue';
+import userInfoDisplay from 'src/components/stepper/UserInfoDisplay.vue';
 
 const { dialogRef, onDialogHide } = useDialogPluginComponent();
 const step = ref(1);
 const loading = ref(false);
 const $q = useQuasar();
-const shipmentStore = useShipmentInfo();
-const FINAL_STEP = 3;
-const shipAddForm = ref<InstanceType<typeof QForm> | null>(null);
+const form = usersForm;
+const usersStore = useCreateUserStore();
+const FINAL_STEP = 2;
+const newUsersAddForm = ref<InstanceType<typeof QForm> | null>(null);
 const shipFinanceFormRef = ref<InstanceType<typeof QForm> | null>(null);
-const shipDisplayInfoFormRef = ref<InstanceType<typeof QForm> | null>(null);
 
 const nextStep = async () => {
   if (step.value === 1) {
-    const isValid = await shipAddForm.value?.validate();
+    const isValid = await newUsersAddForm.value?.validate();
     console.log('Is Valid: ', isValid);
 
     if (!isValid) {
@@ -37,22 +36,53 @@ const nextStep = async () => {
     }
 
     step.value++;
-  } else if (step.value === 3) {
-    const isValid = await shipDisplayInfoFormRef.value?.validate();
-
-    if (!isValid) {
-      $q.notify({ type: 'warning', message: 'Please complete all fields.' });
-      return;
-    }
-
-    step.value++;
   }
 };
 
-const submitAll = async () => {
-  console.log('Store Shipment: ', Object.keys(shipmentStore));
+const submitUser = async () => {
+  console.log('I AM SUBMITTING THE USER');
+  console.log('User Store: ', Object.keys(usersStore));
 
-  await shipmentStore.submitShipment();
+  Loading.show({
+    spinner: QSpinnerHourglass,
+    message: 'Authenticating... please wait.',
+    backgroundColor: 'primary',
+  });
+
+  try {
+    Loading.hide();
+    if (form.value.role_id === null) {
+      throw new Error('Role is required');
+    }
+    const payload = {
+      first_name: form.value.first_name,
+      last_name: form.value.last_name,
+      username: form.value.username,
+      password: form.value.password,
+      role_id: form.value.role_id,
+    };
+
+    const result = await usersStore.createUser(payload);
+    console.log('Create User result: ', result);
+
+    $q.notify({
+      type: 'positive',
+      message: 'New User has been added.successfully',
+      timeout: 3000,
+    });
+  } catch (err) {
+    console.error('Error adding new User: ', err);
+  } finally {
+    Loading.hide();
+    onDialogHide();
+    Object.assign(form.value, {
+      first_name: '',
+      last_name: '',
+      username: '',
+      password: '',
+      role_id: null,
+    });
+  }
 };
 </script>
 
@@ -61,7 +91,7 @@ const submitAll = async () => {
     <q-card class="create-shipment-card">
       <q-card-section class="row items-center">
         <div class="text-weight-bold text-h6 text-primary q-px-md">
-          Create New Shipment <q-icon class="text-weight-bold" name="add_shopping_cart" />
+          Create New User <q-icon class="text-weight-bold" name="add_shopping_cart" />
         </div>
         <q-space />
         <q-btn icon="close" color="primary" flat round dense @click="onDialogHide()" />
@@ -69,31 +99,20 @@ const submitAll = async () => {
 
       <div class="q-px-md">
         <q-stepper v-model="step" ref="stepper" color="primary" animated dense flat>
-          <q-step :name="1" title="Shipping Details" icon="sym_o_unknown_document" :done="step > 1">
-            <q-form class="flex" ref="shipAddForm" @submit.prevent="nextStep">
-              <shipAdditionalForm />
+          <q-step :name="1" title="Add User Info" icon="sym_o_unknown_document" :done="step > 1">
+            <q-form class="flex" ref="newUsersAddForm" @submit.prevent="nextStep">
+              <usersAddForm />
             </q-form>
           </q-step>
 
           <q-step
             :name="2"
             :done="step > 2"
-            title="Additional Information"
+            title=" User Information"
             icon="sym_o_bar_chart_4_bars"
           >
             <q-form ref="shipFinanceFormRef" @submit.prevent="nextStep">
-              <expensesInformationForm />
-            </q-form>
-          </q-step>
-
-          <q-step
-            :name="3"
-            :done="step > 3"
-            title="Final Details"
-            icon="sym_o_published_with_changes"
-          >
-            <q-form ref="shipDisplayInfoFormRef" @submit.prevent="nextStep">
-              <finalAllDetails />
+              <userInfoDisplay />
             </q-form>
           </q-step>
 
@@ -102,8 +121,8 @@ const submitAll = async () => {
             <q-stepper-navigation>
               <q-btn
                 v-if="step === FINAL_STEP"
-                @click="submitAll"
-                :loading="shipmentStore.loading"
+                @click="submitUser"
+                :loading="usersStore.loading"
                 color="primary"
                 label="Submit"
               />

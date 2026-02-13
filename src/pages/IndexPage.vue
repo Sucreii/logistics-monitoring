@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useValidationRules } from 'src/utils/fields/rules';
 import { useAuthStore } from 'src/stores/LoginAuth';
-import { Loading, QSpinnerGears } from 'quasar';
+import { Loading, QSpinnerHourglass } from 'quasar';
 import { useQuasar } from 'quasar';
 
 const { rules } = useValidationRules();
@@ -17,7 +17,7 @@ const credentials = ref({
 
 const onSubmit = async () => {
   Loading.show({
-    spinner: QSpinnerGears,
+    spinner: QSpinnerHourglass,
     message: 'Authenticating... please wait.',
     backgroundColor: 'grey-10',
   });
