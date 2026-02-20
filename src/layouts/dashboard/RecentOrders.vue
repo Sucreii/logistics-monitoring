@@ -35,7 +35,7 @@ const columns: QTableColumn[] = [
     <q-card-section class="q-pt-none">
       <div class="text-overline text-weight-bolder text-primary">RECENT ACCEPTED ORDERS</div>
       <q-table
-        :rows="tableRows"
+        :rows="tableRows.slice(0, 5)"
         :columns="columns"
         :loading="graphShipment.loading"
         :rows-per-page-options="[10, 20, 50, 100]"

@@ -1,31 +1,31 @@
 <script setup lang="ts">
 // import { defineProps } from 'vue'
-import { useDialogPluginComponent } from 'quasar'
-import { useShipmentStore } from 'src/stores/ShipmentStore'
-import type { ShipmentList } from 'src/utils/static/types.ts'
-const { dialogRef, onDialogHide } = useDialogPluginComponent()
-const shipmentStore = useShipmentStore()
+import { useDialogPluginComponent } from 'quasar';
+// import { useShipmentStore } from 'src/stores/ShipmentStore'
+import type { ShipmentList } from 'src/utils/static/types.ts';
+const { dialogRef, onDialogHide } = useDialogPluginComponent();
+// const shipmentStore = useShipmentStore()
 
-const props = defineProps<{ shipmentData: ShipmentList; shipmentStatus: unknown }>()
+const props = defineProps<{ shipmentData: ShipmentList; shipmentStatus: unknown }>();
 
 console.log('propsValue', {
   shipmentData: props.shipmentData,
   shipmentStatus: props.shipmentStatus,
-})
+});
 
-const yes = async () => {
+const yes = () => {
   try {
-    const filteredShipmentData = { ...props.shipmentData, status: props.shipmentStatus }
-    delete filteredShipmentData.issuedBy
-    delete filteredShipmentData.dateIssued
-    delete filteredShipmentData.net
+    const filteredShipmentData = { ...props.shipmentData, status: props.shipmentStatus };
+    delete filteredShipmentData.issuedBy;
+    delete filteredShipmentData.dateIssued;
+    delete filteredShipmentData.net;
 
-    const response = await shipmentStore.updateShipmentToApi(filteredShipmentData)
-    console.log('response update', response)
+    // const response = await shipmentStore.updateShipmentToApi(filteredShipmentData)
+    // console.log('response update', response)
   } catch (err) {
-    console.error(err)
+    console.error(err);
   }
-}
+};
 </script>
 
 <template>
@@ -47,7 +47,13 @@ const yes = async () => {
           <q-btn label="Yes" no-caps color="positive" class="action-buttons" @click="yes" />
         </div>
         <div class="col-6 q-pr-xl">
-          <q-btn label="No" no-caps color="negative" class="action-buttons" @click="onDialogHide()" />
+          <q-btn
+            label="No"
+            no-caps
+            color="negative"
+            class="action-buttons"
+            @click="onDialogHide()"
+          />
         </div>
       </q-card-actions>
     </q-card>

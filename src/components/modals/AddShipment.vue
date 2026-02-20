@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { QForm, useDialogPluginComponent } from 'quasar';
+import { useQuasar, QForm, useDialogPluginComponent, Loading, QSpinnerIos } from 'quasar';
 import { useShipmentInfo } from 'src/stores/ShipmentStore';
-import { useQuasar } from 'quasar';
 import shipAdditionalForm from 'src/components/stepper/ShipAdditionalDetails.vue';
 import expensesInformationForm from 'src/components/stepper/ExpensesInfo.vue';
 import finalAllDetails from 'src/components/stepper/ShipInfoDisplay.vue';
@@ -51,6 +50,12 @@ const nextStep = async () => {
 
 const submitAll = async () => {
   console.log('Store Shipment: ', Object.keys(shipmentStore));
+
+  Loading.show({
+    spinner: QSpinnerIos,
+    message: 'Authenticating... please wait.',
+    backgroundColor: 'primary',
+  });
 
   await shipmentStore.submitShipment();
 };

@@ -30,3 +30,9 @@ export const usersForm = ref({
   last_name: '',
   role_id: null as number | null,
 });
+
+export const truckForm = ref({
+  id: '',
+  operator: '',
+  date_added: '',
+});

@@ -1,13 +1,15 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue';
-import { getAllUsers, getAllPortStorables } from 'src/stores/ShipmentStore';
+import { getAllUsers, getAllPortStorables, getAllShipment } from 'src/stores/ShipmentStore';
 import { CreateAdditionalShipments } from 'src/utils';
 import { shipmentForm } from 'src/stores/AllPostReactive';
 
 onMounted(async () => {
   await graphUsers.fetchUsers();
   await graphPorts.fetchPortStores();
+  await graphShipment.fetchShipments();
 
+  console.log('Shipments fetched: ', graphShipment.shipments);
   console.log('Users fetched: ', graphUsers.user);
   console.log('Ports fetched: ', graphPorts.storables);
 });
@@ -16,6 +18,7 @@ type ShipmentInputKeys = Exclude<keyof typeof shipmentForm, 'finances'>;
 const shipInfo = ref(shipmentForm);
 const graphUsers = getAllUsers();
 const graphPorts = getAllPortStorables();
+const graphShipment = getAllShipment();
 
 const userSelectOptions = computed(() => {
   return graphUsers.user.map((user) => ({

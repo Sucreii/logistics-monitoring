@@ -2,34 +2,16 @@ import { ref } from 'vue';
 import { defineStore } from 'pinia';
 import { HTTP_API } from 'src/boot/axios';
 import { apolloClient } from 'src/boot/apollo';
-import { shipmentForm } from 'src/stores/AllPostReactive';
-// import { useQuasar } from 'quasar';
-import type { ShipmentListTypes, FinanceListTypes, ShipmentList } from 'src/utils/static/types';
+import { shipmentForm, truckForm } from 'src/stores/AllPostReactive';
+import type {
+  Shipment,
+  Users,
+  Storables,
+  Trucks,
+  DashboardStats,
+  Trips,
+} from 'src/utils/static/types';
 import gql from 'graphql-tag';
-
-interface Shipment {
-  id: string;
-  blno: string;
-  contract_no: string;
-  entry_no: string;
-  reference: string;
-  registry_no: string;
-}
-interface Users {
-  id: string;
-  username: string;
-  first_name: string;
-  last_name: string;
-  password: string;
-  last_logged_in: string;
-}
-
-interface Storables {
-  id: string;
-  type: string;
-  description: string;
-  date_created: string;
-}
 
 const GET_PAGINATED_SHIPMENTS = gql`
   query GetPaginated($skip: Int!, $take: Int!) {
@@ -43,6 +25,40 @@ const GET_PAGINATED_SHIPMENTS = gql`
         entry_no
         reference
         registry_no
+      }
+    }
+  }
+`;
+
+const GET_PAGINATED_TRIPS = gql`
+  query GetPaginatedTrips($skip: Int!, $take: Int!) {
+    trips(skip: $skip, take: $take) {
+      totalCount
+      hasMore
+      items {
+        id
+        commodity
+        truck {
+          id
+          operator
+        }
+        warehouse {
+          id
+          description
+        }
+        port {
+          id
+          description
+        }
+        container {
+          id
+          description
+        }
+        financeSummary {
+          title
+          type
+          value
+        }
       }
     }
   }
@@ -85,6 +101,21 @@ const GET_PORT_STORABLES = gql`
   }
 `;
 
+const GET_TRUCK_STORABLES = gql`
+  query GetPaginatedShipments($skip: Int!, $take: Int!) {
+    trucks(skip: $skip, take: $take, showArchived: true) {
+      totalCount
+      hasMore
+      items {
+        id
+        operator
+        is_archived
+        date_added
+      }
+    }
+  }
+`;
+
 const POST_NEW_SHIPMENTINFO = gql`
   mutation CreateNewShipment($input: CreateShipmentInput!) {
     createShipment(input: $input) {
@@ -122,185 +153,44 @@ const POST_NEW_USERSINFO = gql`
   }
 `;
 
-export const useShipmentStore = defineStore('shipmentStore', () => {
-  interface ContainerItem {
-    id: number;
-    name: string;
+const POST_NEW_TRUCKS = gql`
+  mutation CreateNewTruck($input: CreateTruckInput!) {
+    createTruck(input: $input) {
+      id
+      operator
+    }
+  }
+`;
+
+const ARCHIVE_TRUCKS = gql`
+  mutation ArchiveVehicle($id: String!) {
+    archiveTruck(id: $id) {
+      id
+      is_archived
+    }
+  }
+`;
+
+const UNARCHIVE_TRUCKS = gql`
+  mutation RestoreVehicle($id: String!) {
+    restoreTruck(id: $id) {
+      id
+      is_archived
+    }
+  }
+`;
+
+export const getDashStats = defineStore('dashStats', () => {
+  const stats = ref<DashboardStats | null>(null);
+
+  async function fetchStats() {
+    const response = await HTTP_API().get('/dashboard/stats');
+    stats.value = response.data;
+
+    console.log('FETCH DASHBOARD STATS:', response.data);
   }
 
-  interface shipmentDataTypes {
-    id: number;
-    name: string;
-    value: number;
-  }
-
-  interface shipmentIdType {
-    id: number;
-  }
-
-  const expenseData = ref<string[]>([]);
-  const revenueData = ref<string[]>([]);
-  const portItems = ref<string[]>([]);
-  const warehouseItems = ref<string[]>([]);
-  const containerItems = ref<string[]>([]);
-  const containerData = ref<ContainerItem[]>([]);
-  const shipmentExpense = ref<shipmentDataTypes[]>([]);
-  const shipmentRevenue = ref<shipmentDataTypes[]>([]);
-  const shipmentId = ref<shipmentDataTypes[]>([]);
-  const shipmentData = ref<{
-    shipmentExpense: shipmentDataTypes[];
-    shipmentRevenue: shipmentDataTypes[];
-    shipmentId: shipmentIdType[];
-  } | null>(null);
-  const shipmentItemList = ref<ShipmentList[]>([]);
-
-  const createShipmentToApi = async (payload: ShipmentListTypes) => {
-    console.log(payload);
-    try {
-      const { data } = await HTTP_API().post('/api/shipment', payload);
-      console.log('data sa store', data);
-      shipmentExpense.value = data.results.expenses;
-      shipmentRevenue.value = data.results.revenue;
-      shipmentId.value = data.results.id;
-
-      shipmentData.value = {
-        shipmentExpense: shipmentExpense.value,
-        shipmentRevenue: shipmentRevenue.value,
-        shipmentId: shipmentId.value,
-      };
-
-      return data;
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const createFinanceToApi = async (payload: FinanceListTypes, shipId: string) => {
-    const payloadExpenses = {
-      finance: payload.shipmentExpense?.map((expense) => ({
-        id: expense.id,
-        name: expense.name,
-        value: expense.value,
-      })),
-    };
-
-    const payloadRevenue = {
-      finance: payload.shipmentRevenue?.map((rev) => ({
-        id: rev.id,
-        name: rev.name,
-        value: rev.value,
-      })),
-    };
-
-    console.log('payloadExpenses', payloadExpenses);
-    console.log('payloadRevenue', payloadRevenue);
-    console.log('shipId', shipId);
-
-    try {
-      const response = await Promise.all([
-        HTTP_API().put(`/api/shipment/${shipId}/expense`, payloadExpenses),
-        HTTP_API().put(`/api/shipment/${shipId}/revenue`, payloadRevenue),
-      ]);
-      return response; // Return the response
-    } catch (err) {
-      console.error(err);
-      throw err; // Re-throw for proper async handling
-    }
-  };
-
-  const createNewStorableToApi = async (fieldModel: string, val: string) => {
-    try {
-      const payload = {
-        id: val,
-        description: `${val} To ${fieldModel}`,
-      };
-
-      const { data } = await HTTP_API().post(`/api/storable/${fieldModel}`, payload);
-      return data;
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const updateShipmentToApi = async (payload: ShipmentList) => {
-    console.log('payload-update', payload);
-    try {
-      const { data } = await HTTP_API().put(`/api/shipment/${payload.id}`, payload);
-      return data;
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const getFinanceData = async () => {
-    try {
-      const [expenseResponse, revenueResponse] = await Promise.all([
-        HTTP_API().get(`/api/finance/expense`),
-        HTTP_API().get(`/api/finance/revenue`),
-      ]);
-
-      expenseData.value = expenseResponse?.data.results;
-      revenueData.value = revenueResponse?.data.results;
-
-      console.log('Revenue Data:', revenueResponse);
-    } catch (err) {
-      console.error('Error fetching finance data:', err);
-    }
-  };
-
-  const getContainerTypeFromApi = async () => {
-    try {
-      const [portResponse, warehouseResponse, containerResponse] = await Promise.all([
-        HTTP_API().get(`/api/storable/port`),
-        HTTP_API().get(`/api/storable/warehouse`),
-        HTTP_API().get(`/api/storable/container`),
-      ]);
-
-      portItems.value = portResponse?.data.results;
-      warehouseItems.value = warehouseResponse?.data.results;
-      containerItems.value = containerResponse?.data.results;
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const deleteStorableItemToApi = async (opt: string, fieldModel: string) => {
-    try {
-      const payload = {
-        id: opt,
-        description: `The ${fieldModel} has been deleted from ${opt}`,
-      };
-
-      console.log('payload', payload);
-
-      const { data } = await HTTP_API().delete(`/api/storable/${opt}`, {
-        data: payload,
-      });
-
-      return data;
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  return {
-    expenseData,
-    revenueData,
-    containerData,
-    warehouseItems,
-    containerItems,
-    portItems,
-    shipmentData,
-    shipmentItemList,
-    updateShipmentToApi,
-    getContainerTypeFromApi,
-    createShipmentToApi,
-    // getShipmentToApi,
-    getFinanceData,
-    createFinanceToApi,
-    createNewStorableToApi,
-    deleteStorableItemToApi,
-  };
+  return { stats, fetchStats };
 });
 
 export const getAllShipment = defineStore('shipment', {
@@ -340,6 +230,56 @@ export const getAllShipment = defineStore('shipment', {
           this.shipments.push(...incomingItems);
         } else {
           this.shipments = incomingItems;
+        }
+
+        this.totalCount = data?.totalCount ?? 0;
+        this.hasMore = data?.hasMore ?? false;
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.loading = false;
+      }
+    },
+  },
+});
+
+export const getAllTrips = defineStore('shipment', {
+  state: () => ({
+    trips: [] as Trips[],
+    totalCount: 0,
+    hasMore: false,
+    loading: false,
+    skip: 0,
+    take: 10,
+  }),
+
+  actions: {
+    async updateRowsPerPage(newLimit: number) {
+      this.take = newLimit;
+      this.skip = 0;
+      await this.fetchShipments(false);
+    },
+
+    async fetchShipments(isLoadMore = false) {
+      this.loading = true;
+      try {
+        const response = await apolloClient.query({
+          query: GET_PAGINATED_TRIPS,
+          variables: {
+            skip: this.skip,
+            take: this.take,
+          },
+          fetchPolicy: 'network-only',
+        });
+
+        console.log('I AM GRAPHQL SHIPMENTS RESPONSE: ', response.data);
+        const data = response.data?.trips;
+        const incomingItems = data?.items ?? [];
+
+        if (isLoadMore) {
+          this.trips.push(...incomingItems);
+        } else {
+          this.trips = incomingItems;
         }
 
         this.totalCount = data?.totalCount ?? 0;
@@ -445,6 +385,43 @@ export const getAllPortStorables = defineStore('portStorables', {
   },
 });
 
+export const getTruckStorables = defineStore('truckStorables', {
+  state: () => ({
+    trucks: [] as Trucks[],
+    totalCount: 0,
+    hasMore: false,
+    loading: false,
+    skip: 0,
+    take: 50,
+  }),
+
+  actions: {
+    async fetchTruckStores(type?: string) {
+      this.loading = true;
+      try {
+        const { data } = await apolloClient.query({
+          query: GET_TRUCK_STORABLES,
+          variables: {
+            skip: 0,
+            take: 50,
+            type: type || null,
+          },
+          fetchPolicy: 'network-only',
+        });
+
+        if (data?.trucks?.items) {
+          this.trucks = data.trucks.items;
+        }
+        console.log('I AM GRAPHQL PORT RESPONSE: ', data);
+      } catch (error) {
+        console.error('Fetching Port Error: ', error);
+      } finally {
+        this.loading = false;
+      }
+    },
+  },
+});
+
 export const useShipmentInfo = defineStore('postShipment', {
   state: () => ({
     loading: false,
@@ -523,6 +500,90 @@ export const useUsersInfo = defineStore('postShipment', {
         });
         console.log('New User created: ', data.createShipment);
         return data.createShipment;
+      } catch (err) {
+        console.error(err);
+
+        throw err;
+      } finally {
+        this.loading = false;
+      }
+    },
+  },
+});
+
+export const useTrucksInfo = defineStore('postTrucking', {
+  state: () => ({
+    loading: false,
+  }),
+
+  actions: {
+    async submitTrucking() {
+      this.loading = true;
+
+      try {
+        const { data } = await apolloClient.mutate({
+          mutation: POST_NEW_TRUCKS,
+          variables: { input: truckForm.value },
+        });
+
+        console.log('New Truck created: ', data.createTruck);
+        return data.createTruck;
+      } catch (err) {
+        console.error(err);
+
+        throw err;
+      } finally {
+        this.loading = false;
+      }
+    },
+  },
+});
+
+export const hideTrucksProfile = defineStore('hideTrucking', {
+  state: () => ({
+    loading: false,
+  }),
+
+  actions: {
+    async hideTrucking(id: string) {
+      this.loading = true;
+
+      try {
+        const { data } = await apolloClient.mutate({
+          mutation: ARCHIVE_TRUCKS,
+          variables: { id },
+        });
+
+        console.log('Truck Profile hidden: ', data.archiveTruck);
+        return data.archiveTruck;
+      } catch (err) {
+        console.error(err);
+
+        throw err;
+      } finally {
+        this.loading = false;
+      }
+    },
+  },
+});
+
+export const unHideTrucksProfile = defineStore('unHideTrucking', {
+  state: () => ({
+    loading: false,
+  }),
+
+  actions: {
+    async unHideTrucking(id: string) {
+      this.loading = true;
+
+      try {
+        const { data } = await apolloClient.mutate({
+          mutation: UNARCHIVE_TRUCKS,
+          variables: { id },
+        });
+
+        console.log('Truck Profile hidden: ', data.restoreTruck);
+        return data.restoreTruck;
       } catch (err) {
         console.error(err);
 

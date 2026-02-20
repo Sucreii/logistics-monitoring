@@ -1,5 +1,20 @@
 <script lang="ts" setup>
-import chart from '../GraphTable.vue'
+import { useDocumentDialog } from 'src/utils/composables/dialog';
+import { linksArr } from 'src/utils';
+import chart from '../GraphTable.vue';
+
+const {
+  showDocumentDialog,
+  showCreateShipmentDialog,
+  showCreateNewUsersDialog,
+  showCreateNewTrucksDialog,
+} = useDocumentDialog();
+const dialogMap = {
+  shipments: showDocumentDialog,
+  trips: showCreateShipmentDialog,
+  users: showCreateNewUsersDialog,
+  trucks: showCreateNewTrucksDialog,
+};
 </script>
 
 <template>
@@ -16,6 +31,21 @@ import chart from '../GraphTable.vue'
       <q-card flat bordered class="col">
         <q-card-section>
           <div class="text-overline text-weight-bolder text-primary">QUICK LINKS</div>
+          <div class="column q-gutter-xs">
+            <q-btn
+              v-for="item in linksArr"
+              :key="item.label"
+              :label="item.label"
+              :icon-right="item.icon"
+              align="left"
+              color="primary"
+              class="text-sm"
+              flat
+              push
+              dense
+              @click="dialogMap[item.docDialog]()"
+            />
+          </div>
         </q-card-section>
       </q-card>
     </div>

@@ -5,7 +5,8 @@ import type {
   AdditionalShipmentTypes,
   TransitFieldTypes,
   AdditionalUsersTypes,
-  // ExpensesShipmentTypes,
+  AdditionalTrucksTypes,
+  TableTruckProfileConstants,
 } from 'src/utils/static/types';
 
 interface dummy {
@@ -13,7 +14,7 @@ interface dummy {
   content: string;
   date: string;
 }
-
+export type DialogKey = 'shipments' | 'trips' | 'users' | 'trucks';
 export const NavigationItems = [
   {
     label: 'Dashboard',
@@ -33,17 +34,49 @@ export const NavigationItems = [
     name: 'home.trips',
     icon: 'local_shipping',
   },
-  // {
-  //   label: 'Reports',
-  //   separator: true,
-  //   name: 'home.reports',
-  //   icon: 'query_stats',
-  // },
   {
     label: 'Users',
     separator: true,
     name: 'home.users',
     icon: 'manage_accounts',
+  },
+  {
+    label: 'Trucks',
+    separator: true,
+    name: 'home.trucks',
+    icon: 'engineering',
+  },
+];
+
+export const linksArr: {
+  label: string;
+  icon: string;
+  routeName: string;
+  docDialog: DialogKey;
+}[] = [
+  {
+    label: 'Add new Shipments',
+    routeName: 'home.shipments',
+    icon: 'add_shopping_cart',
+    docDialog: 'shipments',
+  },
+  {
+    label: 'Add new Trips',
+    routeName: 'home.trips',
+    icon: 'local_shipping',
+    docDialog: 'trips',
+  },
+  {
+    label: 'Add new Users',
+    routeName: 'home.users',
+    icon: 'person_add',
+    docDialog: 'users',
+  },
+  {
+    label: 'Add new Truck Profile',
+    routeName: 'home.trucks',
+    icon: 'contact_emergency',
+    docDialog: 'trucks',
   },
 ];
 
@@ -287,6 +320,36 @@ export const CreateExpensesShipmentsFields = [
   { label: 'Trucking', index: 4, col: '6' },
 ];
 
+export const CreateAdditionalTrucks: AdditionalTrucksTypes[] = [
+  {
+    label: 'Truck Name',
+    placeholder: 'Plate Number/Name',
+    model: 'id',
+    type: 'text',
+    col: '4',
+    variant: 'information',
+    rules: [(val) => !!val || 'Truck Name is required'],
+  },
+  {
+    label: 'Operator Name',
+    placeholder: 'John Doe',
+    model: 'operator',
+    type: 'text',
+    col: '5',
+    variant: 'information',
+    rules: [(val) => !!val || 'Operator Name is required'],
+  },
+  {
+    label: 'Date',
+    placeholder: 'YYYY-MM-DD',
+    model: 'date_added',
+    type: 'date',
+    col: '3',
+    variant: 'information',
+    rules: [(val) => !!val || 'Date is required'],
+  },
+];
+
 export const CreateAdditionalUsers: AdditionalUsersTypes[] = [
   {
     label: 'Username',
@@ -416,5 +479,26 @@ export const tableUsersConstants: TableUsersConstants[] = [
     last_name: 'Williams',
     password: '********',
     last_logged_in: '2024-12-03 09:15 AM',
+  },
+];
+
+export const tableTruckProfileConstants: TableTruckProfileConstants[] = [
+  {
+    id: '1',
+    operator: 'Operator A',
+    is_archived: false,
+    date_added: '2024-12-01',
+  },
+  {
+    id: '2',
+    operator: 'Operator B',
+    is_archived: true,
+    date_added: '2024-11-15',
+  },
+  {
+    id: '3',
+    operator: 'Operator C',
+    is_archived: false,
+    date_added: '2024-10-20',
   },
 ];

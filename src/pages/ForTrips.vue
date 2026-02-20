@@ -1,220 +1,69 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { computed, onMounted } from 'vue';
+import { getAllShipment } from 'src/stores/ShipmentStore';
+import { tableShipmentConstant } from 'src/utils/index';
+import type { QTableColumn } from 'quasar';
 import filterForm from '../layouts/trips/FilterForm.vue';
 
-const hidePagination = ref(true);
-const current = ref(3);
-const isEditing = ref(false);
-const statusOptions = [
-  { label: 'Completed', value: 'completed' },
-  { label: 'Rejected', value: 'rejected' },
-  { label: 'Pending', value: 'pending' },
+onMounted(async () => {
+  await graphShipment.fetchShipments();
+  console.log('Shipments fetched: ', graphShipment.shipments);
+});
+
+const graphShipment = getAllShipment();
+const tableRows = computed(() => {
+  return graphShipment.shipments.length > 0 ? graphShipment.shipments : tableShipmentConstant;
+});
+
+const columns: QTableColumn[] = [
+  { name: 'id', label: 'ID', field: 'id', align: 'left' },
+  { name: 'blno', label: 'B/L No', field: 'blno', align: 'left' },
+  { name: 'contract_no', label: 'Contract No', field: 'contract_no', align: 'left' },
+  { name: 'entry_no', label: 'Entry No', field: 'entry_no', align: 'left' },
+  { name: 'reference', label: 'Reference', field: 'reference', align: 'left' },
+  { name: 'registry_no', label: 'Registry No', field: 'registry_no', align: 'left' },
 ];
-
-interface Row {
-  name: string;
-  customer_name: string;
-  consignee_name: string;
-  pickup_port: string;
-  delivery_location: string;
-  date_delivered: string;
-  calcium: string;
-  Status: string;
-}
-
-const columns = [
-  {
-    name: 'name',
-    required: true,
-    label: 'Shipment ID',
-    align: 'left' as const,
-    field: (row: Row) => row.name,
-    format: (val: string) => `${val}`,
-    sortable: true,
-  },
-  {
-    name: 'customer_name',
-    align: 'left' as const,
-    label: 'Customer Name',
-    field: 'customer_name',
-    sortable: true,
-  },
-  {
-    name: 'consignee_name',
-    align: 'left' as const,
-    label: 'Consignee Name',
-    field: 'consignee_name',
-    sortable: true,
-  },
-  { name: 'pickup_port', align: 'left' as const, label: 'Pickup Port', field: 'pickup_port' },
-  {
-    name: 'delivery_location',
-    align: 'left' as const,
-    label: 'Delivery Location',
-    field: 'delivery_location',
-  },
-  {
-    name: 'date_delivered',
-    align: 'left' as const,
-    label: 'Date Delivered',
-    field: 'date_delivered',
-  },
-  {
-    name: 'Status',
-    align: 'left' as const,
-    label: 'Status',
-    field: 'Status',
-    sortable: true,
-    sort: (a: string, b: string) => parseInt(a, 10) - parseInt(b, 10),
-  },
-  {
-    name: 'actions',
-    align: 'left' as const,
-    label: 'Actions',
-    field: 'actions',
-    sortable: false,
-  },
-];
-
-const rows: Row[] = [
-  {
-    name: 'Alisa',
-    customer_name: 'test',
-    consignee_name: 'Test',
-    pickup_port: 'test',
-    delivery_location: 'test',
-    date_delivered: 'test',
-    calcium: '14%',
-    Status: 'Completed',
-  },
-  {
-    name: 'Eka',
-    customer_name: 'test',
-    consignee_name: 'Test',
-    pickup_port: 'test',
-    delivery_location: 'test',
-    date_delivered: 'test',
-    calcium: '14%',
-    Status: 'Pending',
-  },
-];
-
-const editRow = (row: Row) => {
-  console.log('Edit:', row);
-  isEditing.value = true;
-};
-
-const saveRow = (row: Row) => {
-  console.log('saveRow', row);
-  isEditing.value = false;
-};
-
-const deleteRow = (row: Row) => {
-  console.log('Delete:', row);
-};
-
-const getStatusIcon = (status: string) => {
-  switch (status) {
-    case 'Completed':
-      return { icon: 'check_circle', color: 'positive' };
-    case 'Rejected':
-      return { icon: 'cancel', color: 'negative' };
-    case 'Pending':
-      return { icon: 'hourglass_empty', color: 'warning' };
-    default:
-      return { icon: 'help', color: 'grey' };
-  }
-};
 </script>
 
 <template>
-  <q-page>
-    <div class="q-px-md text-caption">
-      A streamlined interface to orchestrate trucking schedules, managing logistical parameters, and
-      cargo assignments.
-    </div>
+  <q-layout view="lHh Lpr lFf">
+    <q-page-container>
+      <q-page>
+        <div class="q-px-md text-caption">
+          Comprehensive overview of logistics status with real-time tools to manage, track, and
+          update shipment outcomes.
+        </div>
 
-    <div class="row q-pa-md q-gutter-y-md">
-      <div class="col-12">
-        <q-card flat bordered>
-          <q-card-section>
-            <filterForm />
-          </q-card-section>
-          <q-card-section class="q-pt-none">
-            <q-table
-              :rows="rows"
-              :columns="columns"
-              row-key="name"
-              flat
-              bordered
-              :hide-pagination="hidePagination"
-            >
-              <template v-slot:body-cell-actions="props">
-                <q-td :props="props" class="row">
-                  <div v-if="!isEditing">
-                    <q-btn
-                      flat
-                      dense
-                      round
-                      color="primary"
-                      icon="edit"
-                      @click="editRow(props.row)"
-                    />
-                  </div>
-                  <div v-else>
-                    <q-btn
-                      flat
-                      dense
-                      round
-                      color="primary"
-                      icon="check"
-                      @click="saveRow(props.row)"
-                    />
-                  </div>
-                  <div>
-                    <q-btn
-                      flat
-                      dense
-                      round
-                      color="negative"
-                      icon="delete"
-                      @click="deleteRow(props.row)"
-                    />
-                  </div>
-                </q-td>
-              </template>
+        <div class="row q-pa-md q-gutter-y-md">
+          <div class="col-12">
+            <q-card flat bordered>
+              <q-card-section>
+                <filterForm />
+              </q-card-section>
 
-              <template v-slot:body-cell-Status="props">
-                <q-td :props="props">
-                  <div v-if="isEditing">
-                    <q-select v-model="props.row.Status" :options="statusOptions" filled dense />
-                  </div>
-                  <div v-else>
-                    <!-- Dynamic icon based on status -->
-                    <q-icon
-                      class="q-mb-xs q-mr-xs"
-                      :name="getStatusIcon(props.row.Status).icon"
-                      size="xs"
-                      :color="getStatusIcon(props.row.Status).color"
-                    />
-                    {{ props.row.Status }}
-                  </div>
-                </q-td>
-              </template>
-            </q-table>
-          </q-card-section>
-          <q-card-section class="q-pt-none flex flex-center">
-            <q-pagination
-              v-model="current"
-              max="5"
-              direction-links
-              flat
-              color="grey"
-              active-color="primary"
-            />
-          </q-card-section>
-        </q-card>
-      </div>
-    </div>
-  </q-page>
+              <q-card-section class="q-pt-none">
+                <q-table
+                  :rows="tableRows"
+                  :columns="columns"
+                  :loading="graphShipment.loading"
+                  :rows-per-page-options="[10, 20, 50, 100]"
+                  row-key="id"
+                  bordered
+                  flat
+                >
+                  <template v-slot:body-cell-actions="props">
+                    <q-td :props="props" class="q-gutter-x-sm"> </q-td>
+                  </template>
+
+                  <template v-slot:loading>
+                    <q-inner-loading秀 showing color="primary" />
+                  </template>
+                </q-table>
+              </q-card-section>
+            </q-card>
+          </div>
+        </div>
+      </q-page>
+    </q-page-container>
+  </q-layout>
 </template>

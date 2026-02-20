@@ -26,6 +26,11 @@ export const HomeRoutes: RouteRecordRaw[] = [
         name: 'home.users',
         component: () => import('src/pages/ForUsers.vue'),
       },
+      {
+        path: '/trucks',
+        name: 'home.trucks',
+        component: () => import('src/pages/ForTrucks.vue'),
+      },
     ],
   },
 ];

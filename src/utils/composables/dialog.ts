@@ -3,6 +3,7 @@ import type { ShipmentList } from '../static/types';
 import CreateShipmentComponent from 'src/components/modals/AddShipment.vue';
 import CreateTripsComponent from 'src/components/modals/AddOrders.vue';
 import CreateNewUsersComponent from 'src/components/modals/AddUsers.vue';
+import CreateNewTrucksComponent from 'src/components/modals/AddTrucks.vue';
 import statusValidationModal from 'src/components/modals/StatusValidation.vue';
 // import createValidationModal from 'src/components/modals/AddValidation.vue';
 
@@ -33,6 +34,14 @@ export function useDocumentDialog() {
     });
   };
 
+  const showCreateNewTrucksDialog = () => {
+    $q.dialog({
+      component: CreateNewTrucksComponent,
+    }).onOk((data) => {
+      console.log('Additional Driver Profile: ', data);
+    });
+  };
+
   const showStatusValidationDialog = (props: ShipmentList, status: unknown) => {
     $q.dialog({
       component: statusValidationModal,
@@ -60,6 +69,7 @@ export function useDocumentDialog() {
     showCreateShipmentDialog,
     showStatusValidationDialog,
     showCreateNewUsersDialog,
+    showCreateNewTrucksDialog,
     // showCreateValidationDialog,
   };
 }
