@@ -29,19 +29,53 @@ export type FinanceItem = {
 };
 export interface Shipment {
   id: string;
+  warehouse_id: string;
   blno: string;
   contract_no: string;
   entry_no: string;
   reference: string;
   registry_no: string;
+  status: string;
+  volumex: number;
+  volumey: number;
+  estimated_time_arrival: string;
+  issuer_username: string;
+  customer_username: string;
+  containers: {
+    id: string;
+    type: string;
+    description: string;
+  }[];
+  financeSummary: {
+    title: string;
+    type: string;
+    value: number;
+  }[];
 }
 export interface Trips {
   id: string;
-  blno: string;
-  contract_no: string;
-  entry_no: string;
-  reference: string;
-  registry_no: string;
+  commodity: string;
+  truck: {
+    id: string;
+    operator: string | null;
+  } | null;
+  warehouse: {
+    id: string;
+    description: string | null;
+  } | null;
+  port: {
+    id: string;
+    description: string | null;
+  } | null;
+  container: {
+    id: string;
+    description: string | null;
+  } | null;
+  financeSummary: {
+    title: string;
+    type: string;
+    value: number;
+  }[];
 }
 export interface Users {
   id: string;
@@ -115,6 +149,16 @@ export type AdditionalUsersTypes = {
 };
 
 export type AdditionalTrucksTypes = {
+  label: string;
+  placeholder: string;
+  model: string;
+  type: ShipmentInputType;
+  col: string;
+  variant: string;
+  rules?: ((v: string | number | boolean | null | undefined) => boolean | string)[]; // Added rules
+};
+
+export type AdditionalPortStoreTypes = {
   label: string;
   placeholder: string;
   model: string;
@@ -214,6 +258,15 @@ export type TableShipmentConstants = {
   entry_no?: string;
   reference?: string;
   registry_no?: string;
+};
+
+export type TableTripsConstants = {
+  id: string;
+  commodity?: string;
+  truckId?: string;
+  warehouse?: string;
+  container?: string;
+  port?: string;
 };
 
 export type TableUsersConstants = {

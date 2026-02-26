@@ -1,16 +1,18 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { useQuasar, QForm, useDialogPluginComponent, Loading, QSpinnerIos } from 'quasar';
-import { useShipmentInfo } from 'src/stores/ShipmentStore';
+import { useShipmentInfo, getAllShipment } from 'src/stores/ShipmentStore';
 import shipAdditionalForm from 'src/components/stepper/ShipAdditionalDetails.vue';
 import expensesInformationForm from 'src/components/stepper/ExpensesInfo.vue';
 import finalAllDetails from 'src/components/stepper/ShipInfoDisplay.vue';
+import { shipmentForm } from 'src/stores/AllPostReactive';
 
 const { dialogRef, onDialogHide } = useDialogPluginComponent();
 const step = ref(1);
 const loading = ref(false);
 const $q = useQuasar();
 const shipmentStore = useShipmentInfo();
+const graphShipmentStore = getAllShipment();
 const FINAL_STEP = 3;
 const shipAddForm = ref<InstanceType<typeof QForm> | null>(null);
 const shipFinanceFormRef = ref<InstanceType<typeof QForm> | null>(null);
@@ -22,7 +24,7 @@ const nextStep = async () => {
     console.log('Is Valid: ', isValid);
 
     if (!isValid) {
-      $q.notify({ type: 'warning', message: 'Please complete all fields.' });
+      $q.notify({ type: 'warning', position: 'top', message: 'Please complete all fields.' });
       return;
     }
 
@@ -31,7 +33,7 @@ const nextStep = async () => {
     const isValid = await shipFinanceFormRef.value?.validate();
 
     if (!isValid) {
-      $q.notify({ type: 'warning', message: 'Please complete all fields.' });
+      $q.notify({ type: 'warning', position: 'top', message: 'Please complete all fields.' });
       return;
     }
 
@@ -40,7 +42,7 @@ const nextStep = async () => {
     const isValid = await shipDisplayInfoFormRef.value?.validate();
 
     if (!isValid) {
-      $q.notify({ type: 'warning', message: 'Please complete all fields.' });
+      $q.notify({ type: 'warning', position: 'top', message: 'Please complete all fields.' });
       return;
     }
 
@@ -53,11 +55,55 @@ const submitAll = async () => {
 
   Loading.show({
     spinner: QSpinnerIos,
-    message: 'Authenticating... please wait.',
+    message: 'Creating New Shipment... please wait.',
     backgroundColor: 'primary',
   });
 
-  await shipmentStore.submitShipment();
+  try {
+    await shipmentStore.submitShipment();
+  } catch (err) {
+    console.error('Error adding new Shipment: ', err);
+  } finally {
+    Loading.hide();
+    onDialogHide();
+    Object.assign(shipmentForm, {
+      blno: '',
+      contract_no: '',
+      warehouse_id: '',
+      entry_no: '',
+      reference: '',
+      registry_no: '',
+      port_id: '',
+      shipping_line: '',
+      volumex: null,
+      volumey: null,
+      estimated_time_arrival: '',
+      customer: {
+        id: '',
+        username: '',
+      },
+      issuer: {
+        id: '',
+        username: '',
+      },
+      containers: [
+        {
+          id: '',
+          type: 'amount',
+          description: 0,
+        },
+      ],
+      financeSummary: [
+        {
+          title: '',
+          type: 'amount',
+          value: 0,
+        },
+      ],
+    });
+
+    await graphShipmentStore.fetchShipments();
+  }
 };
 </script>
 
@@ -74,7 +120,7 @@ const submitAll = async () => {
 
       <div class="q-px-md">
         <q-stepper v-model="step" ref="stepper" color="primary" animated dense flat>
-          <q-step :name="1" title="Shipping Details" icon="sym_o_unknown_document" :done="step > 1">
+          <q-step :name="1" :done="step > 1" title="Shipping Details" icon="sym_o_unknown_document">
             <q-form class="flex" ref="shipAddForm" @submit.prevent="nextStep">
               <shipAdditionalForm />
             </q-form>
@@ -83,7 +129,7 @@ const submitAll = async () => {
           <q-step
             :name="2"
             :done="step > 2"
-            title="Additional Information"
+            title="Expenses Information"
             icon="sym_o_bar_chart_4_bars"
           >
             <q-form ref="shipFinanceFormRef" @submit.prevent="nextStep">

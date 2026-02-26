@@ -1,9 +1,9 @@
 import { reactive, ref } from 'vue';
-import type { FinanceItem } from 'src/utils/static/types';
 
 export const shipmentForm = reactive({
   blno: '',
   contract_no: '',
+  warehouse_id: '',
   entry_no: '',
   reference: '',
   registry_no: '',
@@ -11,16 +11,35 @@ export const shipmentForm = reactive({
   shipping_line: '',
   volumex: null,
   volumey: null,
+  estimated_time_arrival: '',
   customer_username: '',
   issuer_username: '',
-  estimated_time_arrival: '',
+  containers: '',
   finances: [
-    { title: 'Billing', type: 'number', value: null },
-    { title: 'Cost', type: 'number', value: null },
-    { title: 'Brokerage (VAT)', type: 'number', value: null },
-    { title: 'Facilitation (VAT)', type: 'number', value: null },
-    { title: 'Trucking (VAT)', type: 'number', value: null },
-  ] as FinanceItem[],
+    {
+      title: '',
+      type: 'amount',
+      value: 0,
+    },
+  ],
+});
+
+export const tripsForm = reactive({
+  container_id: '',
+  truck_id: '',
+  port_id: '',
+  commodity: '',
+  warehouse_id: '',
+  base_rate: 0,
+  volumex: 0,
+  volumey: 0,
+  finances: [
+    {
+      title: '',
+      type: 'amount',
+      value: 0,
+    },
+  ],
 });
 
 export const usersForm = ref({
@@ -35,4 +54,10 @@ export const truckForm = ref({
   id: '',
   operator: '',
   date_added: '',
+});
+
+export const storablesForm = ref({
+  id: '',
+  type: 'PORT',
+  description: '',
 });

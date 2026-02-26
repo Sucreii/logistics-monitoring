@@ -1,39 +1,99 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { useDialogPluginComponent } from 'quasar';
-// import { useShipmentStore } from 'src/stores/ShipmentStore';
+import { useQuasar, QForm, useDialogPluginComponent, Loading, QSpinnerIos } from 'quasar';
+import { useTransitInfo, getAllTrips } from 'src/stores/ShipmentStore';
+import { tripsForm } from 'src/stores/AllPostReactive';
 import transitDetailsForm from 'src/components/stepper/TransitDetails.vue';
-import shipAdditionalForm from 'src/components/stepper/ShipAdditionalDetails.vue';
-import expensesInformationForm from 'src/components/stepper/ExpensesInfo.vue';
+import transitExpenses from 'src/components/stepper/TransitExpenses.vue';
+import transitDisplay from 'src/components/stepper/TransitInfoDisplay.vue';
 
 const { dialogRef, onDialogHide } = useDialogPluginComponent();
-// const shipmentStore = useShipmentStore();
 const step = ref(1);
 const loading = ref(false);
+const $q = useQuasar();
+const transitStore = useTransitInfo();
+const graphTrips = getAllTrips();
+const FINAL_STEP = 3;
+const transitAddForm = ref<InstanceType<typeof QForm> | null>(null);
+const transitFinanceFormRef = ref<InstanceType<typeof QForm> | null>(null);
+const transitDisplayInfoFormRef = ref<InstanceType<typeof QForm> | null>(null);
 
-const nextStep = () => {
+const nextStep = async () => {
   if (step.value === 1) {
-    if (!transitFormRef.value) {
-      console.error('transitFormRef is undefined');
+    const isValid = await transitAddForm.value?.validate();
+    console.log('Is Valid: ', isValid);
+
+    if (!isValid) {
+      $q.notify({ type: 'warning', position: 'top', message: 'Please complete all fields.' });
       return;
     }
 
     step.value++;
-    return;
   } else if (step.value === 2) {
-    if (!shipAddForm.value) {
-      console.error('shipAddForm is undefined');
+    const isValid = await transitFinanceFormRef.value?.validate();
+
+    if (!isValid) {
+      $q.notify({ type: 'warning', position: 'top', message: 'Please complete all fields.' });
       return;
     }
 
     step.value++;
-    return;
+  } else if (step.value === 3) {
+    const isValid = await transitDisplayInfoFormRef.value?.validate();
+
+    if (!isValid) {
+      $q.notify({ type: 'warning', position: 'top', message: 'Please complete all fields.' });
+      return;
+    }
+
+    step.value++;
   }
 };
 
-const transitFormRef = ref<InstanceType<typeof transitDetailsForm> | null>(null);
-const shipAddForm = ref<InstanceType<typeof shipAdditionalForm> | null>(null);
-const shipFinanceFormRef = ref<InstanceType<typeof expensesInformationForm> | null>(null);
+const submitAll = async () => {
+  console.log('Store Transit trip: ', Object.keys(transitStore));
+
+  Loading.show({
+    spinner: QSpinnerIos,
+    message: 'Creating New Transit... please wait.',
+    backgroundColor: 'primary',
+  });
+
+  try {
+    await transitStore.createTrip();
+
+    $q.notify({
+      type: 'positive',
+      position: 'top',
+      message: 'New Transit Order has been added.successfully',
+      timeout: 3000,
+    });
+  } catch (err) {
+    console.error('Error adding new Transit: ', err);
+  } finally {
+    Loading.hide();
+    onDialogHide();
+    Object.assign(tripsForm, {
+      container_id: '',
+      truck_id: '',
+      port_id: '',
+      commodity: '',
+      warehouse_id: '',
+      base_rate: 0,
+      volumex: 0,
+      volumey: 0,
+      finances: [
+        {
+          title: '',
+          type: 'amount',
+          value: 0,
+        },
+      ],
+    });
+
+    await graphTrips.fetchTrips();
+  }
+};
 </script>
 
 <template>
@@ -47,50 +107,37 @@ const shipFinanceFormRef = ref<InstanceType<typeof expensesInformationForm> | nu
         <q-btn icon="close" color="primary" flat round dense @click="onDialogHide()" />
       </q-card-section>
 
-      <!-- <q-separator inset /> -->
-
       <div class="q-px-md">
         <q-stepper v-model="step" ref="stepper" color="primary" animated dense flat>
-          <q-step :name="1" title="Shipping Information" icon="settings" :done="step > 1">
-            <q-form @submit.prevent="nextStep">
-              <transitDetailsForm ref="transitFormRef" />
+          <q-step :name="1" :done="step > 1" title="Transit Information" icon="settings">
+            <q-form class="flex" ref="transitAddForm" @submit.prevent="nextStep">
+              <transitDetailsForm />
             </q-form>
           </q-step>
 
-          <q-step :name="2" title="Shipping Details" icon="sym_o_unknown_document" :done="step > 2">
-            <q-form @submit.prevent="nextStep">
-              <shipAdditionalForm ref="shipAddForm" />
+          <q-step :name="2" :done="step > 2" title="Transit Expenses" icon="sym_o_unknown_document">
+            <q-form ref="transitFinanceFormRef" @submit.prevent="nextStep">
+              <transitExpenses />
             </q-form>
           </q-step>
 
-          <q-step
-            :name="3"
-            title=" Financial Report"
-            icon="sym_o_bar_chart_4_bars"
-            :done="step > 3"
-          >
-            <q-form @submit.prevent="nextStep">
-              <expensesInformationForm ref="shipFinanceFormRef" />
+          <q-step :name="3" :done="step > 3" title="Final Details" icon="sym_o_bar_chart_4_bars">
+            <q-form ref="transitDisplayInfoFormRef" @submit.prevent="nextStep">
+              <transitDisplay />
             </q-form>
           </q-step>
 
           <!-- - - - - - - - - - - BUTTON - - - - - - - - - - -->
-          <template v-slot:navigation v-if="step < 3">
+          <template v-slot:navigation>
             <q-stepper-navigation>
               <q-btn
-                @click="nextStep"
+                v-if="step === FINAL_STEP"
+                @click="submitAll"
+                :loading="transitStore.loading"
                 color="primary"
-                :label="step === 4 ? 'Finish' : 'Continue'"
-                :loading="loading"
+                label="Submit"
               />
-              <!-- <q-btn
-                v-if="step > 1"
-                flat
-                color="primary"
-                @click="prevStep"
-                label="Back"
-                class="q-ml-sm"
-              /> -->
+              <q-btn v-else @click="nextStep" :loading="loading" color="primary" label="Proceed" />
             </q-stepper-navigation>
           </template>
         </q-stepper>

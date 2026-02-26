@@ -103,7 +103,9 @@ provide('dummyNotificationItems', dummyNotificationContent);
       <q-list padding class="q-pt-lg">
         <template v-for="item in NavigationItems" :key="item.label">
           <q-item
-            v-if="item.label !== 'Users' || authStore.roleLabel === 'Super Admin'"
+            v-if="
+              !['Users', 'Trucks'].includes(item.label) || authStore.roleLabel === 'Super Admin'
+            "
             clickable
             v-ripple
             :to="{ name: item.name }"

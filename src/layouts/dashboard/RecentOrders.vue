@@ -20,7 +20,12 @@ const columns: QTableColumn[] = [
   { name: 'contract_no', label: 'Contract No', field: 'contract_no', align: 'left' },
   { name: 'entry_no', label: 'Entry No', field: 'entry_no', align: 'left' },
   { name: 'reference', label: 'Reference', field: 'reference', align: 'left' },
-  { name: 'registry_no', label: 'Registry No', field: 'registry_no', align: 'left' },
+  { name: 'registry_no', label: 'Registry No', field: 'registry_no', align: 'center' },
+  { name: 'status', label: 'Status', field: 'status', align: 'center' },
+  { name: 'volumex', label: 'Volume X', field: 'volumex', align: 'center' },
+  { name: 'volumey', label: 'Volume Y', field: 'volumey', align: 'center' },
+  { name: 'issuer', label: 'Issuer', field: 'issuer', align: 'left' },
+  { name: 'customer', label: 'Customer', field: 'customer', align: 'left' },
 ];
 </script>
 
@@ -33,7 +38,7 @@ const columns: QTableColumn[] = [
     </q-card-section>
 
     <q-card-section class="q-pt-none">
-      <div class="text-overline text-weight-bolder text-primary">RECENT ACCEPTED ORDERS</div>
+      <div class="text-overline text-weight-bolder text-primary">RECENT SHIPMENT</div>
       <q-table
         :rows="tableRows.slice(0, 5)"
         :columns="columns"
@@ -48,7 +53,7 @@ const columns: QTableColumn[] = [
         </template>
 
         <template v-slot:loading>
-          <q-inner-loading秀 showing color="primary" />
+          <q-inner-loading showing color="primary" />
         </template>
       </q-table>
     </q-card-section>

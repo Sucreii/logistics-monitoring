@@ -53,7 +53,7 @@ const columns: QTableColumn[] = [
                   flat
                 >
                   <template v-slot:loading>
-                    <q-inner-loading秀 showing color="primary" />
+                    <q-inner-loading showing color="primary" />
                   </template>
                 </q-table>
               </q-card-section>

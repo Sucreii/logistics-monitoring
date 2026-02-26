@@ -1,24 +1,23 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { QForm, useDialogPluginComponent, useQuasar, Loading, QSpinnerIos } from 'quasar';
-import { useTrucksInfo, getTruckStorables } from 'src/stores/ShipmentStore';
-import { truckForm } from 'src/stores/AllPostReactive';
-import truckAddForm from 'src/components/stepper/TruckProfileAdd.vue';
-import truckInfoDisplay from 'src/components/stepper/TruckInfoDisplay.vue';
+import { useStorablesInfo } from 'src/stores/ShipmentStore';
+import { storablesForm } from 'src/stores/AllPostReactive';
+import portStoreAddForm from 'src/components/stepper/PortStoreAdd.vue';
+import portStoreInfoDisplay from 'src/components/stepper/PortStoreInfoDisplay.vue';
 
 const { dialogRef, onDialogHide } = useDialogPluginComponent();
 const $q = useQuasar();
-const useTrucks = useTrucksInfo();
-const graphTrucks = getTruckStorables();
+const usePortsStorables = useStorablesInfo();
 const step = ref(1);
 const loading = ref(false);
 const FINAL_STEP = 2;
-const newTrucksAddForm = ref<InstanceType<typeof QForm> | null>(null);
-const truckDisplayFormRef = ref<InstanceType<typeof QForm> | null>(null);
+const newPortAddForm = ref<InstanceType<typeof QForm> | null>(null);
+const portDisplayFormRef = ref<InstanceType<typeof QForm> | null>(null);
 
 const nextStep = async () => {
   if (step.value === 1) {
-    const isValid = await newTrucksAddForm.value?.validate();
+    const isValid = await newPortAddForm.value?.validate();
     console.log('Is Valid: ', isValid);
 
     if (!isValid) {
@@ -28,7 +27,7 @@ const nextStep = async () => {
 
     step.value++;
   } else if (step.value === 2) {
-    const isValid = await truckDisplayFormRef.value?.validate();
+    const isValid = await portDisplayFormRef.value?.validate();
 
     if (!isValid) {
       $q.notify({ type: 'warning', position: 'top', message: 'Please complete all fields.' });
@@ -39,23 +38,23 @@ const nextStep = async () => {
   }
 };
 
-const submitUser = async () => {
-  console.log('I AM SUBMITTING THE TRUCKS');
-  console.log('Trucks Store: ', Object.keys(useTrucks));
+const submitPortStore = async () => {
+  console.log('I AM SUBMITTING NEW PORT STORES');
+  console.log('Port Store: ', Object.keys(usePortsStorables));
 
   Loading.show({
     spinner: QSpinnerIos,
-    message: 'Creating New Truck Profile... please wait.',
+    message: 'Creating New Port Store... please wait.',
     backgroundColor: 'primary',
   });
 
   try {
-    await useTrucks.submitTrucking();
+    await usePortsStorables.submitNewPortStore();
 
     $q.notify({
       type: 'positive',
       position: 'top',
-      message: 'New Truck Profile has been added.successfully',
+      message: 'New Port Store has been added.successfully',
       timeout: 3000,
     });
   } catch (err) {
@@ -63,13 +62,11 @@ const submitUser = async () => {
   } finally {
     Loading.hide();
     onDialogHide();
-    truckForm.value = {
+    storablesForm.value = {
       id: '',
-      operator: '',
-      date_added: '',
+      type: '',
+      description: '',
     };
-
-    await graphTrucks.fetchTruckStores();
   }
 };
 </script>
@@ -79,7 +76,7 @@ const submitUser = async () => {
     <q-card class="create-shipment-card">
       <q-card-section class="row items-center">
         <div class="text-weight-bold text-h6 text-primary q-px-md">
-          Create New Truck <q-icon class="text-weight-bold" name="sym_o_contact_emergency" />
+          Create New Port Stores <q-icon class="text-weight-bold" name="sym_o_contact_emergency" />
         </div>
         <q-space />
         <q-btn icon="close" color="primary" flat round dense @click="onDialogHide()" />
@@ -87,25 +84,15 @@ const submitUser = async () => {
 
       <div class="q-px-md">
         <q-stepper v-model="step" ref="stepper" color="primary" animated dense flat>
-          <q-step
-            :name="1"
-            title="Add Truck Profile"
-            icon="sym_o_unknown_document"
-            :done="step > 1"
-          >
-            <q-form class="flex" ref="newTrucksAddForm" @submit.prevent="nextStep">
-              <truckAddForm />
+          <q-step :name="1" title="Add New Port" icon="sym_o_unknown_document" :done="step > 1">
+            <q-form class="flex" ref="newPortAddForm" @submit.prevent="nextStep">
+              <portStoreAddForm />
             </q-form>
           </q-step>
 
-          <q-step
-            :name="2"
-            :done="step > 2"
-            title="Truck Information"
-            icon="sym_o_bar_chart_4_bars"
-          >
-            <q-form ref="truckDisplayFormRef" @submit.prevent="nextStep">
-              <truckInfoDisplay />
+          <q-step :name="2" :done="step > 2" title="Port Information" icon="sym_o_bar_chart_4_bars">
+            <q-form ref="portDisplayFormRef" @submit.prevent="nextStep">
+              <portStoreInfoDisplay />
             </q-form>
           </q-step>
 
@@ -114,8 +101,8 @@ const submitUser = async () => {
             <q-stepper-navigation>
               <q-btn
                 v-if="step === FINAL_STEP"
-                @click="submitUser"
-                :loading="useTrucks.loading"
+                @click="submitPortStore"
+                :loading="usePortsStorables.loading"
                 color="primary"
                 label="Submit"
               />

@@ -34,6 +34,7 @@ const submitArchive = async () => {
 
     $q.notify({
       type: 'positive',
+      position: 'top',
       message: 'Truck Profile archived successfully',
       timeout: 3000,
     });
@@ -53,7 +54,7 @@ const submitArchive = async () => {
     <q-card style="min-width: 400px">
       <q-form @submit.prevent="submitArchive">
         <q-card-section>
-          <div class="text-h6 text-weight-bold">Are you sure you want to Archive this Profile?</div>
+          <div class="text-h6 text-weight-bolder text-primary">Archive this Profile?</div>
         </q-card-section>
 
         <q-card-section>
@@ -68,7 +69,7 @@ const submitArchive = async () => {
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn outline style="color: green" label="Hide" @click="submitArchive" />
+          <q-btn outline style="color: green" label="Hide Profile" @click="submitArchive" />
           <q-btn outline style="color: red" label="Close" @click="closeDialog" />
         </q-card-actions>
       </q-form>

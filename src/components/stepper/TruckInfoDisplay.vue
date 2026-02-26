@@ -9,7 +9,7 @@ console.log('Truck Info: ', truckInfo.value);
 <template>
   <div class="row q-col-gutter-md">
     <div class="col-4">
-      <q-input :model-value="truckForm.id" label="Truck Name" outlined readonly />
+      <q-input :model-value="truckForm.id" label="Truck ID" outlined readonly />
     </div>
     <div class="col-5">
       <q-input :model-value="truckForm.operator" label="Operator Name" outlined readonly />

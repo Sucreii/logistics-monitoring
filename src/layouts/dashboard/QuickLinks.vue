@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 import { useDocumentDialog } from 'src/utils/composables/dialog';
+import { useAuthStore } from 'src/stores/LoginAuth';
 import { linksArr } from 'src/utils';
 import chart from '../GraphTable.vue';
 
+const authStore = useAuthStore();
 const {
   showDocumentDialog,
   showCreateShipmentDialog,
@@ -19,7 +21,7 @@ const dialogMap = {
 
 <template>
   <div class="row q-col-gutter-md">
-    <div class="col-8 column">
+    <div :class="authStore.roleLabel === 'Viewer' ? 'col-12 column' : 'col-8 column'">
       <q-card flat bordered class="col">
         <q-card-section>
           <chart />
@@ -27,7 +29,7 @@ const dialogMap = {
       </q-card>
     </div>
 
-    <div class="col-4 column">
+    <div class="col-4 column" v-if="authStore.roleLabel !== 'Viewer'">
       <q-card flat bordered class="col">
         <q-card-section>
           <div class="text-overline text-weight-bolder text-primary">QUICK LINKS</div>

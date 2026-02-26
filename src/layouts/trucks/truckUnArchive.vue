@@ -34,6 +34,7 @@ const submitUnArchive = async () => {
 
     $q.notify({
       type: 'positive',
+      position: 'top',
       message: 'Truck Profile unarchived successfully',
       timeout: 3000,
     });
@@ -52,7 +53,7 @@ const submitUnArchive = async () => {
   <q-dialog :model-value="modelValue" @update:model-value="emit('update:modelValue', $event)">
     <q-card style="min-width: 400px">
       <q-card-section>
-        <div class="text-h6 text-weight-bold">Unhide this Truck Profile?</div>
+        <div class="text-h6 text-weight-bolder text-primary">Unhide this Truck Profile?</div>
       </q-card-section>
 
       <q-card-section>
@@ -67,7 +68,7 @@ const submitUnArchive = async () => {
       </q-card-section>
 
       <q-card-actions align="right">
-        <q-btn outline style="color: green" label="Unhide" @click="submitUnArchive" />
+        <q-btn outline style="color: green" label="Unhide Profile" @click="submitUnArchive" />
         <q-btn outline style="color: red" label="Close" @click="closeDialog" />
       </q-card-actions>
     </q-card>

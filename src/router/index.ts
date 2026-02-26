@@ -1,5 +1,6 @@
 import { defineRouter } from '#q-app/wrappers';
 import { useAuthStore } from 'src/stores/LoginAuth';
+import { Notify } from 'quasar';
 import {
   createMemoryHistory,
   createRouter,
@@ -33,6 +34,19 @@ export default defineRouter(function (/* { store, ssrContext } */) {
       next({ name: 'auth.page' });
     } else if (to.name === 'auth.page' && authStore.isAuthenticated) {
       next({ path: '/dashboard' });
+    } else if (
+      authStore.isAuthenticated &&
+      authStore.roleLabel === 'Viewer' &&
+      (to.path.includes('/users') || to.path.includes('/trucks'))
+    ) {
+      next({ path: '/dashboard' });
+
+      Notify.create({
+        type: 'negative',
+        position: 'top',
+        message: 'Access Denied: You do not have permission to view this page.',
+      });
+      return;
     } else {
       next();
     }

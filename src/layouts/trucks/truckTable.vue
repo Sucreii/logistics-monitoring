@@ -5,8 +5,8 @@ import { tableTruckProfileConstants } from 'src/utils/index';
 import type { QTableColumn } from 'quasar';
 import type { Trucks } from 'src/utils/static/types';
 import filterForm from '../../layouts/trips/FilterForm.vue';
-import truckHideModal from './truckArchive.vue';
-import truckUnHideModal from './truckUnArchive.vue';
+import truckHideModal from './TruckArchive.vue';
+import truckUnHideModal from './TruckUnArchive.vue';
 
 onMounted(async () => {
   await graphTrucks.fetchTruckStores();
@@ -81,7 +81,7 @@ const openUnArchiveModal = (row: Trucks) => {
         </template>
 
         <template v-slot:loading>
-          <q-inner-loading秀 showing color="primary" />
+          <q-inner-loading showing color="primary" />
         </template>
       </q-table>
     </q-card-section>

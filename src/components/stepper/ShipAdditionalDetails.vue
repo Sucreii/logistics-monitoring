@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted } from 'vue';
 import { getAllUsers, getAllPortStorables, getAllShipment } from 'src/stores/ShipmentStore';
 import { CreateAdditionalShipments } from 'src/utils';
 import { shipmentForm } from 'src/stores/AllPostReactive';
@@ -14,8 +14,8 @@ onMounted(async () => {
   console.log('Ports fetched: ', graphPorts.storables);
 });
 
-type ShipmentInputKeys = Exclude<keyof typeof shipmentForm, 'finances'>;
-const shipInfo = ref(shipmentForm);
+type ShipmentInputKeys = Exclude<keyof typeof shipmentForm, 'finances' | 'containers'>;
+const shipInfo = shipmentForm;
 const graphUsers = getAllUsers();
 const graphPorts = getAllPortStorables();
 const graphShipment = getAllShipment();
@@ -28,10 +28,12 @@ const userSelectOptions = computed(() => {
 });
 
 const portSelectOptions = computed(() => {
-  return graphPorts.storables.map((port) => ({
-    label: port.id,
-    value: port.id,
-  }));
+  return graphPorts.storables
+    .filter((port) => port.type === 'PORT' || port.type === 'port')
+    .map((port) => ({
+      label: port.id,
+      value: port.id,
+    }));
 });
 
 console.log('I am Users: ', graphUsers);
@@ -42,7 +44,12 @@ console.log('I am Port select Options: ', portSelectOptions);
 
 <template>
   <div class="row q-col-gutter-sm">
-    <div v-for="field in CreateAdditionalShipments" :class="`col-${field.col}`" :key="field.model">
+    <div
+      v-for="field in CreateAdditionalShipments"
+      :class="`col-${field.col}`"
+      :key="field.model"
+      dense
+    >
       <div class="row">
         <div class="col-12">
           <div class="text-subtitle3 text-grey-8">{{ field.label }}</div>
@@ -76,6 +83,17 @@ console.log('I am Port select Options: ', portSelectOptions);
           />
 
           <q-input
+            v-else-if="field.type === 'number'"
+            v-model.number="shipInfo[field.model as ShipmentInputKeys]"
+            type="number"
+            :placeholder="field.placeholder"
+            :rules="field.rules"
+            dense
+            outlined
+            clearable
+          />
+
+          <q-input
             v-else-if="field.type !== 'date' && field.type !== 'select'"
             v-model="shipInfo[field.model as ShipmentInputKeys]"
             :type="field.type"
@@ -101,17 +119,7 @@ console.log('I am Port select Options: ', portSelectOptions);
                 <q-popup-proxy cover transition-show="scale" transition-hide="scale">
                   <q-date
                     v-model="shipInfo[field.model as keyof typeof shipInfo]"
-                    mask="YYYY-MM-DD HH:mm"
-                  />
-                </q-popup-proxy>
-              </q-icon>
-
-              <q-icon name="schedule" class="cursor-pointer q-ml-sm">
-                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                  <q-time
-                    v-model="shipInfo[field.model as ShipmentInputKeys]"
-                    mask="YYYY-MM-DD HH:mm"
-                    format24h
+                    mask="YYYY-MM-DD"
                   />
                 </q-popup-proxy>
               </q-icon>

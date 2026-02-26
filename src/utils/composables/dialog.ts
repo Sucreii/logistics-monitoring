@@ -4,8 +4,8 @@ import CreateShipmentComponent from 'src/components/modals/AddShipment.vue';
 import CreateTripsComponent from 'src/components/modals/AddOrders.vue';
 import CreateNewUsersComponent from 'src/components/modals/AddUsers.vue';
 import CreateNewTrucksComponent from 'src/components/modals/AddTrucks.vue';
+import CreateNewPortComponent from 'src/components/modals/AddPortStores.vue';
 import statusValidationModal from 'src/components/modals/StatusValidation.vue';
-// import createValidationModal from 'src/components/modals/AddValidation.vue';
 
 export function useDocumentDialog() {
   const $q = useQuasar();
@@ -42,6 +42,14 @@ export function useDocumentDialog() {
     });
   };
 
+  const showCreatePortStoresDialog = () => {
+    $q.dialog({
+      component: CreateNewPortComponent,
+    }).onOk((data) => {
+      console.log('Additional Port Storables: ', data);
+    });
+  };
+
   const showStatusValidationDialog = (props: ShipmentList, status: unknown) => {
     $q.dialog({
       component: statusValidationModal,
@@ -55,21 +63,12 @@ export function useDocumentDialog() {
     console.log('status', status);
   };
 
-  // const showCreateValidationDialog = () => {
-  //   // console.log('PROPS', props)
-  //   $q.dialog({
-  //     component: createValidationModal,
-  //   }).onOk((data) => {
-  //     console.log('DINE', data);
-  //   });
-  // };
-
   return {
     showDocumentDialog,
     showCreateShipmentDialog,
     showStatusValidationDialog,
     showCreateNewUsersDialog,
     showCreateNewTrucksDialog,
-    // showCreateValidationDialog,
+    showCreatePortStoresDialog,
   };
 }

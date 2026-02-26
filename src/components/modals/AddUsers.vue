@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { QForm, useDialogPluginComponent, useQuasar, Loading, QSpinnerHourglass } from 'quasar';
+import { QForm, useDialogPluginComponent, useQuasar, Loading, QSpinnerIos } from 'quasar';
 import { useCreateUserStore } from 'src/stores/UserStore';
 import { usersForm } from 'src/stores/AllPostReactive';
 import { getAllUsers } from 'src/stores/ShipmentStore';
@@ -24,7 +24,7 @@ const nextStep = async () => {
     console.log('Is Valid: ', isValid);
 
     if (!isValid) {
-      $q.notify({ type: 'warning', message: 'Please complete all fields.' });
+      $q.notify({ type: 'warning', position: 'top', message: 'Please complete all fields.' });
       return;
     }
 
@@ -33,7 +33,7 @@ const nextStep = async () => {
     const isValid = await shipFinanceFormRef.value?.validate();
 
     if (!isValid) {
-      $q.notify({ type: 'warning', message: 'Please complete all fields.' });
+      $q.notify({ type: 'warning', position: 'top', message: 'Please complete all fields.' });
       return;
     }
 
@@ -46,8 +46,8 @@ const submitUser = async () => {
   console.log('User Store: ', Object.keys(usersStore));
 
   Loading.show({
-    spinner: QSpinnerHourglass,
-    message: 'Authenticating... please wait.',
+    spinner: QSpinnerIos,
+    message: 'Creating New user... please wait.',
     backgroundColor: 'primary',
   });
 
@@ -69,6 +69,7 @@ const submitUser = async () => {
 
     $q.notify({
       type: 'positive',
+      position: 'top',
       message: 'New User has been added.successfully',
       timeout: 3000,
     });

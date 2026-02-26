@@ -1,10 +1,8 @@
 <script lang="ts" setup>
 import { onMounted, computed } from 'vue';
-import { useAuthStore } from 'src/stores/LoginAuth';
 import { getDashStats, getAllShipment } from 'src/stores/ShipmentStore';
 import quickLinks from '../layouts/dashboard/QuickLinks.vue';
 import recentOrders from '../layouts/dashboard/RecentOrders.vue';
-import recentOnline from '../layouts/dashboard/RecentOnline.vue';
 
 onMounted(async () => {
   await graphShipment.fetchShipments();
@@ -14,7 +12,6 @@ onMounted(async () => {
   console.log('Dashboard: ', dashboard.stats);
 });
 
-const authStore = useAuthStore();
 const dashboard = getDashStats();
 const graphShipment = getAllShipment();
 const statisticsCard = computed(() => {
@@ -93,12 +90,8 @@ const statisticsCard = computed(() => {
             </q-card>
           </div>
 
-          <div class="column col-12" v-if="authStore.roleLabel !== 'Viewer'">
+          <div class="column col-12">
             <quickLinks />
-          </div>
-
-          <div class="column col-12" v-if="authStore.roleLabel === 'Viewer'">
-            <recentOnline />
           </div>
 
           <div class="col-12">

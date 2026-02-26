@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import truckProfileTable from '../layouts/trucks/truckTable.vue';
+import truckProfileTable from '../layouts/trucks/TruckTable.vue';
 </script>
 
 <template>
