@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import filterForm from '../layouts/trips/FilterForm.vue';
 import tripsTable from 'src/layouts/trips/TripsTable.vue';
+import downloadTrip from 'src/layouts/trips/DownloadTrip.vue';
 </script>
 
 <template>
@@ -20,6 +21,9 @@ import tripsTable from 'src/layouts/trips/TripsTable.vue';
               </q-card-section>
 
               <tripsTable />
+              <div class="row q-pa-md q-gutter-y-md">
+                <downloadTrip />
+              </div>
             </q-card>
           </div>
         </div>
