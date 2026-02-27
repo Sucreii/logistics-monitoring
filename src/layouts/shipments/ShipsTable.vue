@@ -1,24 +1,45 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { getAllShipment } from 'src/stores/ShipmentStore';
 import { tableShipmentConstant } from 'src/utils/index';
+import { pagination } from 'src/stores/AllPostReactive';
+import type { TableRequestProps } from 'src/utils/static/types';
 import type { QTableColumn } from 'quasar';
 import type { Shipment } from 'src/utils/static/types';
 import searchAddButt from '../shipments/SearchandAdd.vue';
 import MoreModal from './MoreInfoModal.vue';
 
 onMounted(async () => {
-  await graphShipment.fetchShipments();
+  // await graphShipment.fetchShipments();
+  await onRequest({ pagination: pagination.value });
   console.log('Shipments fetched: ', graphShipment.shipments);
 });
 
 const graphShipment = getAllShipment();
 const selectedInfoRow = ref<Shipment>();
 const showModalMoreInfo = ref(false);
-
 const tableRows = computed(() => {
   return graphShipment.shipments.length > 0 ? graphShipment.shipments : tableShipmentConstant;
 });
+
+watch(
+  () => graphShipment.totalCount,
+  (val) => {
+    pagination.value.rowsNumber = val;
+  },
+);
+
+const onRequest = async (props: TableRequestProps) => {
+  const page = props.pagination.page || 1;
+  const rowsPerPage = props.pagination.rowsPerPage || 10;
+  const skip = (page - 1) * rowsPerPage;
+  const take = rowsPerPage;
+
+  await graphShipment.fetchShipments(skip, take);
+
+  pagination.value.page = page;
+  pagination.value.rowsPerPage = rowsPerPage;
+};
 
 const moreDetails = (row: Shipment) => {
   selectedInfoRow.value = row;
@@ -74,10 +95,12 @@ const columns: QTableColumn[] = [
 
       <q-card-section class="q-pt-none">
         <q-table
+          v-model:pagination="pagination"
           :rows="tableRows"
           :columns="columns"
           :loading="graphShipment.loading"
           :rows-per-page-options="[10, 20, 50, 100]"
+          @request="onRequest"
           row-key="id"
           bordered
           flat

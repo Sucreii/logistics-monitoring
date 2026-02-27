@@ -1,15 +1,6 @@
 <script lang="ts" setup>
-import { onMounted } from 'vue';
-import { getAllTrips } from 'src/stores/ShipmentStore';
 import filterForm from '../layouts/trips/FilterForm.vue';
 import tripsTable from 'src/layouts/trips/TripsTable.vue';
-
-onMounted(async () => {
-  await graphShipment.fetchTrips();
-  console.log('Trips fetched: ', graphShipment.trips);
-});
-
-const graphShipment = getAllTrips();
 </script>
 
 <template>

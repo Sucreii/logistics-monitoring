@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
+import { computed, ref, watch, onMounted } from 'vue';
 import { getAllTrips } from 'src/stores/ShipmentStore';
-// import { tableTripsConstant } from 'src/utils/index';
+import { pagination } from 'src/stores/AllPostReactive';
+import type { TableRequestProps } from 'src/utils/static/types';
 import type { QTableColumn } from 'quasar';
 import type { Trips } from 'src/utils/static/types';
 import MoreModal from './TripsInfoModal.vue';
@@ -9,46 +10,29 @@ import MoreModal from './TripsInfoModal.vue';
 const graphTrips = getAllTrips();
 const selectedTripInfoRow = ref<Trips>();
 const showModalMoreInfo = ref(false);
-
-// const tableRows = computed(() => {
-//   const sourceData =
-//     graphTrips.trips?.length > 0
-//       ? graphTrips.trips
-//       : tableTripsConstant.map((item) => ({
-//           id: item.id,
-//           commodity: item.commodity ?? '',
-//           truck: { id: item.truckId ?? '-', operator: null },
-//           warehouse: { id: item.warehouse ?? '-', description: null },
-//           container: { id: item.container ?? '-', description: null },
-//           port: { id: item.port ?? '-', description: null },
-//           financeSummary: [],
-//         }));
-
-//   if (!sourceData) return [];
-
-//   return sourceData.map((item: Trips) => ({
-//     id: item.id,
-//     commodity: item.commodity,
-//     truckId: item.truck?.id ?? '-',
-//     warehouse: item.warehouse?.id ?? '-',
-//     container: item.container?.id ?? '-',
-//     port: item.port?.id ?? '-',
-//     financeSummary: item.financeSummary ?? [],
-//   }));
-// });
-
 const tableRows = computed(() => {
-  const sourceData = graphTrips.trips?.length > 0 ? graphTrips.trips : [];
+  // const sourceData = graphTrips.trips || [];
 
-  return sourceData.map((item: Trips) => ({
+  return (graphTrips.trips || []).map((item) => ({
     ...item,
-
     truckId: item.truck?.id ?? '-',
     warehouse: item.warehouse?.id ?? '-',
     container: item.container?.id ?? '-',
     port: item.port?.id ?? '-',
   }));
 });
+
+const onRequest = async (props: TableRequestProps) => {
+  const page = props.pagination.page || 1;
+  const rowsPerPage = props.pagination.rowsPerPage || 10;
+  const skip = (page - 1) * rowsPerPage;
+  const take = rowsPerPage;
+
+  await graphTrips.fetchTrips(skip, take);
+
+  pagination.value.page = page;
+  pagination.value.rowsPerPage = rowsPerPage;
+};
 
 const columns: QTableColumn[] = [
   { name: 'id', label: 'ID', field: 'id', align: 'left' },
@@ -67,15 +51,29 @@ const moreDetails = (row: Trips) => {
   console.log('Modal Open: ', selectedTripInfoRow.value);
 };
 
-console.log('I AM TRIPS TABLE ROWS: ', tableRows);
+onMounted(async () => {
+  await onRequest({ pagination: pagination.value });
+  console.log('Trips fetched: ', graphTrips.trips);
+});
+
+watch(
+  () => graphTrips.totalCount,
+  (val) => {
+    console.log('Total Count Updated:', val);
+    pagination.value.rowsNumber = val;
+  },
+  { immediate: true },
+);
 </script>
 <template>
   <q-card-section class="q-pt-none">
     <q-table
+      v-model:pagination="pagination"
       :rows="tableRows"
       :columns="columns"
       :loading="graphTrips.loading"
       :rows-per-page-options="[10, 20, 50, 100]"
+      @request="onRequest"
       row-key="id"
       bordered
       flat

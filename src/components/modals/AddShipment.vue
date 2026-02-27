@@ -2,10 +2,10 @@
 import { ref } from 'vue';
 import { useQuasar, QForm, useDialogPluginComponent, Loading, QSpinnerIos } from 'quasar';
 import { useShipmentInfo, getAllShipment } from 'src/stores/ShipmentStore';
+import { shipmentForm } from 'src/stores/AllPostReactive';
 import shipAdditionalForm from 'src/components/stepper/ShipAdditionalDetails.vue';
 import expensesInformationForm from 'src/components/stepper/ExpensesInfo.vue';
 import finalAllDetails from 'src/components/stepper/ShipInfoDisplay.vue';
-import { shipmentForm } from 'src/stores/AllPostReactive';
 
 const { dialogRef, onDialogHide } = useDialogPluginComponent();
 const step = ref(1);

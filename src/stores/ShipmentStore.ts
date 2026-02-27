@@ -10,6 +10,7 @@ import type {
   Trucks,
   DashboardStats,
   Trips,
+  SearchShipmentType,
 } from 'src/utils/static/types';
 import gql from 'graphql-tag';
 
@@ -242,6 +243,7 @@ const POST_NEW_TRUCKS = gql`
   }
 `;
 
+// - - - - - - - - - - OTHERS - - - - - - - - - -
 const ARCHIVE_TRUCKS = gql`
   mutation ArchiveVehicle($id: String!) {
     archiveTruck(id: $id) {
@@ -260,6 +262,45 @@ const UNARCHIVE_TRUCKS = gql`
   }
 `;
 
+const SEARCH_SHIPMENTS = gql`
+  query SearchShipments($searchTerm: String!) {
+    shipment(input: $searchTerm) {
+      items {
+        id
+        blno
+        reference
+        contract_no
+        registry_no
+        volumex
+        volumey
+        status
+        warehouse_id
+        containers {
+          id
+          type
+          description
+        }
+        financeSummary {
+          title
+          type
+          value
+        }
+        customer {
+          id
+          username
+        }
+        issuer {
+          id
+          username
+        }
+      }
+      totalCount
+      hasMore
+    }
+  }
+`;
+
+// - - - - - - - - - - API CALL - - - - - - - - -
 export const getDashStats = defineStore('dashStats', () => {
   const stats = ref<DashboardStats | null>(null);
 
@@ -284,37 +325,21 @@ export const getAllShipment = defineStore('shipment', {
   }),
 
   actions: {
-    async updateRowsPerPage(newLimit: number) {
-      this.take = newLimit;
-      this.skip = 0;
-      await this.fetchShipments(false);
-    },
-
-    async fetchShipments(isLoadMore = false) {
+    async fetchShipments(skip: number = 0, take: number = 10) {
       this.loading = true;
       try {
-        const response = await apolloClient.query({
+        const { data } = await apolloClient.query({
           query: GET_PAGINATED_SHIPMENTS,
-          variables: {
-            skip: this.skip,
-            take: this.take,
-          },
+          variables: { skip, take },
           fetchPolicy: 'network-only',
         });
 
-        console.log('I AM GRAPHQL SHIPMENTS RESPONSE: ', response.data);
-        const data = response.data?.shipments;
-        const incomingItems = data?.items ?? [];
-
-        if (isLoadMore) {
-          this.shipments.push(...incomingItems);
-        } else {
-          this.shipments = incomingItems;
+        if (data?.shipments) {
+          this.shipments = data.shipments.items;
+          this.totalCount = data.shipments.totalCount;
+          this.hasMore = data.shipments.hasMore;
         }
-
-        console.log('I AM GET SHIPMENT: ', this.shipments);
-        this.totalCount = data?.totalCount ?? 0;
-        this.hasMore = data?.hasMore ?? false;
+        console.log('I AM GRAPHQL SHIPMENTS RESPONSE: ', data);
       } catch (error) {
         console.error(error);
       } finally {
@@ -335,36 +360,20 @@ export const getAllTrips = defineStore('trips', {
   }),
 
   actions: {
-    async updateRowsPerPage(newLimit: number) {
-      this.take = newLimit;
-      this.skip = 0;
-      await this.fetchTrips(false);
-    },
-
-    async fetchTrips(isLoadMore = false) {
+    async fetchTrips(skip: number = 0, take: number = 10) {
       this.loading = true;
       try {
-        const response = await apolloClient.query({
+        const { data } = await apolloClient.query({
           query: GET_PAGINATED_TRIPS,
-          variables: {
-            skip: this.skip,
-            take: this.take,
-          },
+          variables: { skip, take },
           fetchPolicy: 'network-only',
         });
 
-        console.log('I AM GRAPHQL TRIPS RESPONSE: ', response.data);
-        const data = response.data?.trips;
-        const incomingItems = data?.items ?? [];
-
-        if (isLoadMore) {
-          this.trips.push(...incomingItems);
-        } else {
-          this.trips = incomingItems;
+        if (data?.trips) {
+          this.trips = data.trips.items;
+          this.totalCount = data.trips.totalCount;
+          this.hasMore = data.trips.hasMore;
         }
-
-        this.totalCount = data?.totalCount ?? 0;
-        this.hasMore = data?.hasMore ?? false;
       } catch (error) {
         console.error(error);
       } finally {
@@ -385,46 +394,26 @@ export const getAllUsers = defineStore('users', {
   }),
 
   actions: {
-    async updateRowsPerPage(newLimit: number) {
-      this.take = newLimit;
-      this.skip = 0;
-      await this.fetchUsers(false);
-    },
-
-    async fetchUsers(isLoadMore = false) {
+    async fetchUsers(skip: number = 0, take: number = 10) {
       this.loading = true;
       try {
-        const response = await apolloClient.query({
+        const { data } = await apolloClient.query({
           query: GET_PAGINATED_USERS,
-          variables: {
-            skip: this.skip,
-            take: this.take,
-          },
+          variables: { skip, take },
           fetchPolicy: 'network-only',
         });
 
-        console.log('I AM GRAPHQL USERS RESPONSE: ', response.data);
-        const data = response.data?.user;
-        const incomingItems = data?.items ?? [];
-
-        if (isLoadMore) {
-          this.user.push(...incomingItems);
-        } else {
-          this.user = incomingItems;
+        if (data?.user) {
+          this.user = data.user.items;
+          this.totalCount = data.user.totalCount;
+          this.hasMore = data.user.hasMore;
         }
-
-        this.totalCount = data?.totalCount ?? 0;
-        this.hasMore = data?.hasMore ?? false;
+        console.log('I AM GRAPHQL USERS RESPONSE: ', data);
       } catch (error) {
-        console.error(error);
+        console.error('Error fetching Users data: ', error);
       } finally {
         this.loading = false;
       }
-    },
-
-    async goToPage(page: number) {
-      this.skip = (page - 1) * this.take;
-      await this.fetchUsers();
     },
   },
 });
@@ -493,7 +482,7 @@ export const getTruckStorables = defineStore('truckStorables', {
         if (data?.trucks?.items) {
           this.trucks = data.trucks.items;
         }
-        console.log('I AM GRAPHQL PORT RESPONSE: ', data);
+        console.log('I AM GRAPHQL TRUCK RESPONSE: ', data);
       } catch (error) {
         console.error('Fetching Port Error: ', error);
       } finally {
@@ -650,6 +639,7 @@ export const useTrucksInfo = defineStore('postTrucking', {
   },
 });
 
+// - - - - - - - - - - OTHERS API CALL - - - - - - - - -
 export const hideTrucksProfile = defineStore('hideTrucking', {
   state: () => ({
     loading: false,
@@ -697,6 +687,43 @@ export const unHideTrucksProfile = defineStore('unHideTrucking', {
         return data.restoreTruck;
       } catch (err) {
         console.error(err);
+
+        throw err;
+      } finally {
+        this.loading = false;
+      }
+    },
+  },
+});
+
+export const searchShipmentsItem = defineStore('searchShipmentsFunction', {
+  state: () => ({
+    loading: false,
+    searchResults: [] as SearchShipmentType[],
+    totalCount: 0,
+  }),
+
+  actions: {
+    async searchForShipments(searchTerm: string) {
+      this.loading = true;
+
+      try {
+        const { data } = await apolloClient.query<{
+          shipment: { items: SearchShipmentType[]; totalCount: number };
+        }>({
+          query: SEARCH_SHIPMENTS,
+          variables: { searchTerm },
+        });
+
+        console.log('SEARCH TERM: ', data.shipment);
+        if (data?.shipment) {
+          this.searchResults = data.shipment.items;
+          this.totalCount = data.shipment.totalCount;
+        }
+
+        return data.shipment;
+      } catch (err) {
+        console.error('Error on Searching for Shipment Term: ', err);
 
         throw err;
       } finally {

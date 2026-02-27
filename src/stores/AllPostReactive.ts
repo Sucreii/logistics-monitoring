@@ -42,6 +42,12 @@ export const tripsForm = reactive({
   ],
 });
 
+export const pagination = ref({
+  page: 1,
+  rowsPerPage: 10,
+  rowsNumber: 0,
+});
+
 export const usersForm = ref({
   username: '',
   password: '',
@@ -60,4 +66,11 @@ export const storablesForm = ref({
   id: '',
   type: 'PORT',
   description: '',
+});
+
+export const editedUsersForm = ref({
+  role_id: null as number | null,
+  username: '',
+  first_name: '',
+  last_name: '',
 });

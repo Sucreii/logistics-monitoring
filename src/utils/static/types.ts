@@ -22,6 +22,18 @@ export type FieldTypes = {
   // col: number
 };
 
+export interface TableRequestProps {
+  pagination: {
+    page: number;
+    rowsPerPage: number;
+    sortBy?: string | null;
+    descending?: boolean;
+    rowsNumber?: number;
+  };
+  filter?: string;
+  getCellValue?: (col: number | string, row: number | string) => number | string;
+}
+
 export type FinanceItem = {
   title: string;
   type: 'number';
@@ -47,6 +59,28 @@ export interface Shipment {
     description: string;
   }[];
   financeSummary: {
+    title: string;
+    type: string;
+    value: number;
+  }[];
+}
+
+export interface SearchShipmentType {
+  id: string;
+  blno: string;
+  reference: string;
+  contract_no: string;
+  registry_no: string;
+  volumex?: number;
+  volumey?: number;
+  status: string;
+  warehouse_id?: string;
+  containers?: {
+    id: string;
+    type: string;
+    description: string;
+  }[];
+  financeSummary?: {
     title: string;
     type: string;
     value: number;
@@ -84,6 +118,10 @@ export interface Users {
   last_name: string;
   password: string;
   last_logged_in: string;
+  role: {
+    id: string;
+    title: string;
+  };
 }
 
 export interface Storables {
