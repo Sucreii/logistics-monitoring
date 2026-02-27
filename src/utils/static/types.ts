@@ -144,6 +144,15 @@ export interface DashboardStats {
   TotalDelivered: number;
 }
 
+export interface MonthlySalesRow {
+  month: string;
+  gross: number;
+  office_expenses: number;
+  office_utilities: number;
+  office_rent: number;
+  approx_net_income?: number; // Optional because we calculate it
+}
+
 export type ShipmentInputType = 'text' | 'number' | 'date' | 'password';
 
 export type ShipmentFieldTypes = {
