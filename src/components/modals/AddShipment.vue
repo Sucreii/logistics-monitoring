@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { useQuasar, QForm, useDialogPluginComponent, Loading, QSpinnerIos } from 'quasar';
 import { useShipmentInfo, getAllShipment } from 'src/stores/ShipmentStore';
-import { shipmentForm } from 'src/stores/AllPostReactive';
+import { shipmentForm2 } from 'src/stores/AllPostReactive';
 import shipAdditionalForm from 'src/components/stepper/ShipAdditionalDetails.vue';
 import expensesInformationForm from 'src/components/stepper/ExpensesInfo.vue';
 import finalAllDetails from 'src/components/stepper/ShipInfoDisplay.vue';
@@ -66,7 +66,7 @@ const submitAll = async () => {
   } finally {
     Loading.hide();
     onDialogHide();
-    Object.assign(shipmentForm, {
+    Object.assign(shipmentForm2, {
       blno: '',
       contract_no: '',
       warehouse_id: '',
