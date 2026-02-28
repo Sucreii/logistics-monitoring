@@ -1,11 +1,17 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue';
-import { updateTripsForm, getAllPortStorables, getTruckStorables } from 'src/stores/ShipmentStore';
+import { computed, watch, onMounted } from 'vue';
+import { updateTripsForm, getAllPortStorables, getTruckStorables, getAllTrips } from 'src/stores/ShipmentStore';
 import { Loading, QSpinnerIos, useQuasar } from 'quasar';
 import { tripsForm } from 'src/stores/AllPostReactive';
 import type { Trips, TripInputItem } from 'src/utils/static/types';
 
-// const graphTrips = getAllTrips();
+onMounted(async () => {
+  await graphPorts.fetchPortStores();
+  await graphTrips.fetchTrips();
+  await graphTruckDropDown.fetchTruckStores();
+});
+
+const graphTrips = getAllTrips();
 const updateTrips = updateTripsForm();
 const graphPorts = getAllPortStorables();
 const graphTruckDropDown = getTruckStorables();
@@ -120,57 +126,6 @@ const updateNewTripsInfo = async () => {
         <q-card-section>
           <div class="text-overline text-weight-bolder text-primary">Edit Trips Info</div>
           <div class="row q-col-gutter-sm">
-            <!-- <div class="col-4">
-              <q-select
-                v-model="tripsForm['port_id'] as any"
-                :options="portSelectOptions"
-                placeholder="Port"
-                emit-value
-                map-options
-                dense
-                outlined
-                clearable
-              />
-            </div>
-            <div class="col-4">
-              <q-select
-                v-model="tripsForm['container_id'] as any"
-                :options="containerSelectOptions"
-                placeholder="Container"
-                emit-value
-                map-options
-                dense
-                outlined
-                clearable
-              />
-            </div>
-
-            <div class="col-4">
-              <q-select
-                v-model="tripsForm['truck_id'] as any"
-                :options="truckSelectOptions"
-                placeholder="Truck"
-                emit-value
-                map-options
-                dense
-                outlined
-                clearable
-              />
-            </div>
-
-            <div class="col-6">
-              <q-select
-                v-model="tripsForm['warehouse_id'] as any"
-                :options="warehouseSelectOptions"
-                placeholder="Warehouse"
-                emit-value
-                map-options
-                dense
-                outlined
-                clearable
-              />
-            </div> -->
-
             <div v-for="item in inputArr" :key="item.key" :class="'col-' + item.colSpace">
               <q-select
                 v-if="item.inputVModel === 'truck_id'"

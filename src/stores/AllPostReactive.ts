@@ -71,7 +71,12 @@ export const tripsForm = reactive({
   // date_delivered: '',
   finances: [
     {
-      title: '',
+      title: 'BILLING',
+      type: 'amount',
+      value: 0,
+    },
+    {
+      title: 'COST',
       type: 'amount',
       value: 0,
     },
