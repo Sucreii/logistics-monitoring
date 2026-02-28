@@ -69,18 +69,7 @@ console.log('I am Port select Options: ', portSelectOptions);
             clearable
           />
 
-          <q-select
-            v-else-if="field.variant === 'port'"
-            v-model="shipInfo[field.model as keyof typeof shipInfo]"
-            :options="portSelectOptions"
-            :placeholder="field.placeholder"
-            :rules="field.rules"
-            emit-value
-            map-options
-            dense
-            outlined
-            clearable
-          />
+       
 
           <q-input
             v-else-if="field.type === 'number'"
