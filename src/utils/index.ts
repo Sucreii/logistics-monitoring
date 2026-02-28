@@ -179,6 +179,15 @@ export const CreateAdditionalShipments: AdditionalShipmentTypes[] = [
     rules: [(val) => !!val || 'Consignee is required'],
   },
   {
+    label: 'Selectivity',
+    placeholder: 'ORANGE',
+    model: 'selectivity',
+    type: 'text',
+    col: '4',
+    variant: 'information',
+    rules: [(val) => !!val || 'Selectivity is required'],
+  },
+  {
     label: 'Issuer Name',
     placeholder: 'WARE001',
     model: 'issuer_username',
@@ -196,6 +205,7 @@ export const CreateAdditionalShipments: AdditionalShipmentTypes[] = [
     variant: 'information',
     rules: [(val) => !!val || 'Bill of Landing No. is required'],
   },
+
   // {
   //   label: 'Reference',
   //   placeholder: 'REF001',
