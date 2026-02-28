@@ -80,9 +80,9 @@ provide('dummyNotificationItems', dummyNotificationContent);
     <!-- - - - - - - - - - - LEFT DRAWER - - - - - - - - - -  -->
     <q-drawer class="bg-drawerBg" v-model="leftDrawerOpen" show-if-aboveelevated>
       <q-list padding>
-        <q-item class="q-my-md">
+        <q-item class="q-my-sm">
           <q-item-section side>
-            <q-avatar rounded size="48px">
+            <q-avatar rounded size="50px">
               <img src="https://cdn.quasar.dev/img/avatar.png" />
             </q-avatar>
           </q-item-section>

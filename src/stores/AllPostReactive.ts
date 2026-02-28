@@ -1,20 +1,23 @@
 import { reactive, ref } from 'vue';
 
 export const shipmentForm = reactive({
+  id: '', 
+  selectivity: '',
+  status: '', 
   blno: '',
   contract_no: '',
   warehouse_id: '',
   entry_no: '',
-  reference: '',
   registry_no: '',
   port_id: '',
   shipping_line: '',
-  volumex: null,
-  volumey: null,
+  volumex: null as number | null,
+  volumey: null as number | null,
   estimated_time_arrival: '',
   customer_username: '',
   issuer_username: '',
-  containers: '',
+  // containers: [] as string[],
+  containers: [] as (string | { id: string | number })[],
   finances: [
     {
       title: '',
@@ -25,6 +28,7 @@ export const shipmentForm = reactive({
 });
 
 export const tripsForm = reactive({
+  id: '', 
   container_id: '',
   truck_id: '',
   port_id: '',
@@ -69,7 +73,7 @@ export const storablesForm = ref({
 });
 
 export const editedUsersForm = ref({
-  role_id: null as number | null,
+  role_id: null as string | null,
   username: '',
   first_name: '',
   last_name: '',

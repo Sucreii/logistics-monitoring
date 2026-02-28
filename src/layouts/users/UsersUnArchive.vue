@@ -8,9 +8,10 @@ import type { Users } from 'src/utils/static/types';
 
 const graphUsers = getAllUsers();
 const $q = useQuasar();
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'clear-row']);
 const closeDialog = () => {
   emit('update:modelValue', false);
+  emit('clear-row');
 };
 
 const props = defineProps<{
@@ -22,6 +23,7 @@ watch(
   () => props.row,
   (newVal) => {
     if (newVal) {
+      editedUsersForm.value.role_id = newVal.role?.id || null;
       editedUsersForm.value.username = newVal.username || '';
       editedUsersForm.value.first_name = newVal.first_name || '';
       editedUsersForm.value.last_name = newVal.last_name || '';
@@ -71,6 +73,9 @@ const submitEditedProfile = async () => {
 
       <q-card-section>
         <div class="row q-col-gutter-sm">
+          <div class="col-6">
+            <q-input v-model.number="editedUsersForm.role_id" label="Role Level" outlined />
+          </div>
           <div class="col-6">
             <q-input v-model="editedUsersForm.username" label="Username" outlined />
           </div>

@@ -58,6 +58,7 @@ const openArchiveModal = (row: Users) => {
 
   console.log('I AM OPEN ARCHIVE: ', selectedRow.value);
 };
+
 const openUnArchiveModal = (row: Users) => {
   selectedRow.value = row;
   showModalUnHide.value = true;
@@ -124,7 +125,7 @@ const openUnArchiveModal = (row: Users) => {
               </q-card-section>
 
               <archiveUsers v-model="showModalHide" :row="selectedRow" />
-              <unArchiveUsers v-model="showModalUnHide" :row="selectedRow" />
+              <unArchiveUsers v-model="showModalUnHide" :row="selectedRow" @clear-row="selectedRow = null" />
             </q-card>
           </div>
         </div>

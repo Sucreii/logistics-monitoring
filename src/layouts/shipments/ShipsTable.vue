@@ -1,25 +1,31 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref, watch } from 'vue';
 import { getAllShipment } from 'src/stores/ShipmentStore';
-import { tableShipmentConstant } from 'src/utils/index';
+import { searchShipmentsItem } from 'src/stores/ShipmentStore';
 import { pagination } from 'src/stores/AllPostReactive';
 import type { TableRequestProps } from 'src/utils/static/types';
 import type { QTableColumn } from 'quasar';
 import type { Shipment } from 'src/utils/static/types';
 import searchAddButt from '../shipments/SearchandAdd.vue';
 import MoreModal from './MoreInfoModal.vue';
+import EditModal from './SearchModal.vue'
 
 onMounted(async () => {
-  // await graphShipment.fetchShipments();
   await onRequest({ pagination: pagination.value });
   console.log('Shipments fetched: ', graphShipment.shipments);
 });
 
 const graphShipment = getAllShipment();
+const searchShipStore = searchShipmentsItem();
 const selectedInfoRow = ref<Shipment>();
 const showModalMoreInfo = ref(false);
+const showModalEditInfo = ref(false);
 const tableRows = computed(() => {
-  return graphShipment.shipments.length > 0 ? graphShipment.shipments : tableShipmentConstant;
+  if (searchShipStore.searchResults.length > 0) {
+    return searchShipStore.searchResults;
+  }
+
+  return graphShipment.shipments;
 });
 
 watch(
@@ -44,15 +50,18 @@ const onRequest = async (props: TableRequestProps) => {
 const moreDetails = (row: Shipment) => {
   selectedInfoRow.value = row;
   showModalMoreInfo.value = true;
-
-  console.log('Modal Open: ', showModalMoreInfo.value);
-  console.log('I AM SHIPMENT MODAL: ', row.blno);
-  console.log('I AM SHIPMENT MODAL: ', row.financeSummary);
 };
 
+const editShipmentInfo = (row : Shipment) => {
+  selectedInfoRow.value = row;
+  showModalEditInfo.value = true;
+}
+
 const columns: QTableColumn[] = [
+  { name: 'selectivity', label: 'Selectivity', field: 'selectivity', align: 'left' },
   { name: 'warehouse_id', label: 'Warehouse', field: 'warehouse_id', align: 'left' },
   { name: 'blno', label: 'B/L No', field: 'blno', align: 'left' },
+  { name: 'shipLine', label: 'Shipping Line', field: (row) => row.shipping_line || '-', align: 'left' },
   { name: 'contract_no', label: 'Contract No', field: 'contract_no', align: 'left' },
   { name: 'entry_no', label: 'Entry No', field: 'entry_no', align: 'left' },
   { name: 'reference', label: 'Reference', field: 'reference', align: 'left' },
@@ -60,8 +69,6 @@ const columns: QTableColumn[] = [
   { name: 'status', label: 'Status', field: 'status', align: 'center' },
   { name: 'volumex', label: 'Volume X', field: 'volumex', align: 'center' },
   { name: 'volumey', label: 'Volume Y', field: 'volumey', align: 'center' },
-  // { name: 'issuer', label: 'Issuer', field: 'issuer', align: 'left' },
-  // { name: 'customer', label: 'Consignee', field: 'customer', align: 'left' },
   {
     name: 'issuer',
     label: 'Issuer',
@@ -105,11 +112,27 @@ const columns: QTableColumn[] = [
           bordered
           flat
         >
-          <template v-slot:body-cell-action="props">
+          <template v-slot:body-cell-selectivity="props">
             <q-td :props="props">
+              <span :class="`text-${props.row.selectivity.toLowerCase()}`">
+                {{ props.row.selectivity }}
+              </span>
+            </q-td>
+          </template>
+
+          <template v-slot:body-cell-action="props">
+            <q-td :props="props"> 
               <q-btn icon="info" color="primary" flat round dense @click="moreDetails(props.row)">
                 <q-tooltip>View Finance Summary</q-tooltip>
               </q-btn>
+
+              <q-btn 
+                @click="editShipmentInfo(props.row)"
+                icon="sym_o_edit_square" 
+                color="primary" 
+                flat 
+                round 
+              />
             </q-td>
           </template>
 
@@ -120,5 +143,6 @@ const columns: QTableColumn[] = [
       </q-card-section>
     </q-card>
     <MoreModal v-if="selectedInfoRow" v-model="showModalMoreInfo" :row="selectedInfoRow" />
+    <EditModal v-if="selectedInfoRow" v-model="showModalEditInfo" :row="selectedInfoRow" />
   </div>
 </template>

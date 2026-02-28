@@ -1,26 +1,51 @@
 <script lang="ts" setup>
 import { computed, ref, watch, onMounted } from 'vue';
-import { getAllTrips } from 'src/stores/ShipmentStore';
+import { getAllTrips, searchTripsItem } from 'src/stores/ShipmentStore';
 import { pagination } from 'src/stores/AllPostReactive';
 import type { TableRequestProps } from 'src/utils/static/types';
 import type { QTableColumn } from 'quasar';
 import type { Trips } from 'src/utils/static/types';
 import MoreModal from './TripsInfoModal.vue';
+import EditModal from './EditTripsModal.vue';
+
+onMounted(async () => {
+  await onRequest({ pagination: pagination.value });
+  console.log('Trips fetched: ', graphTrips.trips);
+});
 
 const graphTrips = getAllTrips();
+const searchTripStore = searchTripsItem();
 const selectedTripInfoRow = ref<Trips>();
 const showModalMoreInfo = ref(false);
+const showModalEditInfo = ref(false);
 const tableRows = computed(() => {
-  // const sourceData = graphTrips.trips || [];
+  if(searchTripStore.searchResults.length > 0) {
+    return (searchTripStore.searchResults || []).map((item) => ({
+      ...item,
+      truckId: item.truck?.id ?? '-',
+      warehouseId: item.warehouse?.id ?? '-',
+      containerId: item.container?.id ?? '-',
+      portId: item.port?.id ?? '-',
+    }));
+  }
 
   return (graphTrips.trips || []).map((item) => ({
     ...item,
     truckId: item.truck?.id ?? '-',
-    warehouse: item.warehouse?.id ?? '-',
-    container: item.container?.id ?? '-',
-    port: item.port?.id ?? '-',
+    warehouseId: item.warehouse?.id ?? '-',
+    containerId: item.container?.id ?? '-',
+    portId: item.port?.id ?? '-',
   }));
 });
+
+watch(
+  () => graphTrips.totalCount,
+  (val) => {
+    console.log('Total Count Updated:', val);
+    pagination.value.rowsNumber = val;
+  },
+  { immediate: true },
+);
 
 const onRequest = async (props: TableRequestProps) => {
   const page = props.pagination.page || 1;
@@ -38,32 +63,21 @@ const columns: QTableColumn[] = [
   { name: 'id', label: 'ID', field: 'id', align: 'left' },
   { name: 'commodity', label: 'Commodity', field: 'commodity', align: 'left' },
   { name: 'truckId', label: 'Truck', field: 'truckId', align: 'left' },
-  { name: 'warehouse', label: 'Warehouse', field: 'warehouse', align: 'left' },
-  { name: 'container', label: 'Container', field: 'container', align: 'left' },
-  { name: 'port', label: 'Port', field: 'port', align: 'left' },
+  { name: 'warehouseId', label: 'Warehouse', field: 'warehouseId', align: 'left' },
+  { name: 'containerId', label: 'Container', field: 'containerId', align: 'left' },
+  { name: 'portId', label: 'Port', field: 'portId', align: 'left' },
   { name: 'action', label: 'More Info', field: 'action', align: 'left' },
 ];
 
 const moreDetails = (row: Trips) => {
   selectedTripInfoRow.value = row;
   showModalMoreInfo.value = true;
-
-  console.log('Modal Open: ', selectedTripInfoRow.value);
 };
 
-onMounted(async () => {
-  await onRequest({ pagination: pagination.value });
-  console.log('Trips fetched: ', graphTrips.trips);
-});
-
-watch(
-  () => graphTrips.totalCount,
-  (val) => {
-    console.log('Total Count Updated:', val);
-    pagination.value.rowsNumber = val;
-  },
-  { immediate: true },
-);
+const editShipmentInfo = (row : Trips) => {
+  selectedTripInfoRow.value = row;
+  showModalEditInfo.value = true;
+}
 </script>
 <template>
   <q-card-section class="q-pt-none">
@@ -87,6 +101,14 @@ watch(
           <q-btn icon="info" color="primary" flat round dense @click="moreDetails(props.row)">
             <q-tooltip>View Finance Summary</q-tooltip>
           </q-btn>
+
+          <q-btn 
+                @click="editShipmentInfo(props.row)"
+                icon="sym_o_edit_square" 
+                color="primary" 
+                flat 
+                round 
+              />
         </q-td>
       </template>
 
@@ -96,4 +118,5 @@ watch(
     </q-table>
   </q-card-section>
   <MoreModal v-if="selectedTripInfoRow" v-model="showModalMoreInfo" :row="selectedTripInfoRow" />
+  <EditModal v-if="selectedTripInfoRow" v-model="showModalEditInfo" :row="selectedTripInfoRow" />
 </template>

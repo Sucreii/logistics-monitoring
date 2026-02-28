@@ -1,3 +1,5 @@
+import type { shipmentForm, tripsForm } from 'src/stores/AllPostReactive';
+
 export type InputType =
   | 'number'
   | 'text'
@@ -39,20 +41,43 @@ export type FinanceItem = {
   type: 'number';
   value: number | null;
 };
+
+export interface InputItem {
+  key: string;
+  inputVModel: keyof typeof shipmentForm;
+  colSpace: string;
+  label: string;
+}
+
+export interface TripInputItem {
+  key: string;
+  inputVModel: keyof typeof tripsForm;
+  colSpace: string;
+  label: string;
+}
+
 export interface Shipment {
   id: string;
+  selectivity: string;
   warehouse_id: string;
   blno: string;
   contract_no: string;
   entry_no: string;
-  reference: string;
   registry_no: string;
+  shipping_line: string;
+  port_id: string;
   status: string;
   volumex: number;
   volumey: number;
   estimated_time_arrival: string;
-  issuer_username: string;
-  customer_username: string;
+  issuer: {
+    id: string;
+    username: string;
+  };
+  customer: {
+    id: string;
+    username: string;
+  };
   containers: {
     id: string;
     type: string;
@@ -71,6 +96,8 @@ export interface SearchShipmentType {
   reference: string;
   contract_no: string;
   registry_no: string;
+  entry_no: string;
+  shipping_line: string; 
   volumex?: number;
   volumey?: number;
   status: string;
@@ -86,9 +113,39 @@ export interface SearchShipmentType {
     value: number;
   }[];
 }
+
+export interface SearchTripType {
+  id: string;
+  commodity: string;
+  truck: {
+    id: string;
+    operator: string;
+  }; 
+  warehouse: {
+    id: string; 
+    description: string;
+  }; 
+  port: {
+    id: string; 
+    description: string;
+  }; 
+  container: {
+    id: string; 
+    description: string;
+  }; 
+  financeSummary?: {
+    title: string;
+    type: string;
+    value: number;
+  }[];
+}
+
 export interface Trips {
   id: string;
   commodity: string;
+  base_rate: number;
+  volumex: number;
+  volumey: number;
   truck: {
     id: string;
     operator: string | null;
@@ -103,6 +160,7 @@ export interface Trips {
   } | null;
   container: {
     id: string;
+    type: string;
     description: string | null;
   } | null;
   financeSummary: {
@@ -111,6 +169,7 @@ export interface Trips {
     value: number;
   }[];
 }
+
 export interface Users {
   id: string;
   username: string;

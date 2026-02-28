@@ -31,7 +31,6 @@ const submitArchive = async () => {
   });
   try {
     const response = await HTTP_API().patch(`/auth/archive/${id}`);
-    // await hideTruckProfile.hideTrucking(id);
 
     console.log('ARCHIVE MESSAGE: ', response.data.message);
     $q.notify({
@@ -46,6 +45,7 @@ const submitArchive = async () => {
   } finally {
     Loading.hide();
     closeDialog();
+
     await graphUsers.fetchUsers();
   }
 };

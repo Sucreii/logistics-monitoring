@@ -12,7 +12,7 @@ const fieldDisplayArr = computed(() => [
     modelVal: (function () {
       const data = userInfo.containers;
       if (Array.isArray(data)) {
-        return data.map((c) => (typeof c === 'object' ? c.id : c)).join(', ');
+        return data.map((c) => (typeof c === 'object' ? (c).id : c)).join(', ');
       }
 
       return data || 'None';
@@ -21,7 +21,7 @@ const fieldDisplayArr = computed(() => [
   { key: 'customer', label: 'Consignee', col: `6`, modelVal: userInfo.customer_username },
   { key: 'issuer', label: 'Issuer Name', col: '6', modelVal: userInfo.issuer_username },
   { key: 'billnum', label: 'Bill of Landing', col: '4', modelVal: userInfo.blno },
-  { key: 'refnum', label: 'Reference no.', col: '4', modelVal: userInfo.reference },
+  // { key: 'refnum', label: 'Reference no.', col: '4', modelVal: userInfo.reference },
   { key: 'warehouse_id', label: 'Warehouse', col: '4', modelVal: userInfo.warehouse_id },
   { key: 'contractnum', label: 'Contract no.', col: '4', modelVal: userInfo.contract_no },
   { key: 'entrynum', label: 'Entry no.', col: '4', modelVal: userInfo.entry_no },

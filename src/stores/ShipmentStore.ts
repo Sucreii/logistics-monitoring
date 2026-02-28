@@ -11,6 +11,7 @@ import type {
   DashboardStats,
   Trips,
   SearchShipmentType,
+  SearchTripType
 } from 'src/utils/static/types';
 import gql from 'graphql-tag';
 
@@ -20,9 +21,11 @@ const GET_PAGINATED_SHIPMENTS = gql`
       items {
         id
         blno
+        selectivity
         reference
         contract_no
         registry_no
+        shipping_line
         entry_no
         status
         volumex
@@ -62,6 +65,9 @@ const GET_PAGINATED_TRIPS = gql`
       items {
         id
         commodity
+        base_rate
+        volumex
+        volumey
         truck {
           id
           operator
@@ -145,6 +151,7 @@ const POST_NEW_SHIPMENTINFO = gql`
     createShipment(input: $input) {
       id
       blno
+      selectivity
       reference
       port_id
       warehouse_id
@@ -177,7 +184,10 @@ const POST_NEW_SHIPMENTINFO = gql`
 const POST_NEW_TRANSITINFO = gql`
   mutation CreateNewTrip($input: CreateTripInput!) {
     createTrip(input: $input) {
-      id
+      commodity
+      base_rate
+      volumex
+      volumey
       truck {
         id
         operator
@@ -196,7 +206,6 @@ const POST_NEW_TRANSITINFO = gql`
         description
         date_created
       }
-      commodity
       financeSummary {
         title
         type
@@ -267,10 +276,13 @@ const SEARCH_SHIPMENTS = gql`
     shipment(input: $searchTerm) {
       items {
         id
+        selectivity
         blno
         reference
         contract_no
         registry_no
+        entry_no
+        shipping_line
         volumex
         volumey
         status
@@ -299,6 +311,117 @@ const SEARCH_SHIPMENTS = gql`
     }
   }
 `;
+
+const SEARCH_TRIPS = gql`
+query GetPaginatedTrips($query: String) {
+  searchTrips(query: $query) {
+    totalCount
+    hasMore
+    items{
+        id
+        commodity
+        truck {
+            id
+            operator
+        }
+        warehouse {
+            id
+            description
+        }
+        port {
+            id
+            description
+        }
+        container {
+            id
+            description
+        }
+        financeSummary {
+            title
+            type
+            value
+        }
+    }
+  }
+}
+`
+
+const UPDATE_SHIPMENT = gql`
+  mutation UpdateMyShipment($input: UpdateShipmentInput!) {
+  updateShipment(input: $input) {
+    id
+    selectivity
+    blno
+    reference
+    shipping_line
+    port_id
+    warehouse_id
+    status
+    containers {
+        id
+        type
+        description
+    }
+    customer{
+        id
+        username
+    }
+    issuer{
+        id
+        username
+    }
+    volumex
+    volumey
+    estimated_time_arrival
+    containers {
+        id 
+        type
+        date_created
+    }
+    financeSummary {
+      title
+      value
+      type
+    }
+  }
+}
+`
+
+const UPDATE_TRIP = gql`
+  mutation UpdateMyTrip($input: UpdateTripInput!) {
+    updateTrip(input: $input) {
+      id
+      commodity
+      base_rate
+      volumex
+      volumey
+      truck {
+          id
+          operator
+          is_archived
+          date_added
+      }
+      container {
+          id
+          type
+          description
+          date_created
+      }
+      port {
+          id
+          type
+          description
+          date_created
+      }
+      
+      financeSummary {
+        title
+        type
+        value
+      }
+    }
+  }
+`
 
 // - - - - - - - - - - API CALL - - - - - - - - -
 export const getDashStats = defineStore('dashStats', () => {
@@ -724,6 +847,121 @@ export const searchShipmentsItem = defineStore('searchShipmentsFunction', {
         return data.shipment;
       } catch (err) {
         console.error('Error on Searching for Shipment Term: ', err);
+
+        throw err;
+      } finally {
+        this.loading = false;
+      }
+    },
+  },
+});
+
+export const searchTripsItem = defineStore('searchTripsFunction', {
+  state: () => ({
+    loading: false,
+    searchResults: [] as SearchTripType[],
+    totalCount: 0,
+  }),
+
+  actions: {
+    async searchForTrips(query: string) {
+      this.loading = true;
+
+      try {
+        const { data } = await apolloClient.query<{
+          searchTrips: { items: SearchTripType[]; totalCount: number };
+        }>({
+          query: SEARCH_TRIPS,
+          variables: { query },
+        });
+
+        console.log('SEARCH TRIP TERM: ', data.searchTrips);
+        if (data?.searchTrips) {
+          this.searchResults = data.searchTrips.items;
+          this.totalCount = data.searchTrips.totalCount;
+        }
+
+        return data.searchTrips;
+      } catch (err) {
+        console.error('Error on Searching for Trips Term: ', err);
+
+        throw err;
+      } finally {
+        this.loading = false;
+      }
+    },
+  },
+});
+
+export const updateShipmentForm = defineStore('updateShipmentForm', {
+  state: () => ({
+    loading: false,
+  }),
+
+  actions: {
+    async submitUpdateShipment() {
+      this.loading = true;
+
+      try {
+        const payload = {
+          ...shipmentForm,
+          volumex: Number(shipmentForm.volumex), 
+          volumey: Number(shipmentForm.volumey), 
+          containers: Array.isArray(shipmentForm.containers) ? shipmentForm.containers : []
+        }
+
+        const { data } = await apolloClient.mutate({
+          mutation: UPDATE_SHIPMENT,
+          variables: { input: payload },
+        });
+
+        console.log('Updated Shipment: ', data.updateShipment);
+        return data.updateShipment;
+      } catch (err) {
+        console.error(err);
+
+        throw err;
+      } finally {
+        this.loading = false;
+      }
+    },
+  },
+});
+
+export const updateTripsForm = defineStore('updateTripsForm', {
+  state: () => ({
+    loading: false,
+  }),
+
+  actions: {
+    async submitUpdateTrip() {
+      console.log('I AM CLICKED')
+      if (this.loading) return
+      this.loading = true;
+
+      try {
+        const payload = {
+          ...tripsForm,
+          base_rate: Number(tripsForm.base_rate), 
+          volumex: Number(tripsForm.volumex), 
+          volumey: Number(tripsForm.volumey), 
+          finances: tripsForm.finances.map(f => ({
+            title: f.title,
+            type: f.type,
+            value: Number(f.value)
+          }))
+        }
+
+        const { data } = await apolloClient.mutate({
+          mutation: UPDATE_TRIP,
+          variables: { input: payload },
+          fetchPolicy: 'no-cache'
+        });
+
+        console.log('Updated Trip: ', data.updateTrip);
+        return data.updateTrip;
+      } catch (err) {
+        console.error('Error updating trip:', err);
 
         throw err;
       } finally {

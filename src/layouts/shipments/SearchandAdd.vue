@@ -3,10 +3,8 @@ import { ref } from 'vue';
 import { Loading, QSpinnerIos } from 'quasar';
 import { useDocumentDialog } from 'src/utils/composables/dialog';
 import { searchShipmentsItem } from 'src/stores/ShipmentStore';
-import SearchModal from './SearchModal.vue';
 
 const searchValue = ref('');
-const showOpenResultModal = ref(false);
 const searchShipStore = searchShipmentsItem();
 const { showCreatePortStoresDialog } = useDocumentDialog();
 const openDialog = () => {
@@ -23,7 +21,6 @@ const handlSearchButton = async () => {
 
   try {
     await searchShipStore.searchForShipments(searchValue.value);
-    showOpenResultModal.value = true;
   } catch (err) {
     console.error('Search function encountered an error: ', err);
     throw err;
@@ -32,7 +29,11 @@ const handlSearchButton = async () => {
   }
 };
 
-console.log('I AM SEARCH BOX: ', searchValue);
+const handleClear = () => {
+  searchValue.value = '';
+  searchShipStore.searchResults = [];
+  searchShipStore.totalCount = 0;
+};
 </script>
 
 <template>
@@ -40,6 +41,7 @@ console.log('I AM SEARCH BOX: ', searchValue);
     <div class="row">
       <q-input
         @keyup.enter="handlSearchButton"
+        @clear="handleClear"  
         class="rounded-input q-mr-sm"
         v-model="searchValue"
         placeholder="Search"
@@ -72,8 +74,6 @@ console.log('I AM SEARCH BOX: ', searchValue);
       />
     </div>
   </div>
-
-  <SearchModal v-model="showOpenResultModal" :results="searchShipStore.searchResults" />
 </template>
 
 <style lang="scss" scoped>
