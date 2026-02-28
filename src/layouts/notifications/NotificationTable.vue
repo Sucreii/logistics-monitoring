@@ -28,12 +28,17 @@ const columns: QTableColumn[] = [
 watch(
   notifications,
   (newNotifs) => {
-    rows.value = newNotifs.map((notif, index) => ({
-      id: index + 1,
-      date: notif.date,
-      title: notif.title,
-      details: notif.content,
-    }));
+    rows.value = newNotifs.map((notif, index) => {
+      const dateObj = new Date(notif.date);
+      const formattedDate = `${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}-${dateObj.getFullYear()}`;
+
+      return {
+        id: index + 1,
+        date: formattedDate,
+        title: notif.title,
+        details: notif.content,
+      };
+    });
   },
   { immediate: true },
 );
