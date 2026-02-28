@@ -629,12 +629,11 @@ export const useShipmentInfo = defineStore('postShipment', {
 
       const payload = {
         ...shipmentForm2,
-        containers: [...shipmentForm2.containers],
 
         // estimated_time_arrival: new Date(shipmentForm.estimated_time_arrival).toISOString(),
-        // containers: Array.isArray(shipmentForm2.containers) 
-        //   ? shipmentForm2.containers.map(c => (typeof c === 'object' ? String(c.id) : String(c)))
-        //   : [],
+        containers: Array.isArray(shipmentForm2.containers)
+          ? shipmentForm2.containers.map(c => (typeof c === 'object' ? String(c.id) : String(c)))
+          : [],
 
         finances: shipmentForm2.finances.map((f) => ({
           title: f.title,
