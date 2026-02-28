@@ -15,3 +15,7 @@ $warning: #f2c037;
 body {
   font-family: 'Amiko', sans-serif;
 }
+
+.upper-case :deep(input) {
+  text-transform: uppercase;
+}

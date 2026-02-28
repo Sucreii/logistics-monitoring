@@ -205,16 +205,6 @@ export const CreateAdditionalShipments: AdditionalShipmentTypes[] = [
     variant: 'information',
     rules: [(val) => !!val || 'Bill of Landing No. is required'],
   },
-
-  // {
-  //   label: 'Reference',
-  //   placeholder: 'REF001',
-  //   model: 'reference',
-  //   type: 'text',
-  //   col: '6',
-  //   variant: 'reference',
-  //   rules: [(val) => !!val || 'Reference No. is required'],
-  // },
   {
     label: 'Shipping Line',
     placeholder: 'SITC',

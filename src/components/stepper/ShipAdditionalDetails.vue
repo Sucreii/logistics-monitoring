@@ -25,7 +25,7 @@ const userSelectOptions = computed(() => {
 
 const portSelectOptions = computed(() => {
   return graphPorts.storables
-    .filter((port) => port.type === 'PORT' || port.type === 'port')
+    .filter((port) => port.type?.toLowerCase() === 'port')
     .map((port) => ({
       label: port.id,
       value: port.id,
@@ -62,21 +62,22 @@ console.log('Port select options: ', portSelectOptions);
             clearable
           />
 
-          <q-input
-            v-else-if="field.type === 'number'"
-            v-model.number="shipInfo[field.model as ShipmentInputKeys]"
-            type="number"
+          <q-select
+            v-else-if="field.variant === 'port'"
+            v-model="shipInfo[field.model as keyof typeof shipInfo]"
+            :options="portSelectOptions"
             :placeholder="field.placeholder"
             :rules="field.rules"
+            emit-value
+            map-options
             dense
             outlined
             clearable
           />
 
           <q-input
-            v-else-if="field.type !== 'date' && field.type !== 'select'"
+            v-else-if="field.type !== 'date'"
             v-model="shipInfo[field.model as ShipmentInputKeys]"
-            :type="field.type"
             :placeholder="field.placeholder"
             :rules="field.rules"
             class="upper-case"
@@ -85,7 +86,6 @@ console.log('Port select options: ', portSelectOptions);
             clearable
           />
 
-          <!-- - - - - - DATE AND TIME - - - - - -->
           <q-input
             v-else
             v-model="shipInfo[field.model as ShipmentInputKeys]"

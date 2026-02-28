@@ -64,7 +64,7 @@ const submitAll = async () => {
     $q.notify({
       type: 'positive',
       position: 'top',
-      message: 'New Transit Order has been added.successfully',
+      message: 'New Transit Order has been added successfully',
       timeout: 3000,
     });
   } catch (err) {

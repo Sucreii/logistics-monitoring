@@ -64,7 +64,7 @@ watch(
   () => props.row,
   (newVal) => {
     if (newVal && props.modelValue) {
-      tripsForm.id = newVal.id;
+      // tripsForm.id = newVal.id;
       tripsForm.commodity = newVal.commodity;
       tripsForm.truck_id = newVal.truck?.id || '';
       tripsForm.port_id = newVal.port?.id || '';
@@ -73,7 +73,7 @@ watch(
       tripsForm.base_rate = newVal.base_rate;
       tripsForm.volumex = newVal.volumex;
       tripsForm.volumey = newVal.volumey;
-      tripsForm.date_delivered = newVal.date_delivered;
+      // tripsForm.date_delivered = newVal.date_delivered;
       tripsForm.finances = newVal.financeSummary?.map((f) => ({ ...f })) || [];
     }
   },
@@ -180,7 +180,7 @@ const updateNewTripsInfo = async () => {
               />
             </div>
             <div class="col-12">
-              <q-input
+              <!-- <q-input
                 v-model="tripsForm['date_delivered'] as string"
                 label="Date Delivered"
                 outlined
@@ -198,7 +198,7 @@ const updateNewTripsInfo = async () => {
                     </q-popup-proxy>
                   </q-icon>
                 </template>
-              </q-input>
+              </q-input> -->
             </div>
           </div>
 

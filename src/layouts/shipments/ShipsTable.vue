@@ -54,13 +54,15 @@ const moreDetails = (row: Shipment) => {
 const editShipmentInfo = (row : Shipment) => {
   selectedInfoRow.value = row;
   showModalEditInfo.value = true;
+
+  console.log('- - - - -', showModalEditInfo)
 }
 
 const columns: QTableColumn[] = [
   { name: 'selectivity', label: 'Selectivity', field: 'selectivity', align: 'left' },
   { name: 'warehouse_id', label: 'Warehouse', field: 'warehouse_id', align: 'left' },
   { name: 'blno', label: 'B/L No', field: 'blno', align: 'left' },
-  { name: 'shipLine', label: 'Shipping Line', field: (row) => row.shipping_line || '-', align: 'left' },
+  { name: 'shipLine', label: 'Shipping Line', field: (row) => row.shipping_line, align: 'left' },
   { name: 'contract_no', label: 'Contract No', field: 'contract_no', align: 'left' },
   { name: 'entry_no', label: 'Entry No', field: 'entry_no', align: 'left' },
   { name: 'reference', label: 'Reference', field: 'reference', align: 'left' },
@@ -141,7 +143,7 @@ const columns: QTableColumn[] = [
         </q-table>
       </q-card-section>
     </q-card>
-    <MoreModal v-if="selectedInfoRow" v-model="showModalMoreInfo" :row="selectedInfoRow" />
-    <EditModal v-if="selectedInfoRow" v-model="showModalEditInfo" :row="selectedInfoRow" />
+    <MoreModal v-model="showModalMoreInfo" :row="selectedInfoRow || null" />
+    <EditModal v-model="showModalEditInfo" :row="selectedInfoRow || null" />
   </div>
 </template>

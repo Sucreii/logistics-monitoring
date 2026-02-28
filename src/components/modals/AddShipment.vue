@@ -67,6 +67,7 @@ const submitAll = async () => {
     onDialogHide();
     Object.assign(shipmentForm2, {
       blno: '',
+      selectivity: '', 
       contract_no: '',
       warehouse_id: '',
       entry_no: '',
@@ -94,7 +95,12 @@ const submitAll = async () => {
       ],
       financeSummary: [
         {
-          title: '',
+          title: 'BILLING',
+          type: 'amount',
+          value: 0,
+        },
+        {
+          title: 'COST',
           type: 'amount',
           value: 0,
         },

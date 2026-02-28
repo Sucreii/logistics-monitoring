@@ -42,10 +42,16 @@ export const shipmentForm2 = reactive({
   customer_username: '',
   issuer_username: '',
   // containers: [] as string[],
-  containers: [] as (string | { id: string | number })[],
+  // containers: [] as (string | { id: string | number })[],
+  containers: '', 
   finances: [
     {
-      title: '',
+      title: 'BILLING',
+      type: 'amount',
+      value: 0,
+    },
+    {
+      title: 'COST',
       type: 'amount',
       value: 0,
     },
@@ -54,7 +60,6 @@ export const shipmentForm2 = reactive({
 
 
 export const tripsForm = reactive({
-  id: '',
   container_id: '',
   truck_id: '',
   port_id: '',
@@ -63,7 +68,7 @@ export const tripsForm = reactive({
   base_rate: 0,
   volumex: 0,
   volumey: 0,
-  date_delivered: '',
+  // date_delivered: '',
   finances: [
     {
       title: '',

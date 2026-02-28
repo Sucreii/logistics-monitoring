@@ -68,7 +68,7 @@ const submitUser = async () => {
     $q.notify({
       type: 'positive',
       position: 'top',
-      message: 'New User has been added.successfully',
+      message: 'New User has been added successfully',
       timeout: 3000,
     });
   } catch (err) {
