@@ -16,8 +16,8 @@ export const shipmentForm = reactive({
   estimated_time_arrival: '',
   customer_username: '',
   issuer_username: '',
-  containers: [] as string[],
-  // containers: [] as (string | { id: string | number })[],
+  // containers: [] as string[],
+  containers: [] as (string | { id: string | number })[],
   finances: [
     {
       title: '',
@@ -41,8 +41,8 @@ export const shipmentForm2 = reactive({
   estimated_time_arrival: '',
   customer_username: '',
   issuer_username: '',
-  containers: [] as string[],
-  // containers: [] as (string | { id: string | number })[],
+  // containers: [] as string[],
+  containers: [] as (string | { id: string | number })[],
   finances: [
     {
       title: '',
