@@ -27,13 +27,11 @@ const onSubmit = async () => {
     Loading.hide();
 
     if (result.message === 'Login successful') {
-      console.log('I AM SUCCESSFUL');
 
       $q.dialog({
         title: 'Login Successful',
         message: 'Welcome!',
       }).onOk(() => {
-        console.log('OK clicked, attempting redirect...');
         void router.replace({ name: 'home.dashboard' });
       });
     }

@@ -8,10 +8,6 @@ onMounted(async () => {
   await graphPorts.fetchPortStores();
   await graphTrips.fetchTrips();
   await graphTruckDropDown.fetchTruckStores();
-
-  console.log('Shipments fetched: ', graphTrips.trips);
-  console.log('Ports fetched: ', graphPorts.storables);
-  console.log('Trucks Profile fetched: ', graphTruckDropDown.trucks);
 });
 
 type TripsInputKeys = Exclude<keyof typeof tripsForm, 'finances'>;
@@ -53,9 +49,6 @@ const warehouseSelectOptions = computed(() => {
       value: port.id,
     }));
 });
-
-console.log('I am TripsInfo: ', tripsInfo);
-console.log('I am Port select Options: ', portSelectOptions);
 </script>
 
 <template>

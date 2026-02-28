@@ -18,7 +18,6 @@ const portDisplayFormRef = ref<InstanceType<typeof QForm> | null>(null);
 const nextStep = async () => {
   if (step.value === 1) {
     const isValid = await newPortAddForm.value?.validate();
-    console.log('Is Valid: ', isValid);
 
     if (!isValid) {
       $q.notify({ type: 'warning', position: 'top', message: 'Please complete all fields.' });
@@ -39,8 +38,7 @@ const nextStep = async () => {
 };
 
 const submitPortStore = async () => {
-  console.log('I AM SUBMITTING NEW PORT STORES');
-  console.log('Port Store: ', Object.keys(usePortsStorables));
+  // console.log('Port Store: ', Object.keys(usePortsStorables));
 
   Loading.show({
     spinner: QSpinnerIos,

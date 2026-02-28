@@ -16,8 +16,6 @@ const handlSearchButton = async () => {
 
   try {
     await searchTripStore.searchForTrips(searchValue.value);
-
-    console.log('I AM SEARCHED TRIPS: ', searchValue.value);
   } catch (err) {
     console.error('Search function encountered an error: ', err);
     throw err;

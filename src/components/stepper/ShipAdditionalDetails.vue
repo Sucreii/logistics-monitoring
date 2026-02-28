@@ -2,20 +2,16 @@
 import { computed, onMounted } from 'vue';
 import { getAllUsers, getAllPortStorables, getAllShipment } from 'src/stores/ShipmentStore';
 import { CreateAdditionalShipments } from 'src/utils';
-import { shipmentForm } from 'src/stores/AllPostReactive';
+import { shipmentForm2 } from 'src/stores/AllPostReactive';
 
 onMounted(async () => {
   await graphUsers.fetchUsers();
   await graphPorts.fetchPortStores();
   await graphShipment.fetchShipments();
-
-  console.log('Shipments fetched: ', graphShipment.shipments);
-  console.log('Users fetched: ', graphUsers.user);
-  console.log('Ports fetched: ', graphPorts.storables);
 });
 
-type ShipmentInputKeys = Exclude<keyof typeof shipmentForm, 'finances' | 'containers'>;
-const shipInfo = shipmentForm;
+type ShipmentInputKeys = Exclude<keyof typeof shipmentForm2, 'finances' | 'containers'>;
+const shipInfo = shipmentForm2;
 const graphUsers = getAllUsers();
 const graphPorts = getAllPortStorables();
 const graphShipment = getAllShipment();
@@ -36,10 +32,7 @@ const portSelectOptions = computed(() => {
     }));
 });
 
-console.log('I am Users: ', graphUsers);
-console.log('I am ShipInfo: ', shipInfo);
-console.log('I am User select Options: ', userSelectOptions);
-console.log('I am Port select Options: ', portSelectOptions);
+console.log('Port select options: ', portSelectOptions);
 </script>
 
 <template>
@@ -69,8 +62,6 @@ console.log('I am Port select Options: ', portSelectOptions);
             clearable
           />
 
-       
-
           <q-input
             v-else-if="field.type === 'number'"
             v-model.number="shipInfo[field.model as ShipmentInputKeys]"
@@ -88,6 +79,7 @@ console.log('I am Port select Options: ', portSelectOptions);
             :type="field.type"
             :placeholder="field.placeholder"
             :rules="field.rules"
+            class="upper-case"
             dense
             outlined
             clearable
@@ -99,6 +91,7 @@ console.log('I am Port select Options: ', portSelectOptions);
             v-model="shipInfo[field.model as ShipmentInputKeys]"
             :placeholder="field.placeholder"
             :rules="field.rules"
+            class="upper-case"
             dense
             outlined
             clearable
@@ -119,3 +112,9 @@ console.log('I am Port select Options: ', portSelectOptions);
     </div>
   </div>
 </template>
+
+<style scoped>
+.upper-case :deep(input) {
+  text-transform: uppercase;
+}
+</style>

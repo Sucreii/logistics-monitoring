@@ -39,8 +39,6 @@ onMounted(async () => {
     const pendingData = labels.map((month) => data[month]?.created_shipment || 0);
     const deliveredData = labels.map((month) => data[month]?.delivered_trips || 0);
 
-    console.log('I AM DASHBOARD: ', data);
-
     chartData.value = {
       labels: labels,
       datasets: [

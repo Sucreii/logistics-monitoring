@@ -21,7 +21,6 @@ const shipFinanceFormRef = ref<InstanceType<typeof QForm> | null>(null);
 const nextStep = async () => {
   if (step.value === 1) {
     const isValid = await newUsersAddForm.value?.validate();
-    console.log('Is Valid: ', isValid);
 
     if (!isValid) {
       $q.notify({ type: 'warning', position: 'top', message: 'Please complete all fields.' });
@@ -42,8 +41,7 @@ const nextStep = async () => {
 };
 
 const submitUser = async () => {
-  console.log('I AM SUBMITTING THE USER');
-  console.log('User Store: ', Object.keys(usersStore));
+  // console.log('User Store: ', Object.keys(usersStore));
 
   Loading.show({
     spinner: QSpinnerIos,

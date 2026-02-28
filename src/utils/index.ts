@@ -303,7 +303,7 @@ export const CreateAdditionalShipments: AdditionalShipmentTypes[] = [
     type: 'text',
     col: '4',
     variant: 'information',
-    rules: [(val) => !!val || 'Contract No. is required'],
+    // rules: [(val) => !!val || 'Contract No. is required'],
   },
 ];
 

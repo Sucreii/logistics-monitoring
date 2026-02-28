@@ -16,13 +16,9 @@ const { modelValue, row } = defineProps<{
   row: Trucks | null;
 }>();
 
-console.log('Row object:', row);
-console.log('Row ID:', row?.id);
-
 const submitUnArchive = async () => {
   if (!row?.id) return;
   const id = String(row.id);
-  console.log('ID to Archive: ', row?.id);
 
   Loading.show({
     spinner: QSpinnerIos,
@@ -39,7 +35,7 @@ const submitUnArchive = async () => {
       timeout: 3000,
     });
   } catch (err) {
-    console.log('Error archiving truck profile: ', err);
+    console.error('Error archiving truck profile: ', err);
     throw err;
   } finally {
     Loading.hide();

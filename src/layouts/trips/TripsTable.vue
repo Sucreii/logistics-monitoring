@@ -10,7 +10,6 @@ import EditModal from './EditTripsModal.vue';
 
 onMounted(async () => {
   await onRequest({ pagination: pagination.value });
-  console.log('Trips fetched: ', graphTrips.trips);
 });
 
 const graphTrips = getAllTrips();
@@ -48,7 +47,6 @@ function unixToYMD(unixSeconds: number) {
 watch(
   () => graphTrips.totalCount,
   (val) => {
-    console.log('Total Count Updated:', val);
     pagination.value.rowsNumber = val;
   },
   { immediate: true },

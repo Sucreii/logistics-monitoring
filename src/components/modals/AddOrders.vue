@@ -21,7 +21,6 @@ const transitDisplayInfoFormRef = ref<InstanceType<typeof QForm> | null>(null);
 const nextStep = async () => {
   if (step.value === 1) {
     const isValid = await transitAddForm.value?.validate();
-    console.log('Is Valid: ', isValid);
 
     if (!isValid) {
       $q.notify({ type: 'warning', position: 'top', message: 'Please complete all fields.' });
@@ -51,7 +50,7 @@ const nextStep = async () => {
 };
 
 const submitAll = async () => {
-  console.log('Store Transit trip: ', Object.keys(transitStore));
+  // console.log('Store Transit trip: ', Object.keys(transitStore));
 
   Loading.show({
     spinner: QSpinnerIos,

@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { shipmentForm } from 'src/stores/AllPostReactive';
+import { shipmentForm2 } from 'src/stores/AllPostReactive';
 
-const userInfo = shipmentForm;
+const userInfo = shipmentForm2;
 const fieldDisplayArr = computed(() => [
   { key: 'eta', label: 'ETA', col: '6', modelVal: userInfo.estimated_time_arrival },
   {
@@ -31,8 +31,6 @@ const fieldDisplayArr = computed(() => [
   { key: 'volx', label: 'Vol. X', col: '2', modelVal: Number(userInfo.volumex) },
   { key: 'voly', label: 'Vol. Y', col: '2', modelVal: Number(userInfo.volumey) },
 ]);
-
-console.log('Shipment Info: ', userInfo);
 </script>
 <template>
   <div class="row q-col-gutter-md q-mb-md">

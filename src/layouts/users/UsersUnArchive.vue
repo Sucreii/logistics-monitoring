@@ -35,7 +35,6 @@ watch(
 const submitEditedProfile = async () => {
   if (!props.row?.id) return;
   const id = props.row?.id;
-  console.log('ID to Archive: ', props.row?.id);
 
   Loading.show({
     spinner: QSpinnerIos,
@@ -46,7 +45,6 @@ const submitEditedProfile = async () => {
     const payload = editedUsersForm.value;
     const response = await HTTP_API().patch(`/auth/update/${id}`, payload);
 
-    console.log('Successful User Edit: ', response.data.message);
     $q.notify({
       type: 'positive',
       position: 'top',
@@ -54,7 +52,7 @@ const submitEditedProfile = async () => {
       timeout: 3000,
     });
   } catch (err) {
-    console.log('Error archiving truck profile: ', err);
+    console.error('Error archiving truck profile: ', err);
     throw err;
   } finally {
     Loading.hide();

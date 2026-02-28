@@ -65,7 +65,6 @@ watch(() => props.row, (newVal) => {
 
 const updateNewShipmentInfo = async () => {
   if (!props.row?.id) return;
-  console.log('ID to Archive: ', props.row);
 
   Loading.show({
     spinner: QSpinnerIos,
@@ -75,8 +74,6 @@ const updateNewShipmentInfo = async () => {
 
   try{
     const response = await updateShipInfo.submitUpdateShipment();
-
-    console.log('Success on Updating Shipment Info: ', response)
     $q.notify({
       type: 'positive',
       position: 'top',

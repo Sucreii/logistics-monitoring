@@ -12,7 +12,6 @@ import EditModal from './SearchModal.vue'
 
 onMounted(async () => {
   await onRequest({ pagination: pagination.value });
-  console.log('Shipments fetched: ', graphShipment.shipments);
 });
 
 const graphShipment = getAllShipment();

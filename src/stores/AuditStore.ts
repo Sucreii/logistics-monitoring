@@ -14,7 +14,7 @@ export const useAuditStore = defineStore('audit', {
                 const response = await HTTP_API().get('/audit/monthly_sales/' + Number(year));
                 this.monthlySales = response.data;
 
-                console.log('MONTHLY SALES:: ', response.data);
+                // console.log('MONTHLY SALES:: ', response.data);
 
                 return response.data;
             } catch (err) {

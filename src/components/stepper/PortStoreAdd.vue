@@ -30,6 +30,7 @@ const truckInfo = ref(storablesForm);
             :type="field.type"
             :placeholder="field.placeholder"
             :rules="field.rules"
+            class="upper-case"
             dense
             outlined
             clearable
@@ -39,3 +40,9 @@ const truckInfo = ref(storablesForm);
     </div>
   </div>
 </template>
+
+<style scoped>
+.upper-case :deep(input) {
+  text-transform: uppercase;
+}
+</style>

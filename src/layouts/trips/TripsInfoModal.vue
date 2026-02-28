@@ -10,8 +10,6 @@ const props = defineProps<{
   modelValue: boolean;
   row: Trips | null;
 }>();
-
-console.log('Row object:', props.row);
 </script>
 
 <template>

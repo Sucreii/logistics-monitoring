@@ -35,7 +35,7 @@ export const useAuthStore = defineStore('auth', {
         const response = await HTTP_API().post('/auth/login', payload);
         this.username = response.data.user;
         this.role = response.data.user.role;
-        console.log('I AM LOGIN: ', response.data.user.first_name);
+        console.log('Login Response: ', response.data.user.first_name);
 
         Cookies.set('username', this.username as string, { path: '/', expires: 7 });
         Cookies.set('role', this.role as string, { path: '/', expires: 7 });

@@ -67,7 +67,7 @@ const handleDownload = async () => {
       });
     }
   } catch (error) {
-    console.log('Download error: ', error);
+    console.error('Download error: ', error);
     $q.notify({
       message: 'Error generating CSV file.',
       color: 'negative',

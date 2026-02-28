@@ -82,7 +82,6 @@ watch(
 
 const updateNewTripsInfo = async () => {
   if (!props.row?.id || updateTrips.loading) return;
-  console.log('Updating Trip Info: ', props.row);
 
   Loading.show({
     spinner: QSpinnerIos,

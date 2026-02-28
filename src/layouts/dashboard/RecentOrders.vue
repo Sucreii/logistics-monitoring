@@ -6,7 +6,6 @@ import type { QTableColumn } from 'quasar';
 
 onMounted(async () => {
   await graphShipment.fetchShipments();
-  console.log('Shipments fetched: ', graphShipment.shipments);
 });
 
 const graphShipment = getAllShipment();

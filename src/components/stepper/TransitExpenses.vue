@@ -14,7 +14,7 @@ const removeFinance = (index: number) => {
   tripsForm.finances.splice(index, 1);
 };
 
-console.log('I am Transit Expenses: ', shipInfo);
+console.log('Transit Expenses: ', shipInfo);
 </script>
 <template>
   <div class="q-col-gutter-md">

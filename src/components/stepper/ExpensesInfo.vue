@@ -1,9 +1,8 @@
 <script lang="ts" setup>
-import { shipmentForm } from 'src/stores/AllPostReactive';
+import { shipmentForm2 } from 'src/stores/AllPostReactive';
 
-const shipInfo = shipmentForm;
 const addFinance = () => {
-  shipmentForm.finances.push({
+  shipmentForm2.finances.push({
     title: '',
     type: 'amount',
     value: 0,
@@ -11,10 +10,9 @@ const addFinance = () => {
 };
 
 const removeFinance = (index: number) => {
-  shipmentForm.finances.splice(index, 1);
+  shipmentForm2.finances.splice(index, 1);
 };
 
-console.log('I am Shipment Expenses: ', shipInfo);
 </script>
 
 <template>
@@ -23,7 +21,7 @@ console.log('I am Shipment Expenses: ', shipInfo);
       <q-btn @click="addFinance" label="Add" color="primary" icon="add" />
     </div>
 
-    <div v-for="(finance, index) in shipmentForm.finances" :key="index" class="row q-col-gutter-sm">
+    <div v-for="(finance, index) in shipmentForm2.finances" :key="index" class="row q-col-gutter-sm">
       <div class="col-4">
         <q-input v-model="finance.title" label="Title" dense outlined />
       </div>
@@ -57,7 +55,7 @@ console.log('I am Shipment Expenses: ', shipInfo);
 
       <div class="col-1">
         <q-btn
-          v-if="shipmentForm.finances.length > 1"
+          v-if="shipmentForm2.finances.length > 1"
           @click="removeFinance(index)"
           icon="delete"
           color="negative"

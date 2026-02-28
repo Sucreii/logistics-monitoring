@@ -16,13 +16,9 @@ const { modelValue, row } = defineProps<{
   row: Users | null;
 }>();
 
-console.log('Row object:', row);
-console.log('Row ID:', row?.id);
-
 const submitArchive = async () => {
   if (!row?.id) return;
   const id = row?.id;
-  console.log('ID to Archive: ', row?.id);
 
   Loading.show({
     spinner: QSpinnerIos,
@@ -31,8 +27,6 @@ const submitArchive = async () => {
   });
   try {
     const response = await HTTP_API().patch(`/auth/archive/${id}`);
-
-    console.log('ARCHIVE MESSAGE: ', response.data.message);
     $q.notify({
       type: 'positive',
       position: 'top',
@@ -40,7 +34,7 @@ const submitArchive = async () => {
       timeout: 3000,
     });
   } catch (err) {
-    console.log('Error archiving user profile: ', err);
+    console.error('Error archiving user profile: ', err);
     throw err;
   } finally {
     Loading.hide();

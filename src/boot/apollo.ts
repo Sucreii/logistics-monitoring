@@ -4,6 +4,7 @@ import { DefaultApolloClient } from '@vue/apollo-composable';
 
 const httpLink = createHttpLink({
   uri: `${process.env.VITE_BASE_URL}/graphql`,
+  credentials: 'include',
 });
 
 export const apolloClient = new ApolloClient({

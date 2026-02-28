@@ -10,9 +10,6 @@ const props = defineProps<{
   modelValue: boolean;
   row: Shipment | null;
 }>();
-
-console.log('Row object:', props.row);
-console.log('Row ID:', props.row?.financeSummary);
 </script>
 
 <template>

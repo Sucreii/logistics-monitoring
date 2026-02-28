@@ -10,7 +10,6 @@ import truckUnHideModal from './TruckUnArchive.vue';
 
 onMounted(async () => {
   await graphTrucks.fetchTruckStores();
-  console.log('Truck Profiles fetched: ', graphTrucks.trucks);
 });
 
 const showModalHide = ref(false);

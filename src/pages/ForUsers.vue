@@ -11,7 +11,6 @@ import unArchiveUsers from 'src/layouts/users/UsersUnArchive.vue';
 
 onMounted(async () => {
   await onRequest({ pagination: pagination.value });
-  console.log('Users fetched: ', graphUsers.user);
 });
 
 const selectedRow = ref<Users | null>(null);
@@ -55,8 +54,6 @@ const onRequest = async (props: TableRequestProps) => {
 const openArchiveModal = (row: Users) => {
   selectedRow.value = row;
   showModalHide.value = true;
-
-  console.log('I AM OPEN ARCHIVE: ', selectedRow.value);
 };
 
 const openUnArchiveModal = (row: Users) => {

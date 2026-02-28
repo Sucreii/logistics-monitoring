@@ -466,7 +466,7 @@ export const getAllShipment = defineStore('shipment', {
           this.totalCount = data.shipments.totalCount;
           this.hasMore = data.shipments.hasMore;
         }
-        console.log('I AM GRAPHQL SHIPMENTS RESPONSE: ', data);
+        console.log('SHIPMENTS RESPONSE: ', data);
       } catch (error) {
         console.error(error);
       } finally {
@@ -535,7 +535,7 @@ export const getAllUsers = defineStore('users', {
           this.totalCount = data.user.totalCount;
           this.hasMore = data.user.hasMore;
         }
-        console.log('I AM GRAPHQL USERS RESPONSE: ', data);
+        console.log('USERS RESPONSE: ', data);
       } catch (error) {
         console.error('Error fetching Users data: ', error);
       } finally {
@@ -572,7 +572,7 @@ export const getAllPortStorables = defineStore('portStorables', {
         if (data?.storables?.items) {
           this.storables = data.storables.items;
         }
-        console.log('I AM GRAPHQL PORT RESPONSE: ', data.data);
+        console.log('PORT RESPONSE: ', data.data);
       } catch (error) {
         console.error('Fetching Port Error: ', error);
       } finally {
@@ -609,7 +609,7 @@ export const getTruckStorables = defineStore('truckStorables', {
         if (data?.trucks?.items) {
           this.trucks = data.trucks.items;
         }
-        console.log('I AM GRAPHQL TRUCK RESPONSE: ', data);
+        console.log('TRUCK RESPONSE: ', data);
       } catch (error) {
         console.error('Fetching Port Error: ', error);
       } finally {
@@ -626,10 +626,14 @@ export const useShipmentInfo = defineStore('postShipment', {
 
   actions: {
     async submitShipment() {
+
       const payload = {
         ...shipmentForm2,
-        containers: [shipmentForm2.containers],
+        // containers: [shipmentForm2.containers],
         // estimated_time_arrival: new Date(shipmentForm.estimated_time_arrival).toISOString(),
+        containers: Array.isArray(shipmentForm2.containers) 
+          ? shipmentForm2.containers.map(c => (typeof c === 'object' ? String(c.id) : String(c)))
+          : [],
 
         finances: shipmentForm2.finances.map((f) => ({
           title: f.title,
@@ -637,6 +641,8 @@ export const useShipmentInfo = defineStore('postShipment', {
           value: Number(f.value),
         })),
       };
+
+      console.log('I AM PAYLOAD SHIPMENT: ', payload)
 
       const { data } = await apolloClient.mutate({
         mutation: POST_NEW_SHIPMENTINFO,

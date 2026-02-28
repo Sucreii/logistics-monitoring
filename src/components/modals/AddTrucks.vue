@@ -19,7 +19,6 @@ const truckDisplayFormRef = ref<InstanceType<typeof QForm> | null>(null);
 const nextStep = async () => {
   if (step.value === 1) {
     const isValid = await newTrucksAddForm.value?.validate();
-    console.log('Is Valid: ', isValid);
 
     if (!isValid) {
       $q.notify({ type: 'warning', position: 'top', message: 'Please complete all fields.' });
@@ -40,8 +39,7 @@ const nextStep = async () => {
 };
 
 const submitUser = async () => {
-  console.log('I AM SUBMITTING THE TRUCKS');
-  console.log('Trucks Store: ', Object.keys(useTrucks));
+  // console.log('Trucks Store: ', Object.keys(useTrucks));
 
   Loading.show({
     spinner: QSpinnerIos,
