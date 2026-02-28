@@ -2,7 +2,7 @@ import { ref } from 'vue';
 import { defineStore } from 'pinia';
 import { HTTP_API } from 'src/boot/axios';
 import { apolloClient } from 'src/boot/apollo';
-import { shipmentForm, truckForm, tripsForm, storablesForm } from 'src/stores/AllPostReactive';
+import { shipmentForm, truckForm, tripsForm, storablesForm, shipmentForm2 } from 'src/stores/AllPostReactive';
 import type {
   Shipment,
   Users,
@@ -627,11 +627,11 @@ export const useShipmentInfo = defineStore('postShipment', {
   actions: {
     async submitShipment() {
       const payload = {
-        ...shipmentForm,
-        containers: [shipmentForm.containers],
+        ...shipmentForm2,
+        containers: [shipmentForm2.containers],
         // estimated_time_arrival: new Date(shipmentForm.estimated_time_arrival).toISOString(),
 
-        finances: shipmentForm.finances.map((f) => ({
+        finances: shipmentForm2.finances.map((f) => ({
           title: f.title,
           type: f.type,
           value: Number(f.value),
