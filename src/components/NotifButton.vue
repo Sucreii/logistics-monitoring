@@ -1,27 +1,41 @@
 <script lang="ts" setup>
-import { inject, ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
 
 interface Dummy {
-  title: string
-  content: string
-  date: string
+  title: string;
+  content: string;
+  date: string;
 }
-const router = useRouter()
-const itemsToShow = ref(6)
-const visibleNotifications = computed(() => notifications?.slice(0, itemsToShow.value) || [])
+
+const props = defineProps<{
+  notifications: Dummy[];
+  loading: boolean;
+}>();
+
+const router = useRouter();
+const itemsToShow = ref(4);
 const handleSeeAll = async () => {
-  await router.push({ name: 'home.notifications' })
-}
-const notifications = inject<Dummy[]>('dummyNotificationItems', [])
+  await router.push({ name: 'home.notifications' });
+};
+
+const visibleNotifications = computed(() => props.notifications?.slice(0, itemsToShow.value) || []);
 </script>
 
 <template>
   <q-menu fit class="notification-menu">
-    <q-card class="notification-card">
+    <div v-if="loading" class="q-pa-md">
+      <div class="q-gutter-md row">
+        <q-spinner color="primary" size="3em" />
+
+        <q-spinner color="primary" size="3em" :thickness="2" />
+
+        <q-spinner color="primary" size="3em" :thickness="10" />
+      </div>
+    </div>
+    <q-card v-else class="notification-card">
       <q-card-section class="row items-center justify-between">
         <div class="h6 text-bold">Notifications</div>
-        <q-btn flat round color="primary" icon="more_horiz" />
       </q-card-section>
       <q-separator />
       <q-card-section
@@ -30,25 +44,13 @@ const notifications = inject<Dummy[]>('dummyNotificationItems', [])
         v-for="(notif, index) in visibleNotifications"
         :key="index"
       >
-        <q-card-section class="flex flex-center">
-          <q-badge color="primary" />
-        </q-card-section>
         <q-card-section horizontal>
-          <q-card-section>
-            <q-avatar>
-              <img src="https://cdn.quasar.dev/img/avatar.png" />
-            </q-avatar>
-          </q-card-section>
           <q-card-section>
             <div class="text-bold text-caption">{{ notif.title }}</div>
             <div class="text-caption text-grey-8">{{ notif.content }}</div>
           </q-card-section>
         </q-card-section>
         <q-space />
-        <q-card-actions>
-          <q-btn flat no-caps color="positive" label="Confirm" />
-          <q-btn flat no-caps color="negative" label="Delete" />
-        </q-card-actions>
       </q-card-section>
 
       <q-separator />

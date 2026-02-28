@@ -26,6 +26,12 @@ export const NavigationItems = [
     icon: 'dashboard',
   },
   {
+    label: 'Notifications',
+    separator: true,
+    name: 'home.notifications',
+    icon: 'list',
+  },
+  {
     label: 'Shipments',
     separator: true,
     name: 'home.shipments',
