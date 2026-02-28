@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import shipsTable from '../layouts/shipments/ShipsTable.vue';
+import downloadShipment from '../layouts/shipments/DownloadShipment.vue';
 </script>
 
 <template>
@@ -13,6 +14,9 @@ import shipsTable from '../layouts/shipments/ShipsTable.vue';
 
         <div class="row q-pa-md q-gutter-y-md">
           <shipsTable />
+          <div class="row q-pt-sm q-gutter-y-md">
+            <downloadShipment />
+          </div>
         </div>
       </q-page>
     </q-page-container>

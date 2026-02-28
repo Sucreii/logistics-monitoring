@@ -26,6 +26,12 @@ export const NavigationItems = [
     icon: 'dashboard',
   },
   {
+    label: 'Notifications',
+    separator: true,
+    name: 'home.notifications',
+    icon: 'list',
+  },
+  {
     label: 'Shipments',
     separator: true,
     name: 'home.shipments',
@@ -49,6 +55,12 @@ export const NavigationItems = [
     name: 'home.trucks',
     icon: 'engineering',
   },
+  {
+    label: 'Audit',
+    separator: true,
+    name: 'home.audit',
+    icon: 'list',
+  },
 ];
 
 export const linksArr: {
@@ -57,31 +69,31 @@ export const linksArr: {
   routeName: string;
   docDialog: DialogKey;
 }[] = [
-  {
-    label: 'Add new Shipments',
-    routeName: 'home.shipments',
-    icon: 'add_shopping_cart',
-    docDialog: 'shipments',
-  },
-  {
-    label: 'Add new Trips',
-    routeName: 'home.trips',
-    icon: 'local_shipping',
-    docDialog: 'trips',
-  },
-  {
-    label: 'Add new Users',
-    routeName: 'home.users',
-    icon: 'person_add',
-    docDialog: 'users',
-  },
-  {
-    label: 'Add new Truck Profile',
-    routeName: 'home.trucks',
-    icon: 'contact_emergency',
-    docDialog: 'trucks',
-  },
-];
+    {
+      label: 'Add new Shipments',
+      routeName: 'home.shipments',
+      icon: 'add_shopping_cart',
+      docDialog: 'shipments',
+    },
+    {
+      label: 'Add new Trips',
+      routeName: 'home.trips',
+      icon: 'local_shipping',
+      docDialog: 'trips',
+    },
+    {
+      label: 'Add new Users',
+      routeName: 'home.users',
+      icon: 'person_add',
+      docDialog: 'users',
+    },
+    {
+      label: 'Add new Truck Profile',
+      routeName: 'home.trucks',
+      icon: 'contact_emergency',
+      docDialog: 'trucks',
+    },
+  ];
 
 export const dummyNotificationContent: dummy[] = [
   {

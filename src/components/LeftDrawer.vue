@@ -1,13 +1,19 @@
 <script lang="ts" setup>
-import { ref, provide, computed } from 'vue';
+import { ref, provide, computed, onMounted } from 'vue';
 import { NavigationItems } from 'src/utils';
 import { useRoute } from 'vue-router';
-import { dummyNotificationContent } from 'src/utils';
 import { useAuthStore } from 'src/stores/LoginAuth';
+import { useNotificationStore } from 'src/stores/NotificationStore';
 import { date } from 'quasar';
 // import { useDocumentDialog } from 'src/utils/composables/dialog'
 import notificationMenu from './NotifButton.vue';
 import AddButtonComponent from 'src/components/ShipmentButton.vue';
+
+const notificationStore = useNotificationStore();
+
+onMounted(async () => {
+  await notificationStore.fetchNotifications(authStore.username?.username);
+});
 
 // const { showNotificationDialog } = useDocumentDialog()
 const route = useRoute();
@@ -25,7 +31,7 @@ function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
 
-provide('dummyNotificationItems', dummyNotificationContent);
+provide('dummyNotificationItems', notificationStore.notifications);
 </script>
 
 <template>
@@ -62,7 +68,10 @@ provide('dummyNotificationItems', dummyNotificationContent);
         </div>
 
         <q-btn flat round icon="notifications" class="text-primary">
-          <notificationMenu />
+          <notificationMenu
+            :notifications="notificationStore.notifications"
+            :loading="notificationStore.loading"
+          />
         </q-btn>
       </q-toolbar>
 
