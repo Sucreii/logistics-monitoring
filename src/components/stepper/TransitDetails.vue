@@ -120,6 +120,10 @@ const warehouseSelectOptions = computed(() => {
           <q-input
             v-else-if="field.variant === 'price'"
             v-model.number="tripsInfo[field.model as TripsInputKeys]"
+            :rules="[ 
+              val => (val !== null && val !== '') || 'Value is required',
+              val => val !== 0 || 'Value cannot be zero' 
+            ]"
             type="number"
             placeholder="₱"
             dense
@@ -130,6 +134,10 @@ const warehouseSelectOptions = computed(() => {
           <q-input
             v-else
             v-model="tripsInfo[field.model as TripsInputKeys]"
+            :rules="[ 
+              val => (val !== null && val !== '') || 'Value is required',
+              val => val !== 0 || 'Value cannot be zero' 
+            ]"
             :placeholder="field.placeholder"
             :icon="field.icon"
             dense

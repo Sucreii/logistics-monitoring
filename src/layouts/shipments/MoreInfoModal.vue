@@ -10,6 +10,8 @@ const props = defineProps<{
   modelValue: boolean;
   row: Shipment | null;
 }>();
+
+console.log('Display More Modal: ', props.row)
 </script>
 
 <template>
@@ -20,8 +22,9 @@ const props = defineProps<{
           <div class="row q-col-gutter-sm">
             <div class="col-6">
               <q-input
-                :model-value="props.row?.warehouse_id"
-                label="Warehouse ID"
+                :model-value="props.row?.selectivity"
+                class="upper-case"
+                label="Selectivity"
                 outlined
                 readonly
               />
@@ -29,7 +32,8 @@ const props = defineProps<{
             <div class="col-6">
               <q-input
                 :model-value="props.row?.warehouse_id"
-                label="Container No."
+                class="upper-case"
+                label="Warehouse ID"
                 outlined
                 readonly
               />
@@ -71,3 +75,9 @@ const props = defineProps<{
     </q-card>
   </q-dialog>
 </template>
+
+<style scoped>
+.upper-case :deep(input) {
+  text-transform: uppercase;
+}
+</style>

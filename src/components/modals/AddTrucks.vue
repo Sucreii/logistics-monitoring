@@ -53,7 +53,7 @@ const submitUser = async () => {
     $q.notify({
       type: 'positive',
       position: 'top',
-      message: 'New Truck Profile has been added.successfully',
+      message: 'New Truck Profile has been added successfully',
       timeout: 3000,
     });
   } catch (err) {

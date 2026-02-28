@@ -31,6 +31,8 @@ const fieldDisplayArr = computed(() => [
   { key: 'volx', label: 'Vol. X', col: '2', modelVal: Number(userInfo.volumex) },
   { key: 'voly', label: 'Vol. Y', col: '2', modelVal: Number(userInfo.volumey) },
 ]);
+
+console.log('Shipment Info: ', userInfo);
 </script>
 <template>
   <div class="row q-col-gutter-md q-mb-md">

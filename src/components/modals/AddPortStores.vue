@@ -52,7 +52,7 @@ const submitPortStore = async () => {
     $q.notify({
       type: 'positive',
       position: 'top',
-      message: 'New Port Store has been added.successfully',
+      message: 'New Port Store has been added successfully',
       timeout: 3000,
     });
   } catch (err) {

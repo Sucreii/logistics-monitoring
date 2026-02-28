@@ -156,6 +156,7 @@ const POST_NEW_SHIPMENTINFO = gql`
       reference
       port_id
       warehouse_id
+      shipping_line
       status
       customer {
         id
@@ -626,28 +627,48 @@ export const useShipmentInfo = defineStore('postShipment', {
 
   actions: {
     async submitShipment() {
+      // const payload = {
+      //   ...shipmentForm2,
+      //   // containers: shipmentForm2.containers.map(c => typeof c === 'object' ? String(c.id) : String(c)),
+      //   containers: Array.isArray(shipmentForm2.containers) ? shipmentForm2.containers : [],
 
-      const payload = {
-        ...shipmentForm2,
+      //   finances: shipmentForm2.finances.map((f) => ({
+      //     title: f.title,
+      //     type: f.type,
+      //     value: Number(f.value),
+      //   })),
+      // };
 
-        // estimated_time_arrival: new Date(shipmentForm.estimated_time_arrival).toISOString(),
-        // containers: Array.isArray(shipmentForm2.containers)
-        //   ? shipmentForm2.containers.map(c => (typeof c === 'object' ? String(c.id) : String(c)))
-        //   : [],
-        containers: [shipmentForm2.containers],
+      const input = {
+        blno: shipmentForm2.blno,
+        selectivity: shipmentForm2.selectivity,
+        contract_no: shipmentForm2.contract_no?.trim() || 'N/A',
+        entry_no: shipmentForm2.entry_no,
+        registry_no: shipmentForm2.registry_no,
+        port_id: shipmentForm2.port_id,
+        warehouse_id: shipmentForm2.warehouse_id,
+        shipping_line: shipmentForm2.shipping_line,
+        volumex: Number(shipmentForm2.volumex),
+        volumey: Number(shipmentForm2.volumey),
+        customer_username: shipmentForm2.customer_username,
+        issuer_username: shipmentForm2.issuer_username,
+        estimated_time_arrival: shipmentForm2.estimated_time_arrival,
+
+        containers: shipmentForm2.containers
+          ? [String(shipmentForm2.containers)]
+          : [],
 
         finances: shipmentForm2.finances.map((f) => ({
           title: f.title,
           type: f.type,
           value: Number(f.value),
         })),
-      };
-
-      console.log('I AM PAYLOAD SHIPMENT: ', payload)
+      }
+      console.log('I AM PAYLOAD SHIPMENT: ', input)
 
       const { data } = await apolloClient.mutate({
         mutation: POST_NEW_SHIPMENTINFO,
-        variables: { input: payload },
+        variables: { input },
       });
 
       return data.createShipment;
@@ -962,6 +983,8 @@ export const updateTripsForm = defineStore('updateTripsForm', {
           }))
         }
 
+        console.log('TRIPS PAYLOAD: ', payload)
+
         const { data } = await apolloClient.mutate({
           mutation: UPDATE_TRIP,
           variables: { input: payload },
@@ -969,7 +992,6 @@ export const updateTripsForm = defineStore('updateTripsForm', {
         });
 
         return data.updateTrip;
-
       } catch (err) {
         console.error('Error updating trip:', err);
         throw err;

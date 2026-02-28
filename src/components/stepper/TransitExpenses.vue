@@ -46,6 +46,10 @@ console.log('Transit Expenses: ', shipInfo);
       <div class="col-4">
         <q-input
           v-model.number="finance.value"
+          :rules="[ 
+            val => (val !== null && val !== '') || 'Value is required',
+            val => val !== 0 || 'Value cannot be zero' 
+          ]"
           label="Value"
           type="number"
           dense

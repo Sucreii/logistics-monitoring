@@ -9,7 +9,12 @@ console.log('Truck Info: ', portInfo.value);
 <template>
   <div class="row q-col-gutter-md">
     <div class="col-3">
-      <q-input :model-value="storablesForm.id" label="Port Name" outlined readonly />
+      <q-input 
+        :model-value="storablesForm.id" 
+        class="upper-case" 
+        label="Port Name" 
+        outlined 
+        readonly />
     </div>
     <div class="col-3">
       <q-input :model-value="storablesForm.type" label="Type" outlined readonly />
@@ -24,3 +29,8 @@ console.log('Truck Info: ', portInfo.value);
     </div>
   </div>
 </template>
+<style scoped>
+.upper-case :deep(input) {
+  text-transform: uppercase;
+}
+</style>

@@ -77,7 +77,7 @@ const updateNewShipmentInfo = async () => {
     $q.notify({
       type: 'positive',
       position: 'top',
-      message: response.data.message,
+      message: response.data.message || 'Shipment info updated successfully!',
       timeout: 3000,
     })
   } catch (err) {
