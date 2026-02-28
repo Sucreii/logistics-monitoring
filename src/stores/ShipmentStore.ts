@@ -68,6 +68,7 @@ const GET_PAGINATED_TRIPS = gql`
         base_rate
         volumex
         volumey
+        date_delivered
         truck {
           id
           operator
@@ -188,6 +189,7 @@ const POST_NEW_TRANSITINFO = gql`
       base_rate
       volumex
       volumey
+      date_delivered
       truck {
         id
         operator
@@ -320,6 +322,7 @@ query GetPaginatedTrips($query: String) {
     items{
         id
         commodity
+        date_delivered
         truck {
             id
             operator
@@ -395,6 +398,7 @@ const UPDATE_TRIP = gql`
       base_rate
       volumex
       volumey
+      date_delivered
       truck {
           id
           operator
@@ -905,8 +909,8 @@ export const updateShipmentForm = defineStore('updateShipmentForm', {
       try {
         const payload = {
           ...shipmentForm,
-          volumex: Number(shipmentForm.volumex), 
-          volumey: Number(shipmentForm.volumey), 
+          volumex: Number(shipmentForm.volumex),
+          volumey: Number(shipmentForm.volumey),
           containers: Array.isArray(shipmentForm.containers) ? shipmentForm.containers : []
         }
 
@@ -935,16 +939,15 @@ export const updateTripsForm = defineStore('updateTripsForm', {
 
   actions: {
     async submitUpdateTrip() {
-      console.log('I AM CLICKED')
       if (this.loading) return
       this.loading = true;
 
       try {
         const payload = {
           ...tripsForm,
-          base_rate: Number(tripsForm.base_rate), 
-          volumex: Number(tripsForm.volumex), 
-          volumey: Number(tripsForm.volumey), 
+          base_rate: Number(tripsForm.base_rate),
+          volumex: Number(tripsForm.volumex),
+          volumey: Number(tripsForm.volumey),
           finances: tripsForm.finances.map(f => ({
             title: f.title,
             type: f.type,
@@ -958,11 +961,10 @@ export const updateTripsForm = defineStore('updateTripsForm', {
           fetchPolicy: 'no-cache'
         });
 
-        console.log('Updated Trip: ', data.updateTrip);
         return data.updateTrip;
+
       } catch (err) {
         console.error('Error updating trip:', err);
-
         throw err;
       } finally {
         this.loading = false;

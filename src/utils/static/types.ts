@@ -97,7 +97,7 @@ export interface SearchShipmentType {
   contract_no: string;
   registry_no: string;
   entry_no: string;
-  shipping_line: string; 
+  shipping_line: string;
   volumex?: number;
   volumey?: number;
   status: string;
@@ -117,22 +117,23 @@ export interface SearchShipmentType {
 export interface SearchTripType {
   id: string;
   commodity: string;
+  date_delivered: string;
   truck: {
     id: string;
     operator: string;
-  }; 
+  };
   warehouse: {
-    id: string; 
+    id: string;
     description: string;
-  }; 
+  };
   port: {
-    id: string; 
+    id: string;
     description: string;
-  }; 
+  };
   container: {
-    id: string; 
+    id: string;
     description: string;
-  }; 
+  };
   financeSummary?: {
     title: string;
     type: string;
@@ -146,6 +147,7 @@ export interface Trips {
   base_rate: number;
   volumex: number;
   volumey: number;
+  date_delivered: string;
   truck: {
     id: string;
     operator: string | null;

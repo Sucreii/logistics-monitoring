@@ -1,9 +1,9 @@
 import { reactive, ref } from 'vue';
 
 export const shipmentForm = reactive({
-  id: '', 
+  id: '',
   selectivity: '',
-  status: '', 
+  status: '',
   blno: '',
   contract_no: '',
   warehouse_id: '',
@@ -28,7 +28,7 @@ export const shipmentForm = reactive({
 });
 
 export const tripsForm = reactive({
-  id: '', 
+  id: '',
   container_id: '',
   truck_id: '',
   port_id: '',
@@ -37,6 +37,7 @@ export const tripsForm = reactive({
   base_rate: 0,
   volumex: 0,
   volumey: 0,
+  date_delivered: '',
   finances: [
     {
       title: '',

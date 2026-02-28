@@ -19,13 +19,14 @@ const selectedTripInfoRow = ref<Trips>();
 const showModalMoreInfo = ref(false);
 const showModalEditInfo = ref(false);
 const tableRows = computed(() => {
-  if(searchTripStore.searchResults.length > 0) {
+  if (searchTripStore.searchResults.length > 0) {
     return (searchTripStore.searchResults || []).map((item) => ({
       ...item,
       truckId: item.truck?.id ?? '-',
       warehouseId: item.warehouse?.id ?? '-',
       containerId: item.container?.id ?? '-',
       portId: item.port?.id ?? '-',
+      dateDelivered: unixToYMD(Number(item.date_delivered)) ?? '-',
     }));
   }
 
@@ -35,8 +36,14 @@ const tableRows = computed(() => {
     warehouseId: item.warehouse?.id ?? '-',
     containerId: item.container?.id ?? '-',
     portId: item.port?.id ?? '-',
+    dateDelivered: unixToYMD(Number(item.date_delivered)) ?? '-',
   }));
 });
+
+function unixToYMD(unixSeconds: number) {
+  const date = new Date(unixSeconds);
+  return date.toISOString().split('T')[0];
+}
 
 watch(
   () => graphTrips.totalCount,
@@ -66,6 +73,7 @@ const columns: QTableColumn[] = [
   { name: 'warehouseId', label: 'Warehouse', field: 'warehouseId', align: 'left' },
   { name: 'containerId', label: 'Container', field: 'containerId', align: 'left' },
   { name: 'portId', label: 'Port', field: 'portId', align: 'left' },
+  { name: 'dateDelivered', label: 'Date Delivered', field: 'dateDelivered', align: 'left' },
   { name: 'action', label: 'More Info', field: 'action', align: 'left' },
 ];
 
@@ -74,10 +82,10 @@ const moreDetails = (row: Trips) => {
   showModalMoreInfo.value = true;
 };
 
-const editShipmentInfo = (row : Trips) => {
+const editShipmentInfo = (row: Trips) => {
   selectedTripInfoRow.value = row;
   showModalEditInfo.value = true;
-}
+};
 </script>
 <template>
   <q-card-section class="q-pt-none">
@@ -102,13 +110,13 @@ const editShipmentInfo = (row : Trips) => {
             <q-tooltip>View Finance Summary</q-tooltip>
           </q-btn>
 
-          <q-btn 
-                @click="editShipmentInfo(props.row)"
-                icon="sym_o_edit_square" 
-                color="primary" 
-                flat 
-                round 
-              />
+          <q-btn
+            @click="editShipmentInfo(props.row)"
+            icon="sym_o_edit_square"
+            color="primary"
+            flat
+            round
+          />
         </q-td>
       </template>
 

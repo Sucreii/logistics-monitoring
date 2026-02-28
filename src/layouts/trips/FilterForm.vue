@@ -24,15 +24,13 @@ const handlSearchButton = async () => {
   } finally {
     Loading.hide();
   }
-}
+};
 
 const handleClear = () => {
   searchValue.value = '';
   searchTripStore.searchResults = [];
   searchTripStore.totalCount = 0;
 };
-
-console.log('I AM SEARCH BOX: ', searchValue);
 </script>
 
 <template>
@@ -40,7 +38,7 @@ console.log('I AM SEARCH BOX: ', searchValue);
     <div class="row">
       <q-input
         @keyup.enter="handlSearchButton"
-        @clear="handleClear"  
+        @clear="handleClear"
         class="rounded-input q-mr-sm"
         v-model="searchValue"
         placeholder="Search"
