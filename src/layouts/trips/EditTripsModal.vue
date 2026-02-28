@@ -16,6 +16,7 @@ const closeDialog = () => {
 };
 
 const truckSelectOptions = computed(() => {
+  console.log('I AM TRUCK SELECT', graphTruckDropDown)
   return graphTruckDropDown.trucks.map((trucks) => ({
     label: trucks.id,
     value: trucks.id,
@@ -29,7 +30,6 @@ const portSelectOptions = computed(() => {
       value: port.id,
     }));
 });
-
 const containerSelectOptions = computed(() => {
   return graphPorts.storables
     .filter((port) => port.type === 'CONTAINER' || port.type === 'container')
@@ -38,7 +38,6 @@ const containerSelectOptions = computed(() => {
       value: port.id,
     }));
 });
-
 const warehouseSelectOptions = computed(() => {
   return graphPorts.storables
     .filter((port) => port.type === 'WAREHOUSE')
@@ -54,17 +53,22 @@ const props = defineProps<{
 }>();
 
 const inputArr = computed((): TripInputItem[] => [
-  { key: 'commodity', inputVModel: 'commodity', colSpace: '6', label: 'Commodity' },
-  { key: 'baseRate', inputVModel: 'base_rate', colSpace: '6', label: 'Base Rate' },
-  { key: 'volx', inputVModel: 'volumex', colSpace: '3', label: 'Vol X' },
-  { key: 'voly', inputVModel: 'volumey', colSpace: '3', label: 'Vol Y' },
+  { key: 'truck', inputVModel: 'truck_id', colSpace: '6', label: 'Truck ID', type: 'select' },
+  { key: 'port', inputVModel: 'port_id', colSpace: '6', label: 'Port ID', type: 'select' },
+  { key: 'warehouse', inputVModel: 'warehouse_id', colSpace: '6', label: 'Warehouse ID', type: 'select' },
+  { key: 'container', inputVModel: 'container_id', colSpace: '6', label: 'Container ID', type: 'select' },
+  { key: 'commodity', inputVModel: 'commodity', colSpace: '6', label: 'Commodity', type: 'text' },
+  { key: 'baseRate', inputVModel: 'base_rate', colSpace: '6', label: 'Base Rate', type: 'number' },
+  { key: 'volx', inputVModel: 'volumex', colSpace: '3', label: 'Vol X', type: 'number' },
+  { key: 'voly', inputVModel: 'volumey', colSpace: '3', label: 'Vol Y', type: 'number' },
+  // { key: 'dateCreated', inputVModel: 'date_delivered', colSpace: '6', label: 'Date Created', type: 'date' },
 ]);
 
 watch(
   () => props.row,
   (newVal) => {
     if (newVal && props.modelValue) {
-      // tripsForm.id = newVal.id;
+      tripsForm.id = newVal.id;
       tripsForm.commodity = newVal.commodity;
       tripsForm.truck_id = newVal.truck?.id || '';
       tripsForm.port_id = newVal.port?.id || '';
@@ -116,7 +120,7 @@ const updateNewTripsInfo = async () => {
         <q-card-section>
           <div class="text-overline text-weight-bolder text-primary">Edit Trips Info</div>
           <div class="row q-col-gutter-sm">
-            <div class="col-4">
+            <!-- <div class="col-4">
               <q-select
                 v-model="tripsForm['port_id'] as any"
                 :options="portSelectOptions"
@@ -165,10 +169,67 @@ const updateNewTripsInfo = async () => {
                 outlined
                 clearable
               />
-            </div>
+            </div> -->
 
             <div v-for="item in inputArr" :key="item.key" :class="'col-' + item.colSpace">
+              <q-select
+                v-if="item.inputVModel === 'truck_id'"
+                v-model="tripsForm[item.inputVModel]"
+                :options="truckSelectOptions"
+                :label="item.label"
+                emit-value
+                map-options
+                outlined
+              />
+
+              <q-select
+                v-else-if="item.inputVModel === 'port_id'"
+                v-model="tripsForm[item.inputVModel]"
+                :options="portSelectOptions"
+                :label="item.label"
+                emit-value
+                map-options
+                outlined
+              />
+
+              <q-select
+                v-else-if="item.inputVModel === 'warehouse_id'"
+                v-model="tripsForm[item.inputVModel]"
+                :options="warehouseSelectOptions"
+                :label="item.label"
+                emit-value
+                map-options
+                outlined
+              />
+
+              <q-select
+                v-else-if="item.inputVModel === 'container_id'"
+                v-model="tripsForm[item.inputVModel]"
+                :options="containerSelectOptions"
+                :label="item.label"
+                emit-value
+                map-options
+                outlined
+              />
+
+              <!-- <q-input
+                v-else-if="item.inputVModel === 'date_delivered'"
+                v-model="tripsForm[item.inputVModel]"
+                :label="item.label"
+                outlined
+                readonly
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                      <q-date v-model="tripsForm[item.inputVModel]" mask="YYYY-MM-DD" />
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input> -->
+
               <q-input
+                v-else
                 v-model="tripsForm[item.inputVModel] as any"
                 :type="
                   item.inputVModel === 'volumex' || item.inputVModel === 'volumey'
@@ -179,6 +240,8 @@ const updateNewTripsInfo = async () => {
                 outlined
               />
             </div>
+
+            
             <div class="col-12">
               <!-- <q-input
                 v-model="tripsForm['date_delivered'] as string"

@@ -983,6 +983,8 @@ export const updateTripsForm = defineStore('updateTripsForm', {
           }))
         }
 
+        console.log('TRIPS PAYLOAD: ', payload)
+
         const { data } = await apolloClient.mutate({
           mutation: UPDATE_TRIP,
           variables: { input: payload },
@@ -990,7 +992,6 @@ export const updateTripsForm = defineStore('updateTripsForm', {
         });
 
         return data.updateTrip;
-
       } catch (err) {
         console.error('Error updating trip:', err);
         throw err;

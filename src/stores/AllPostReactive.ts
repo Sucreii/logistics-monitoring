@@ -58,8 +58,8 @@ export const shipmentForm2 = reactive({
   ],
 });
 
-
 export const tripsForm = reactive({
+  id: '',
   container_id: '',
   truck_id: '',
   port_id: '',

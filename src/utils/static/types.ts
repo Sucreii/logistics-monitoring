@@ -54,6 +54,7 @@ export interface TripInputItem {
   inputVModel: keyof typeof tripsForm;
   colSpace: string;
   label: string;
+  type: InputType;
 }
 
 export interface Shipment {
