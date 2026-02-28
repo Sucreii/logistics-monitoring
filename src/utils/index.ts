@@ -324,7 +324,7 @@ export const CreateAdditionalPort: AdditionalPortStoreTypes[] = [
     type: 'text',
     col: '3',
     variant: 'information',
-    rules: [(val) => !!val || 'Operator Name is required'],
+    // rules: [(val) => !!val || 'Operator Name is required'],
   },
   {
     label: 'Description',
