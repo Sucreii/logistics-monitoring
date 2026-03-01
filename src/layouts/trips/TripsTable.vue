@@ -41,7 +41,13 @@ const tableRows = computed(() => {
 
 function unixToYMD(unixSeconds: number) {
   const date = new Date(unixSeconds);
-  return date.toISOString().split('T')[0];
+
+  const formattedDate = date.toISOString().split('T')[0]
+  if(formattedDate === "1970-01-01"){
+    return "IN-TRANSIT"
+  } else {
+    return formattedDate
+  }
 }
 
 watch(

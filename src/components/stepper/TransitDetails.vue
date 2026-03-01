@@ -2,7 +2,7 @@
 import { onMounted, computed } from 'vue';
 import { getAllPortStorables, getAllTrips, getTruckStorables } from 'src/stores/ShipmentStore';
 import { CreateTransitDetailsFields } from 'src/utils';
-import { tripsForm } from 'src/stores/AllPostReactive';
+import { tripsForm2 } from 'src/stores/AllPostReactive';
 
 onMounted(async () => {
   await graphPorts.fetchPortStores();
@@ -10,8 +10,8 @@ onMounted(async () => {
   await graphTruckDropDown.fetchTruckStores();
 });
 
-type TripsInputKeys = Exclude<keyof typeof tripsForm, 'finances'>;
-const tripsInfo = tripsForm;
+type TripsInputKeys = Exclude<keyof typeof tripsForm2, 'finances'>;
+const tripsInfo = tripsForm2;
 const graphPorts = getAllPortStorables();
 const graphTruckDropDown = getTruckStorables();
 const graphTrips = getAllTrips();

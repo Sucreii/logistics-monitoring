@@ -59,16 +59,33 @@ const submitAll = async () => {
   });
 
   try {
-    await transitStore.createTrip();
+    const res = await transitStore.createTrip();
 
-    $q.notify({
+    if(res.error){
+        $q.notify({
+        type: 'negative',
+        position: 'top',
+        message: 'Error creating shipment',
+        timeout: 3000,
+      });
+    }
+
+    if(res.id){
+      $q.notify({
       type: 'positive',
       position: 'top',
-      message: 'New Transit Order has been added successfully',
+      message: 'Successfully created shipment',
       timeout: 3000,
     });
+    }
   } catch (err) {
     console.error('Error adding new Transit: ', err);
+      $q.notify({
+        type: 'negative',
+        position: 'top',
+        message: 'Error creating shipment',
+        timeout: 3000,
+      });
   } finally {
     Loading.hide();
     onDialogHide();
