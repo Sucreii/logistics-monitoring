@@ -2,7 +2,7 @@ import { ref } from 'vue';
 import { defineStore } from 'pinia';
 import { HTTP_API } from 'src/boot/axios';
 import { apolloClient } from 'src/boot/apollo';
-import { shipmentForm, truckForm, tripsForm, storablesForm, shipmentForm2 } from 'src/stores/AllPostReactive';
+import { shipmentForm, truckForm, tripsForm, storablesForm, shipmentForm2, tripsForm2 } from 'src/stores/AllPostReactive';
 import type {
   Shipment,
   Users,
@@ -642,7 +642,7 @@ export const useShipmentInfo = defineStore('postShipment', {
       const input = {
         blno: shipmentForm2.blno,
         selectivity: shipmentForm2.selectivity,
-        contract_no: shipmentForm2.contract_no?.trim() || 'N/A', 
+        contract_no: shipmentForm2.contract_no?.trim() || null,
         entry_no: shipmentForm2.entry_no,
         registry_no: shipmentForm2.registry_no,
         port_id: shipmentForm2.port_id,
@@ -654,8 +654,11 @@ export const useShipmentInfo = defineStore('postShipment', {
         issuer_username: shipmentForm2.issuer_username,
         estimated_time_arrival: shipmentForm2.estimated_time_arrival,
 
-        containers: shipmentForm2.containers 
-          ? [String(shipmentForm2.containers)] 
+        containers: shipmentForm2.containers
+          ? shipmentForm2.containers
+            .split(',')
+            .map(c => c.trim())
+            .filter(c => c !== '')
           : [],
 
         finances: shipmentForm2.finances.map((f) => ({
@@ -664,7 +667,7 @@ export const useShipmentInfo = defineStore('postShipment', {
           value: Number(f.value),
         })),
       }
-      console.log('I AM PAYLOAD SHIPMENT: ', input)
+      // console.log('I AM PAYLOAD SHIPMENT: ', input)
 
       const { data } = await apolloClient.mutate({
         mutation: POST_NEW_SHIPMENTINFO,
@@ -684,9 +687,9 @@ export const useTransitInfo = defineStore('postTransit', {
   actions: {
     async createTrip() {
       const payload = {
-        ...tripsForm,
+        ...tripsForm2,
 
-        finances: tripsForm.finances.map((f) => ({
+        finances: tripsForm2.finances.map((f) => ({
           title: f.title,
           type: f.type,
           value: Number(f.value),

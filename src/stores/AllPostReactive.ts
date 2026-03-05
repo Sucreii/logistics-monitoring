@@ -43,7 +43,7 @@ export const shipmentForm2 = reactive({
   issuer_username: '',
   // containers: [] as string[],
   // containers: [] as (string | { id: string | number })[],
-  containers: '', 
+  containers: '',
   finances: [
     {
       title: 'BILLING',
@@ -68,20 +68,85 @@ export const tripsForm = reactive({
   base_rate: 0,
   volumex: 0,
   volumey: 0,
-  // date_delivered: '',
+  date_delivered: '',
   finances: [
     {
-      title: 'BILLING',
+      title: 'Tariff Rate',
       type: 'amount',
       value: 0,
     },
     {
-      title: 'COST',
+      title: 'P/R Expense',
+      type: 'amount',
+      value: 0,
+    },
+    {
+      title: 'Drvr Comm',
+      type: 'amount',
+      value: 0,
+    },
+    {
+      title: 'Hlpr Comm',
+      type: 'amount',
+      value: 0,
+    },
+    {
+      title: 'Other Exp',
+      type: 'amount',
+      value: 0,
+    },
+    {
+      title: 'RFID',
       type: 'amount',
       value: 0,
     },
   ],
 });
+
+export const tripsForm2 = reactive({
+  container_id: '',
+  truck_id: '',
+  port_id: '',
+  commodity: '',
+  warehouse_id: '',
+  base_rate: 0,
+  volumex: 0,
+  volumey: 0,
+  // date_delivered: '',
+  finances: [
+    {
+      title: 'Tariff Rate',
+      type: 'amount',
+      value: 0,
+    },
+    {
+      title: 'P/R Expense',
+      type: 'amount',
+      value: 0,
+    },
+    {
+      title: 'Drvr Comm',
+      type: 'amount',
+      value: 0,
+    },
+    {
+      title: 'Hlpr Comm',
+      type: 'amount',
+      value: 0,
+    },
+    {
+      title: 'Other Exp',
+      type: 'amount',
+      value: 0,
+    },
+    {
+      title: 'RFID',
+      type: 'amount',
+      value: 0,
+    },
+  ],
+});
+
 
 export const pagination = ref({
   page: 1,

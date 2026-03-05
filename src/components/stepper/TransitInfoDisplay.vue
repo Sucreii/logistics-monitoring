@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { tripsForm } from 'src/stores/AllPostReactive';
+import { tripsForm2 } from 'src/stores/AllPostReactive';
 
 type SimpleTripsKeys = Exclude<keyof typeof userInfo, 'finances'>;
-const userInfo = tripsForm;
+const userInfo = tripsForm2;
 const fieldDisplayArr = computed(() => [
   { key: 'container_id', label: 'Container ID', col: '6', modelVal: userInfo.container_id },
   { key: 'commodity', label: 'Commodity', col: `6`, modelVal: userInfo.commodity },

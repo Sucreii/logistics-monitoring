@@ -59,9 +59,33 @@ const submitAll = async () => {
   });
 
   try {
-    await shipmentStore.submitShipment();
+    const res = await shipmentStore.submitShipment();
+
+    if(res.error){
+        $q.notify({
+        type: 'negative',
+        position: 'top',
+        message: 'Error creating shipment',
+        timeout: 3000,
+      });
+    }
+
+    if(res.id){
+      $q.notify({
+      type: 'positive',
+      position: 'top',
+      message: 'Successfully created shipment',
+      timeout: 3000,
+    });
+    }
   } catch (err) {
     console.error('Error adding new Shipment: ', err);
+        $q.notify({
+        type: 'negative',
+        position: 'top',
+        message: 'Error creating shipment',
+        timeout: 3000,
+      });
   } finally {
     Loading.hide();
     onDialogHide();

@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { tripsForm } from 'src/stores/AllPostReactive';
+import { tripsForm2 } from 'src/stores/AllPostReactive';
 
-const shipInfo = tripsForm;
+const shipInfo = tripsForm2;
 const addFinance = () => {
-  tripsForm.finances.push({
+  tripsForm2.finances.push({
     title: '',
     type: 'amount',
     value: 0,
@@ -11,7 +11,7 @@ const addFinance = () => {
 };
 
 const removeFinance = (index: number) => {
-  tripsForm.finances.splice(index, 1);
+  tripsForm2.finances.splice(index, 1);
 };
 
 console.log('Transit Expenses: ', shipInfo);
@@ -22,7 +22,7 @@ console.log('Transit Expenses: ', shipInfo);
       <q-btn @click="addFinance" label="Add" color="primary" icon="add" />
     </div>
 
-    <div v-for="(finance, index) in tripsForm.finances" :key="index" class="row q-col-gutter-sm">
+    <div v-for="(finance, index) in tripsForm2.finances" :key="index" class="row q-col-gutter-sm">
       <div class="col-4">
         <q-input v-model="finance.title" label="Title" dense outlined />
       </div>
@@ -47,8 +47,7 @@ console.log('Transit Expenses: ', shipInfo);
         <q-input
           v-model.number="finance.value"
           :rules="[ 
-            val => (val !== null && val !== '') || 'Value is required',
-            val => val !== 0 || 'Value cannot be zero' 
+            val => (val !== null && val !== '') || 'Value is required'
           ]"
           label="Value"
           type="number"
@@ -60,7 +59,7 @@ console.log('Transit Expenses: ', shipInfo);
 
       <div class="col-1">
         <q-btn
-          v-if="tripsForm.finances.length > 1"
+          v-if="tripsForm2.finances.length > 1"
           @click="removeFinance(index)"
           icon="delete"
           color="negative"

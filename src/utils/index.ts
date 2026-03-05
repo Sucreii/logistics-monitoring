@@ -279,7 +279,7 @@ export const CreateAdditionalShipments: AdditionalShipmentTypes[] = [
   },
   {
     label: 'Container',
-    placeholder: 'CON0012026',
+    placeholder: '(e.g., container1, container2)',
     model: 'containers',
     type: 'text',
     col: '4',

@@ -67,7 +67,7 @@ const inputArr = computed((): TripInputItem[] => [
   { key: 'baseRate', inputVModel: 'base_rate', colSpace: '6', label: 'Base Rate', type: 'number' },
   { key: 'volx', inputVModel: 'volumex', colSpace: '3', label: 'Vol X', type: 'number' },
   { key: 'voly', inputVModel: 'volumey', colSpace: '3', label: 'Vol Y', type: 'number' },
-  // { key: 'dateCreated', inputVModel: 'date_delivered', colSpace: '6', label: 'Date Created', type: 'date' },
+  { key: 'date_delivered', inputVModel: 'date_delivered', colSpace: '6', label: 'Date Delivered', type: 'date' },
 ]);
 
 watch(
@@ -83,7 +83,7 @@ watch(
       tripsForm.base_rate = newVal.base_rate;
       tripsForm.volumex = newVal.volumex;
       tripsForm.volumey = newVal.volumey;
-      // tripsForm.date_delivered = newVal.date_delivered;
+      tripsForm.date_delivered = newVal.date_delivered;
       tripsForm.finances = newVal.financeSummary?.map((f) => ({ ...f })) || [];
     }
   },
@@ -109,9 +109,15 @@ const updateNewTripsInfo = async () => {
       message: 'Successfully updated trip',
       timeout: 3000,
     });
-    // await graphTrips.fetchTrips();
+    await graphTrips.fetchTrips();
   } catch (err) {
     console.error('Error on updating Trips Info: ', err);
+      $q.notify({
+      type: 'negative',
+      position: 'top',
+      message: 'Error updating trip',
+      timeout: 3000,
+    });
     throw err;
   } finally {
     Loading.hide();
@@ -167,7 +173,7 @@ const updateNewTripsInfo = async () => {
                 outlined
               />
 
-              <!-- <q-input
+              <q-input
                 v-else-if="item.inputVModel === 'date_delivered'"
                 v-model="tripsForm[item.inputVModel]"
                 :label="item.label"
@@ -181,7 +187,7 @@ const updateNewTripsInfo = async () => {
                     </q-popup-proxy>
                   </q-icon>
                 </template>
-              </q-input> -->
+              </q-input>
 
               <q-input
                 v-else
