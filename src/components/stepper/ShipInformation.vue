@@ -23,6 +23,7 @@ const formData = ref<Record<string, string | number>>({});
             v-model="formData[field.model]"
             :placeholder="field.placeholder"
             :icon="field.icon"
+            class="upper-case"
             dense
             outlined
             clearable
@@ -32,3 +33,8 @@ const formData = ref<Record<string, string | number>>({});
     </div>
   </div>
 </template>
+<style scoped>
+.upper-case :deep(input) {
+  text-transform: uppercase;
+}
+</style>

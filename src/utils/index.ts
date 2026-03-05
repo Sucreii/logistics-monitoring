@@ -12,11 +12,6 @@ import type {
 } from 'src/utils/static/types';
 
 export type DialogKey = 'shipments' | 'trips' | 'users' | 'trucks';
-interface dummy {
-  title: string;
-  content: string;
-  date: string;
-}
 
 export const NavigationItems = [
   {
@@ -69,75 +64,59 @@ export const linksArr: {
   routeName: string;
   docDialog: DialogKey;
 }[] = [
-    {
-      label: 'Add new Shipments',
-      routeName: 'home.shipments',
-      icon: 'add_shopping_cart',
-      docDialog: 'shipments',
-    },
-    {
-      label: 'Add new Trips',
-      routeName: 'home.trips',
-      icon: 'local_shipping',
-      docDialog: 'trips',
-    },
-    {
-      label: 'Add new Users',
-      routeName: 'home.users',
-      icon: 'person_add',
-      docDialog: 'users',
-    },
-    {
-      label: 'Add new Truck Profile',
-      routeName: 'home.trucks',
-      icon: 'contact_emergency',
-      docDialog: 'trucks',
-    },
-  ];
-
-export const dummyNotificationContent: dummy[] = [
   {
-    title: 'May nag notif',
-    content: 'luh di nga? Totoo ba ? ',
-    date: 'December 20, 2024',
+    label: 'Add new Shipments',
+    routeName: 'home.shipments',
+    icon: 'add_shopping_cart',
+    docDialog: 'shipments',
   },
   {
-    title: 'May nag notif',
-    content: 'luh di nga? Totoo ba ? ',
-    date: 'December 20, 2024',
+    label: 'Add new Trips',
+    routeName: 'home.trips',
+    icon: 'local_shipping',
+    docDialog: 'trips',
   },
   {
-    title: 'May nag notif',
-    content: 'luh di nga? Totoo ba ? ',
-    date: 'December 20, 2024',
+    label: 'Add new Users',
+    routeName: 'home.users',
+    icon: 'person_add',
+    docDialog: 'users',
   },
   {
-    title: 'May nag notif',
-    content: 'luh di nga? Totoo ba ? ',
-    date: 'December 20, 2024',
-  },
-  {
-    title: 'May nag notif',
-    content: 'luh di nga? Totoo ba ? ',
-    date: 'December 20, 2024',
-  },
-  {
-    title: 'May nag notif',
-    content: 'luh di nga? Totoo ba ? ',
-    date: 'December 20, 2024',
-  },
-  {
-    title: 'hahaa',
-    content: 'luh di nga? Totoo ba ? ',
-    date: 'December 20, 2024',
-  },
-  {
-    title: 'huhuhuhuhuhuhu',
-    content: 'luh di nga? Totoo ba ? ',
-    date: 'December 1212, 2024',
+    label: 'Add new Truck Profile',
+    routeName: 'home.trucks',
+    icon: 'contact_emergency',
+    docDialog: 'trucks',
   },
 ];
 
+export const portArr = [
+  { label: 'MIP', value: 'MIP' },
+  { label: 'POM', value: 'POM' },
+  { label: 'CDO', value: 'CDO' },
+  { label: 'DAVAO', value: 'DAVAO' },
+  { label: 'CEBU', value: 'CEBU' },
+];
+
+export const selectivityArr = [
+  { label: 'RED', value: 'RED' },
+  { label: 'ORANGE', value: 'ORANGE' },
+  { label: 'YELLOW', value: 'YELLOW' },
+  { label: 'GREEN', value: 'GREEN' },
+];
+
+export const sizeArr = [
+  { label: '20ft', size: '20ft' },
+  { label: '40ft', size: '40ft' },
+  { label: 'LCL', size: 'LCL' },
+];
+
+export const statusArr = [
+  { label: 'PENDING', value: 'PENDING' },
+  { label: 'ARRIVED', value: 'ARRIVED' },
+];
+
+// - - - - - - - - - - - FIELDS INPUT - - - - - - - - - -
 export const CreateNewShipmentFields: ShipmentFieldTypes[] = [
   {
     label: 'Port',
@@ -170,6 +149,15 @@ export const CreateNewShipmentFields: ShipmentFieldTypes[] = [
 
 export const CreateAdditionalShipments: AdditionalShipmentTypes[] = [
   {
+    label: 'Selectivity',
+    placeholder: 'ORANGE',
+    model: 'selectivity',
+    type: 'text',
+    col: '3',
+    variant: 'selectivity',
+    rules: [(val) => !!val || 'Selectivity is required'],
+  },
+  {
     label: 'Consignee',
     placeholder: 'John Doe',
     model: 'customer_username',
@@ -179,31 +167,13 @@ export const CreateAdditionalShipments: AdditionalShipmentTypes[] = [
     rules: [(val) => !!val || 'Consignee is required'],
   },
   {
-    label: 'Selectivity',
-    placeholder: 'ORANGE',
-    model: 'selectivity',
-    type: 'text',
-    col: '4',
-    variant: 'information',
-    rules: [(val) => !!val || 'Selectivity is required'],
-  },
-  {
-    label: 'Issuer Name',
-    placeholder: 'WARE001',
-    model: 'issuer_username',
-    type: 'select',
-    col: '6',
-    variant: 'name',
-    rules: [(val) => !!val || 'Issuer Name is required'],
-  },
-  {
-    label: 'Bill of Landing No.',
-    placeholder: 'BILLNUM012026',
+    label: 'Bill of Lading No.',
+    placeholder: 'BLN0026002',
     model: 'blno',
     type: 'text',
-    col: '6',
+    col: '3',
     variant: 'information',
-    rules: [(val) => !!val || 'Bill of Landing No. is required'],
+    rules: [(val) => !!val || 'Bill of Lading No. is required'],
   },
   {
     label: 'Shipping Line',
@@ -237,61 +207,66 @@ export const CreateAdditionalShipments: AdditionalShipmentTypes[] = [
     placeholder: 'C-001-26',
     model: 'entry_no',
     type: 'text',
-    col: '4',
+    col: '6',
     variant: 'information',
     rules: [(val) => !!val || 'Entry No. is required'],
   },
+  // {
+  //   label: 'Warehouse',
+  //   placeholder: 'Polyland',
+  //   model: 'warehouse_id',
+  //   type: 'text',
+  //   col: '4',
+  //   variant: 'information',
+  //   rules: [(val) => !!val || 'Warehouse is required'],
+  // },
   {
-    label: 'Warehouse',
-    placeholder: 'Polyland',
-    model: 'warehouse_id',
-    type: 'text',
-    col: '4',
-    variant: 'information',
-    rules: [(val) => !!val || 'Warehouse is required'],
-  },
-  {
-    label: 'Volume X',
-    placeholder: 'Vol X',
+    label: 'Volume',
+    placeholder: '1',
     model: 'volumex',
-    type: 'number',
-    col: '2',
+    type: 'text',
+    col: '3',
     variant: 'information',
     rules: [(val) => !!val || 'Volume X is required'],
   },
   {
-    label: 'Volume Y',
-    placeholder: 'Vol Y',
+    label: 'Size',
+    placeholder: 'LCL',
     model: 'volumey',
-    type: 'number',
-    col: '2',
-    variant: 'information',
-    rules: [(val) => !!val || 'Volume Y is required'],
+    type: 'text',
+    col: '3',
+    variant: 'sizeForVol',
+    rules: [(val) => !!val || 'Size is required'],
   },
   {
     label: 'Registry No. ',
     placeholder: 'REG001-26',
     model: 'registry_no',
     type: 'text',
-    col: '4',
+    col: '6',
     variant: 'information',
     rules: [(val) => !!val || 'Registry No. is required'],
   },
-  {
-    label: 'Container',
-    placeholder: '(e.g., container1, container2)',
-    model: 'containers',
-    type: 'text',
-    col: '4',
-    variant: 'information',
-    rules: [(val) => !!val || 'Container ID is required'],
-  },
+  // {
+  //   label: 'Container',
+  //   placeholder: '(e.g., container1, container2)',
+  //   model: 'containers',
+  //   type: 'text',
+  //   col: '4',
+  //   variant: 'information',
+  //   rules: [
+  //     (val) => !!val || 'Container ID is required',
+  //     (val) =>
+  //       (val && /^[A-Za-z]{4}\d{7}$/.test(val as string)) ||
+  //       'Wrong Container format. Ex.: ABCD1234567',
+  //   ],
+  // },
   {
     label: 'Contract No.',
     placeholder: 'CON001-26',
     model: 'contract_no',
     type: 'text',
-    col: '4',
+    col: '6',
     variant: 'information',
     // rules: [(val) => !!val || 'Contract No. is required'],
   },
@@ -329,31 +304,22 @@ export const CreateAdditionalPort: AdditionalPortStoreTypes[] = [
 
 export const CreateAdditionalTrucks: AdditionalTrucksTypes[] = [
   {
-    label: 'Truck Name',
-    placeholder: 'Plate Number/Name',
-    model: 'id',
-    type: 'text',
-    col: '4',
-    variant: 'information',
-    rules: [(val) => !!val || 'Truck Name is required'],
-  },
-  {
-    label: 'Operator Name',
-    placeholder: 'John Doe',
-    model: 'operator',
-    type: 'text',
-    col: '5',
-    variant: 'information',
-    rules: [(val) => !!val || 'Operator Name is required'],
-  },
-  {
     label: 'Date',
     placeholder: 'YYYY-MM-DD',
     model: 'date_added',
     type: 'date',
-    col: '3',
-    variant: 'information',
+    col: '4',
+    variant: 'date',
     rules: [(val) => !!val || 'Date is required'],
+  },
+  {
+    label: 'Truck Name',
+    placeholder: 'Plate Number/Name',
+    model: 'id',
+    type: 'text',
+    col: '8',
+    variant: 'information',
+    rules: [(val) => !!val || 'Truck Name is required'],
   },
 ];
 
@@ -411,10 +377,15 @@ export const CreateTransitDetailsFields: TransitFieldTypes[] = [
     placeholder: 'TRANS001',
     model: 'container_id',
     icon: '',
-    type: 'select',
-    col: '6',
+    type: 'text',
+    col: '4',
     variant: 'container',
-    rules: [(val) => !!val || 'Container ID is required'],
+    rules: [
+      (val) => !!val || 'Container ID is required',
+      (val) =>
+        (val && /^[A-Za-z]{4}\d{7}$/.test(val as string)) ||
+        'Wrong Container format. Ex.: ABCD1234567',
+    ],
   },
   {
     label: 'Commodity',
@@ -422,9 +393,19 @@ export const CreateTransitDetailsFields: TransitFieldTypes[] = [
     model: 'commodity',
     icon: '',
     type: 'text',
-    col: '6',
+    col: '4',
     variant: 'information',
     rules: [(val) => !!val || 'Commodity is required'],
+  },
+  {
+    label: 'Warehouse',
+    placeholder: 'Silang, Cavite',
+    model: 'warehouse_id',
+    icon: '',
+    type: 'text',
+    col: '4',
+    variant: 'warehouse',
+    rules: [(val) => !!val || 'Warehouse ID is required'],
   },
   {
     label: 'Truck',
@@ -442,49 +423,19 @@ export const CreateTransitDetailsFields: TransitFieldTypes[] = [
     model: 'port_id',
     icon: '',
     type: 'text',
-    col: '3',
+    col: '4',
     variant: 'port',
     rules: [(val) => !!val || 'Port ID is required'],
   },
   {
-    label: 'Warehouse',
-    placeholder: 'Silang, Cavite',
-    model: 'warehouse_id',
-    icon: '',
-    type: 'text',
-    col: '5',
-    variant: 'warehouse',
-    rules: [(val) => !!val || 'Warehouse ID is required'],
-  },
-  {
-    label: 'Base Rate',
-    placeholder: '000,000',
-    model: 'base_rate',
-    icon: '',
-    type: 'number',
-    col: '6',
-    variant: 'price',
-    rules: [(val) => !!val || 'Base Rate is required'],
-  },
-  {
-    label: 'Volume X',
-    placeholder: '000',
+    label: 'Volume',
+    placeholder: '10ft',
     model: 'volumex',
     icon: '',
-    type: 'number',
-    col: '3',
+    type: 'text',
+    col: '4',
     variant: 'price',
-    rules: [(val) => !!val || 'Volume X is required'],
-  },
-  {
-    label: 'Volume Y',
-    placeholder: '000',
-    model: 'volumey',
-    icon: '',
-    type: 'number',
-    col: '3',
-    variant: 'price',
-    rules: [(val) => !!val || 'Volume Y is required'],
+    rules: [(val) => !!val || 'Volume is required'],
   },
 ];
 

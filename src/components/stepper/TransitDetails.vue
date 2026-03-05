@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { onMounted, computed } from 'vue';
+import { onMounted, computed, ref } from 'vue';
 import { getAllPortStorables, getAllTrips, getTruckStorables } from 'src/stores/ShipmentStore';
-import { CreateTransitDetailsFields } from 'src/utils';
+import { CreateTransitDetailsFields, sizeArr, portArr } from 'src/utils';
 import { tripsForm2 } from 'src/stores/AllPostReactive';
 
 onMounted(async () => {
@@ -13,8 +13,10 @@ onMounted(async () => {
 type TripsInputKeys = Exclude<keyof typeof tripsForm2, 'finances'>;
 const tripsInfo = tripsForm2;
 const graphPorts = getAllPortStorables();
-const graphTruckDropDown = getTruckStorables();
 const graphTrips = getAllTrips();
+const graphTruckDropDown = getTruckStorables();
+const portOption = ref(portArr);
+const volOption = ref(sizeArr);
 
 const truckSelectOptions = computed(() => {
   return graphTruckDropDown.trucks.map((trucks) => ({
@@ -22,37 +24,10 @@ const truckSelectOptions = computed(() => {
     value: trucks.id,
   }));
 });
-
-const portSelectOptions = computed(() => {
-  return graphPorts.storables
-    .filter((port) => port.type === 'PORT' || port.type === 'port')
-    .map((port) => ({
-      label: port.id,
-      value: port.id,
-    }));
-});
-
-const containerSelectOptions = computed(() => {
-  return graphPorts.storables
-    .filter((port) => port.type === 'CONTAINER' || port.type === 'container')
-    .map((port) => ({
-      label: port.id,
-      value: port.id,
-    }));
-});
-
-const warehouseSelectOptions = computed(() => {
-  return graphPorts.storables
-    .filter((port) => port.type === 'WAREHOUSE')
-    .map((port) => ({
-      label: port.id,
-      value: port.id,
-    }));
-});
 </script>
 
 <template>
-  <div class="row q-col-gutter-md">
+  <div class="row q-col-gutter-sm">
     <div
       v-for="field in CreateTransitDetailsFields"
       :class="`col-${field.col}`"
@@ -68,34 +43,8 @@ const warehouseSelectOptions = computed(() => {
           <q-select
             v-if="field.variant === 'port'"
             v-model="tripsInfo[field.model as keyof typeof tripsInfo]"
-            :options="portSelectOptions"
-            :placeholder="field.placeholder"
-            :rules="field.rules"
-            emit-value
-            map-options
-            dense
-            outlined
-            clearable
-          />
-
-          <q-select
-            v-else-if="field.variant === 'container'"
-            v-model="tripsInfo[field.model as keyof typeof tripsInfo]"
-            :options="containerSelectOptions"
-            :placeholder="field.placeholder"
-            :rules="field.rules"
-            emit-value
-            map-options
-            dense
-            outlined
-            clearable
-          />
-
-          <q-select
-            v-else-if="field.variant === 'warehouse'"
-            v-model="tripsInfo[field.model as keyof typeof tripsInfo]"
-            :options="warehouseSelectOptions"
-            :placeholder="field.placeholder"
+            :options="portOption"
+            :label="field.placeholder"
             :rules="field.rules"
             emit-value
             map-options
@@ -108,7 +57,7 @@ const warehouseSelectOptions = computed(() => {
             v-else-if="field.variant === 'truck'"
             v-model="tripsInfo[field.model as keyof typeof tripsInfo]"
             :options="truckSelectOptions"
-            :placeholder="field.placeholder"
+            :label="field.placeholder"
             :rules="field.rules"
             emit-value
             map-options
@@ -117,15 +66,16 @@ const warehouseSelectOptions = computed(() => {
             clearable
           />
 
-          <q-input
+          <q-select
             v-else-if="field.variant === 'price'"
-            v-model.number="tripsInfo[field.model as TripsInputKeys]"
-            :rules="[ 
-              val => (val !== null && val !== '') || 'Value is required',
-              val => val !== 0 || 'Value cannot be zero' 
-            ]"
-            type="number"
-            placeholder="₱"
+            v-model="tripsInfo[field.model as keyof typeof tripsInfo]"
+            :options="volOption"
+            :label="field.placeholder"
+            :rules="field.rules"
+            option-value="size"
+            option-label="label"
+            emit-value
+            map-options
             dense
             outlined
             clearable
@@ -133,12 +83,10 @@ const warehouseSelectOptions = computed(() => {
 
           <q-input
             v-else
+            class="input-uppercase"
             v-model="tripsInfo[field.model as TripsInputKeys]"
-            :rules="[ 
-              val => (val !== null && val !== '') || 'Value is required',
-              val => val !== 0 || 'Value cannot be zero' 
-            ]"
-            :placeholder="field.placeholder"
+            :rules="field.rules"
+            :label="field.placeholder"
             :icon="field.icon"
             dense
             outlined

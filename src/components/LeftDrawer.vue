@@ -5,7 +5,6 @@ import { useRoute } from 'vue-router';
 import { useAuthStore } from 'src/stores/LoginAuth';
 import { useNotificationStore } from 'src/stores/NotificationStore';
 import { date } from 'quasar';
-// import { useDocumentDialog } from 'src/utils/composables/dialog'
 import notificationMenu from './NotifButton.vue';
 import AddButtonComponent from 'src/components/ShipmentButton.vue';
 
@@ -15,13 +14,11 @@ onMounted(async () => {
   await notificationStore.fetchNotifications(authStore.username?.username);
 });
 
-// const { showNotificationDialog } = useDocumentDialog()
 const route = useRoute();
 const authStore = useAuthStore();
 const leftDrawerOpen = ref(true);
 const getDate = Date.now();
 const formattedDate = date.formatDate(getDate, 'MMMM DD, YYYY');
-
 const currentLabel = computed(() => {
   const currentItem = NavigationItems.find((item) => item.name === route.name);
   return currentItem ? currentItem.label : 'Users';

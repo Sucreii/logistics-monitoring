@@ -2,6 +2,7 @@
 import { computed, ref, watch, onMounted } from 'vue';
 import { getAllTrips, searchTripsItem } from 'src/stores/ShipmentStore';
 import { pagination } from 'src/stores/AllPostReactive';
+import { useAuthStore } from 'src/stores/LoginAuth';
 import type { TableRequestProps } from 'src/utils/static/types';
 import type { QTableColumn } from 'quasar';
 import type { Trips } from 'src/utils/static/types';
@@ -13,6 +14,7 @@ onMounted(async () => {
 });
 
 const graphTrips = getAllTrips();
+const authStore = useAuthStore();
 const searchTripStore = searchTripsItem();
 const selectedTripInfoRow = ref<Trips>();
 const showModalMoreInfo = ref(false);
@@ -42,11 +44,11 @@ const tableRows = computed(() => {
 function unixToYMD(unixSeconds: number) {
   const date = new Date(unixSeconds);
 
-  const formattedDate = date.toISOString().split('T')[0]
-  if(formattedDate === "1970-01-01"){
-    return "IN-TRANSIT"
+  const formattedDate = date.toISOString().split('T')[0];
+  if (formattedDate === '1970-01-01') {
+    return 'IN-TRANSIT';
   } else {
-    return formattedDate
+    return formattedDate;
   }
 }
 
@@ -71,9 +73,9 @@ const onRequest = async (props: TableRequestProps) => {
 };
 
 const columns: QTableColumn[] = [
-  { name: 'id', label: 'ID', field: 'id', align: 'left' },
-  { name: 'commodity', label: 'Commodity', field: 'commodity', align: 'left' },
+  // { name: 'id', label: 'ID', field: 'id', align: 'left' },
   { name: 'truckId', label: 'Truck', field: 'truckId', align: 'left' },
+  { name: 'commodity', label: 'Commodity', field: 'commodity', align: 'left' },
   { name: 'warehouseId', label: 'Warehouse', field: 'warehouseId', align: 'left' },
   { name: 'containerId', label: 'Container', field: 'containerId', align: 'left' },
   { name: 'portId', label: 'Port', field: 'portId', align: 'left' },
@@ -95,6 +97,7 @@ const editShipmentInfo = (row: Trips) => {
   <q-card-section class="q-pt-none">
     <q-table
       v-model:pagination="pagination"
+      class="input-uppercase"
       :rows="tableRows"
       :columns="columns"
       :loading="graphTrips.loading"
@@ -115,6 +118,7 @@ const editShipmentInfo = (row: Trips) => {
           </q-btn>
 
           <q-btn
+            v-if="authStore.roleLabel !== 'Worker'"
             @click="editShipmentInfo(props.row)"
             icon="sym_o_edit_square"
             color="primary"

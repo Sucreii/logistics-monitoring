@@ -16,6 +16,15 @@ body {
   font-family: 'Amiko', sans-serif;
 }
 
-.upper-case :deep(input) {
-  text-transform: uppercase;
+.input-uppercase {
+  input,
+  .q-field__native,
+  .q-field__input {
+    text-transform: uppercase;
+  }
+
+  &.q-td,
+  td {
+    text-transform: uppercase;
+  }
 }

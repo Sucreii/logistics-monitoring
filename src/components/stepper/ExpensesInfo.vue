@@ -20,14 +20,13 @@ const removeFinance = (index: number) => {
       <q-btn @click="addFinance" label="Add" color="primary" icon="add" />
     </div>
 
-    <div v-for="(finance, index) in shipmentForm2.finances" :key="index" class="row q-col-gutter-sm">
+    <div
+      v-for="(finance, index) in shipmentForm2.finances"
+      :key="index"
+      class="row q-col-gutter-sm"
+    >
       <div class="col-4">
-        <q-input 
-          v-model="finance.title" 
-          class="upper-case"
-          label="Title" 
-          dense 
-          outlined />
+        <q-input v-model="finance.title" class="input-uppercase" label="Title" dense outlined />
       </div>
 
       <div class="col-3">
@@ -37,7 +36,7 @@ const removeFinance = (index: number) => {
             { label: 'Amount', value: 'amount' },
             { label: 'Percentage', value: 'percentage' },
           ]"
-          class="upper-case"
+          class="input-uppercase"
           label="Type"
           emit-value
           map-options
@@ -50,9 +49,9 @@ const removeFinance = (index: number) => {
       <div class="col-4">
         <q-input
           v-model.number="finance.value"
-          :rules="[ 
-            val => (val !== null && val !== '') || 'Value is required',
-            val => val !== 0 || 'Value cannot be zero' 
+          :rules="[
+            (val) => (val !== null && val !== '') || 'Value is required',
+            (val) => val !== 0 || 'Value cannot be zero',
           ]"
           label="Value"
           type="number"
@@ -75,9 +74,3 @@ const removeFinance = (index: number) => {
     </div>
   </div>
 </template>
-
-<style scoped>
-.upper-case :deep(input) {
-  text-transform: uppercase;
-}
-</style>

@@ -1,49 +1,65 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import { shipmentForm2 } from 'src/stores/AllPostReactive';
+import { useAuthStore } from 'src/stores/LoginAuth';
 
 const userInfo = shipmentForm2;
+const authStore = useAuthStore();
 const fieldDisplayArr = computed(() => [
-  { key: 'eta', label: 'ETA', col: '6', modelVal: userInfo.estimated_time_arrival },
+  { key: 'eta', label: 'ETA', col: '4', modelVal: userInfo.estimated_time_arrival },
+  { key: 'customer', label: 'Consignee', col: `4`, modelVal: userInfo.customer_username },
+  { key: 'billnum', label: 'Bill of Lading', col: '4', modelVal: userInfo.blno },
   {
     key: 'container',
-    label: 'Container No.',
+    label: 'Container ID',
     col: '6',
     modelVal: (function () {
       const data = userInfo.containers;
       if (Array.isArray(data)) {
-        return data.map((c) => (typeof c === 'object' ? (c).id : c)).join(', ');
+        return data.map((c) => (typeof c === 'object' ? c.container_id : c)).join(', ');
       }
 
       return data || 'None';
     })(),
   },
-  { key: 'customer', label: 'Consignee', col: `6`, modelVal: userInfo.customer_username },
-  { key: 'issuer', label: 'Issuer Name', col: '6', modelVal: userInfo.issuer_username },
-  { key: 'billnum', label: 'Bill of Landing', col: '4', modelVal: userInfo.blno },
-  // { key: 'refnum', label: 'Reference no.', col: '4', modelVal: userInfo.reference },
-  { key: 'warehouse_id', label: 'Warehouse', col: '4', modelVal: userInfo.warehouse_id },
+  {
+    key: 'container',
+    label: 'Warehouse',
+    col: '6',
+    modelVal: (function () {
+      const data = userInfo.containers;
+      if (Array.isArray(data)) {
+        return data.map((c) => (typeof c === 'object' ? c.warehouse_id : c)).join(', ');
+      }
+
+      return data || 'None';
+    })(),
+  },
   { key: 'contractnum', label: 'Contract no.', col: '4', modelVal: userInfo.contract_no },
   { key: 'entrynum', label: 'Entry no.', col: '4', modelVal: userInfo.entry_no },
   { key: 'regnum', label: 'Registry no.', col: '4', modelVal: userInfo.registry_no },
   { key: 'portID', label: 'Port ID', col: '4', modelVal: userInfo.port_id },
   { key: 'shipline', label: 'Shipping Line.', col: '4', modelVal: userInfo.shipping_line },
-  { key: 'volx', label: 'Vol. X', col: '2', modelVal: Number(userInfo.volumex) },
-  { key: 'voly', label: 'Vol. Y', col: '2', modelVal: Number(userInfo.volumey) },
+  { key: 'volx', label: 'Volume', col: '2', modelVal: userInfo.volumex },
+  { key: 'voly', label: 'Size', col: '2', modelVal: userInfo.volumey },
 ]);
-
-console.log('Shipment Info: ', userInfo);
 </script>
 <template>
   <div class="row q-col-gutter-md q-mb-md">
     <div v-for="field in fieldDisplayArr" :class="`col-${field.col}`" :key="field.key">
-      <q-input :model-value="field.modelVal" :label="field.label" outlined readonly />
+      <q-input
+        class="input-uppercase"
+        :model-value="field.modelVal"
+        :label="field.label"
+        outlined
+        readonly
+      />
     </div>
   </div>
 
-  <q-separator />
+  <q-separator v-if="['Super Admin'].includes(authStore.roleLabel)" />
 
-  <div class="row q-col-gutter-sm q-mt-xs">
+  <div v-if="['Super Admin'].includes(authStore.roleLabel)" class="row q-col-gutter-sm q-mt-xs">
     <div class="text-overline text-weight-bolder text-primary">Finance Summary</div>
     <div
       v-for="(finance, index) in userInfo.finances"

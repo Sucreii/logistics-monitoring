@@ -14,17 +14,21 @@ const tableRows = computed(() => {
 });
 
 const columns: QTableColumn[] = [
-  { name: 'id', label: 'ID', field: 'id', align: 'left' },
+  { name: 'selectivity', label: 'Selectivity', field: 'selectivity', align: 'left' },
   { name: 'blno', label: 'B/L No', field: 'blno', align: 'left' },
   { name: 'contract_no', label: 'Contract No', field: 'contract_no', align: 'left' },
   { name: 'entry_no', label: 'Entry No', field: 'entry_no', align: 'left' },
   { name: 'reference', label: 'Reference', field: 'reference', align: 'left' },
   { name: 'registry_no', label: 'Registry No', field: 'registry_no', align: 'center' },
   { name: 'status', label: 'Status', field: 'status', align: 'center' },
-  { name: 'volumex', label: 'Volume X', field: 'volumex', align: 'center' },
-  { name: 'volumey', label: 'Volume Y', field: 'volumey', align: 'center' },
-  { name: 'issuer', label: 'Issuer', field: 'issuer', align: 'left' },
-  { name: 'customer', label: 'Customer', field: 'customer', align: 'left' },
+  { name: 'volumex', label: 'Volume', field: 'volumex', align: 'center' },
+  { name: 'volumey', label: 'Size', field: 'volumey', align: 'center' },
+  {
+    name: 'customer',
+    label: 'Consignee',
+    field: (row) => row.customer?.username || '',
+    align: 'left',
+  },
 ];
 </script>
 
@@ -47,8 +51,12 @@ const columns: QTableColumn[] = [
         bordered
         flat
       >
-        <template v-slot:body-cell-actions="props">
-          <q-td :props="props" class="q-gutter-x-sm"> </q-td>
+        <template v-slot:body-cell-selectivity="props">
+          <q-td :props="props">
+            <span :class="`text-${props.row.selectivity?.toLowerCase()}`">
+              {{ props.row.selectivity }}
+            </span>
+          </q-td>
         </template>
 
         <template v-slot:loading>

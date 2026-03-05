@@ -8,7 +8,7 @@ import type { QTableColumn } from 'quasar';
 import type { Shipment } from 'src/utils/static/types';
 import searchAddButt from '../shipments/SearchandAdd.vue';
 import MoreModal from './MoreInfoModal.vue';
-import EditModal from './SearchModal.vue'
+import EditModal from './SearchModal.vue';
 
 onMounted(async () => {
   await onRequest({ pagination: pagination.value });
@@ -51,31 +51,28 @@ const moreDetails = (row: Shipment) => {
   showModalMoreInfo.value = true;
 };
 
-const editShipmentInfo = (row : Shipment) => {
+const editShipmentInfo = (row: Shipment) => {
   selectedInfoRow.value = row;
   showModalEditInfo.value = true;
-
-  console.log('- - - - -', showModalEditInfo)
-}
+};
 
 const columns: QTableColumn[] = [
-  { name: 'selectivity', label: 'Selectivity', field: 'selectivity', align: 'left' },
-  { name: 'warehouse_id', label: 'Warehouse', field: 'warehouse_id', align: 'left' },
-  { name: 'blno', label: 'B/L No', field: 'blno', align: 'left' },
-  { name: 'shipLine', label: 'Shipping Line', field: (row) => row.shipping_line, align: 'left' },
-  { name: 'contract_no', label: 'Contract No', field: 'contract_no', align: 'left' },
-  { name: 'entry_no', label: 'Entry No', field: 'entry_no', align: 'left' },
-  { name: 'reference', label: 'Reference', field: 'reference', align: 'left' },
-  { name: 'registry_no', label: 'Registry No', field: 'registry_no', align: 'center' },
-  { name: 'status', label: 'Status', field: 'status', align: 'center' },
-  { name: 'volumex', label: 'Volume X', field: 'volumex', align: 'center' },
-  { name: 'volumey', label: 'Volume Y', field: 'volumey', align: 'center' },
   {
-    name: 'issuer',
-    label: 'Issuer',
-    field: (row) => row.issuer?.username || '',
+    name: 'selectivity',
+    label: 'Selectivity',
+    field: 'selectivity',
     align: 'left',
   },
+  { name: 'status', label: 'Status', field: 'status', align: 'center' },
+  { name: 'blno', label: 'B/L No', field: 'blno', align: 'left' },
+  { name: 'shipLine', label: 'Shipping Line', field: (row) => row.shipping_line, align: 'left' },
+  { name: 'port_id', label: 'Port', field: (row) => row.port_id, align: 'left' },
+  { name: 'contract_no', label: 'Contract No', field: 'contract_no', align: 'left' },
+  { name: 'entry_no', label: 'Entry No', field: 'entry_no', align: 'left' },
+  { name: 'reference', label: 'Reference', field: 'reference', align: 'center' },
+  { name: 'registry_no', label: 'Registry No', field: 'registry_no', align: 'center' },
+  { name: 'volumex', label: 'Volume', field: 'volumex', align: 'center' },
+  { name: 'volumey', label: 'Size', field: 'volumey', align: 'center' },
   {
     name: 'customer',
     label: 'Consignee',
@@ -83,13 +80,16 @@ const columns: QTableColumn[] = [
     align: 'left',
   },
   {
-    name: 'containers',
-    label: 'Containers',
-    field: (row: Shipment) => {
-      if (!row.containers || !Array.isArray(row.containers)) return 'None';
-      return row.containers.map((container) => container.id).join(', ');
-    },
-    align: 'left',
+    name: 'estimated_time_arrival',
+    label: 'ETA',
+    field: (row) => row.estimated_time_arrival?.split('T')[0] || 'N/A',
+    align: 'center',
+  },
+  {
+    name: 'actual_time_arrival',
+    label: 'Date Arrived',
+    field: (row) => row.actual_time_arrival?.split('T')[0] || 'N/A',
+    align: 'right',
   },
   { name: 'action', label: 'More Info', field: 'action', align: 'center' },
 ];
@@ -115,24 +115,24 @@ const columns: QTableColumn[] = [
         >
           <template v-slot:body-cell-selectivity="props">
             <q-td :props="props">
-              <span :class="`text-${props.row.selectivity.toLowerCase()}`">
+              <span :class="`text-${props.row.selectivity?.toLowerCase()}`">
                 {{ props.row.selectivity }}
               </span>
             </q-td>
           </template>
 
           <template v-slot:body-cell-action="props">
-            <q-td :props="props"> 
+            <q-td :props="props">
               <q-btn icon="info" color="primary" flat round dense @click="moreDetails(props.row)">
                 <q-tooltip>View Finance Summary</q-tooltip>
               </q-btn>
 
-              <q-btn 
+              <q-btn
                 @click="editShipmentInfo(props.row)"
-                icon="sym_o_edit_square" 
-                color="primary" 
-                flat 
-                round 
+                icon="sym_o_edit_square"
+                color="primary"
+                flat
+                round
               />
             </q-td>
           </template>

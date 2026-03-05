@@ -1,8 +1,15 @@
 <script setup lang="ts">
-import { computed, watch, onMounted } from 'vue';
-import { updateTripsForm, getAllPortStorables, getTruckStorables, getAllTrips } from 'src/stores/ShipmentStore';
+import { useAuthStore } from 'src/stores/LoginAuth';
+import { computed, watch, onMounted, ref } from 'vue';
+import {
+  updateTripsForm,
+  getAllPortStorables,
+  getTruckStorables,
+  getAllTrips,
+} from 'src/stores/ShipmentStore';
 import { Loading, QSpinnerIos, useQuasar } from 'quasar';
 import { tripsForm } from 'src/stores/AllPostReactive';
+import { sizeArr } from 'src/utils';
 import type { Trips, TripInputItem } from 'src/utils/static/types';
 
 onMounted(async () => {
@@ -11,6 +18,8 @@ onMounted(async () => {
   await graphTruckDropDown.fetchTruckStores();
 });
 
+const sizeOptions = ref(sizeArr);
+const authStore = useAuthStore();
 const graphTrips = getAllTrips();
 const updateTrips = updateTripsForm();
 const graphPorts = getAllPortStorables();
@@ -22,7 +31,6 @@ const closeDialog = () => {
 };
 
 const truckSelectOptions = computed(() => {
-  console.log('I AM TRUCK SELECT', graphTruckDropDown)
   return graphTruckDropDown.trucks.map((trucks) => ({
     label: trucks.id,
     value: trucks.id,
@@ -36,21 +44,11 @@ const portSelectOptions = computed(() => {
       value: port.id,
     }));
 });
-const containerSelectOptions = computed(() => {
-  return graphPorts.storables
-    .filter((port) => port.type === 'CONTAINER' || port.type === 'container')
-    .map((port) => ({
-      label: port.id,
-      value: port.id,
-    }));
-});
-const warehouseSelectOptions = computed(() => {
-  return graphPorts.storables
-    .filter((port) => port.type === 'WAREHOUSE')
-    .map((port) => ({
-      label: port.id,
-      value: port.id,
-    }));
+const sizeSelectOptions = computed(() => {
+  return sizeOptions.value.map((port) => ({
+    label: port.label,
+    value: port.size,
+  }));
 });
 
 const props = defineProps<{
@@ -61,19 +59,35 @@ const props = defineProps<{
 const inputArr = computed((): TripInputItem[] => [
   { key: 'truck', inputVModel: 'truck_id', colSpace: '6', label: 'Truck ID', type: 'select' },
   { key: 'port', inputVModel: 'port_id', colSpace: '6', label: 'Port ID', type: 'select' },
-  { key: 'warehouse', inputVModel: 'warehouse_id', colSpace: '6', label: 'Warehouse ID', type: 'select' },
-  { key: 'container', inputVModel: 'container_id', colSpace: '6', label: 'Container ID', type: 'select' },
-  { key: 'commodity', inputVModel: 'commodity', colSpace: '6', label: 'Commodity', type: 'text' },
-  { key: 'baseRate', inputVModel: 'base_rate', colSpace: '6', label: 'Base Rate', type: 'number' },
-  { key: 'volx', inputVModel: 'volumex', colSpace: '3', label: 'Vol X', type: 'number' },
-  { key: 'voly', inputVModel: 'volumey', colSpace: '3', label: 'Vol Y', type: 'number' },
-  { key: 'date_delivered', inputVModel: 'date_delivered', colSpace: '6', label: 'Date Delivered', type: 'date' },
+  {
+    key: 'warehouse',
+    inputVModel: 'warehouse_id',
+    colSpace: '6',
+    label: 'Warehouse ID',
+    type: 'select',
+  },
+  {
+    key: 'container',
+    inputVModel: 'container_id',
+    colSpace: '6',
+    label: 'Container ID',
+    type: 'select',
+  },
+  { key: 'commodity', inputVModel: 'commodity', colSpace: '4', label: 'Commodity', type: 'text' },
+  { key: 'volx', inputVModel: 'volumex', colSpace: '4', label: 'Volume', type: 'number' },
+  {
+    key: 'date_delivered',
+    inputVModel: 'date_delivered',
+    colSpace: '4',
+    label: 'Date Delivered',
+    type: 'date',
+  },
 ]);
 
 watch(
   () => props.row,
   (newVal) => {
-    if (newVal && props.modelValue) {
+    if (newVal) {
       tripsForm.id = newVal.id;
       tripsForm.commodity = newVal.commodity;
       tripsForm.truck_id = newVal.truck?.id || '';
@@ -82,7 +96,7 @@ watch(
       tripsForm.container_id = newVal.container?.id || '';
       tripsForm.base_rate = newVal.base_rate;
       tripsForm.volumex = newVal.volumex;
-      tripsForm.volumey = newVal.volumey;
+      // tripsForm.volumey = newVal.volumey;
       tripsForm.date_delivered = newVal.date_delivered;
       tripsForm.finances = newVal.financeSummary?.map((f) => ({ ...f })) || [];
     }
@@ -112,7 +126,7 @@ const updateNewTripsInfo = async () => {
     await graphTrips.fetchTrips();
   } catch (err) {
     console.error('Error on updating Trips Info: ', err);
-      $q.notify({
+    $q.notify({
       type: 'negative',
       position: 'top',
       message: 'Error updating trip',
@@ -154,19 +168,9 @@ const updateNewTripsInfo = async () => {
               />
 
               <q-select
-                v-else-if="item.inputVModel === 'warehouse_id'"
+                v-else-if="item.inputVModel === 'volumex'"
                 v-model="tripsForm[item.inputVModel]"
-                :options="warehouseSelectOptions"
-                :label="item.label"
-                emit-value
-                map-options
-                outlined
-              />
-
-              <q-select
-                v-else-if="item.inputVModel === 'container_id'"
-                v-model="tripsForm[item.inputVModel]"
-                :options="containerSelectOptions"
+                :options="sizeSelectOptions"
                 :label="item.label"
                 emit-value
                 map-options
@@ -177,64 +181,43 @@ const updateNewTripsInfo = async () => {
                 v-else-if="item.inputVModel === 'date_delivered'"
                 v-model="tripsForm[item.inputVModel]"
                 :label="item.label"
+                type="date"
+                emit-value
+                map-options
                 outlined
-                readonly
-              >
-                <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                      <q-date v-model="tripsForm[item.inputVModel]" mask="YYYY-MM-DD" />
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
+              />
 
               <q-input
                 v-else
                 v-model="tripsForm[item.inputVModel] as any"
-                :type="
-                  item.inputVModel === 'volumex' || item.inputVModel === 'volumey'
-                    ? 'number'
-                    : 'text'
-                "
+                class="input-uppercase"
+                type="text"
                 :label="item.label"
                 outlined
               />
             </div>
-
-            
-            <div class="col-12">
-              <!-- <q-input
-                v-model="tripsForm['date_delivered'] as string"
-                label="Date Delivered"
-                outlined
-                dense
-                readonly
-              >
-                <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                      <q-date v-model="tripsForm['date_delivered'] as string" mask="YYYY-MM-DD">
-                        <div class="row items-center justify-end">
-                          <q-btn v-close-popup label="Close" color="primary" flat />
-                        </div>
-                      </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input> -->
-            </div>
           </div>
 
-          <div v-if="props.row?.financeSummary?.length">
-            <div class="text-overline text-weight-bolder text-primary">Finance Summary</div>
+          <div
+            v-if="
+              props.row?.financeSummary?.length &&
+              ['Super Admin', 'Admin'].includes(authStore.roleLabel)
+            "
+          >
+            <div class="text-overline text-weight-bolder text-primary q-pt-sm">Finance Summary</div>
             <div
-              v-for="(item, index) in props.row.financeSummary"
+              v-for="(item, index) in tripsForm.finances"
               :key="index"
               class="row q-col-gutter-sm q-mb-sm"
             >
               <div class="col-8">
-                <q-input :model-value="item.title" label="Title" outlined readonly />
+                <q-input
+                  v-model="item.title"
+                  :readonly="!['Super Admin', 'Admin'].includes(authStore.roleLabel)"
+                  class="input-uppercase"
+                  label="Title"
+                  outlined
+                />
               </div>
 
               <div class="col-4">
@@ -244,9 +227,14 @@ const updateNewTripsInfo = async () => {
                       ? (item.value * 100).toFixed(2) + '%'
                       : item.value.toLocaleString()
                   "
+                  @update:model-value="
+                    (val) =>
+                      (item.value = item.type === 'percentage' ? Number(val) / 100 : Number(val))
+                  "
+                  :prefix="item.type === 'percentage' ? '%' : '₱'"
+                  :readonly="!['Super Admin', 'Admin'].includes(authStore.roleLabel)"
                   label="Value"
                   outlined
-                  readonly
                 />
               </div>
             </div>

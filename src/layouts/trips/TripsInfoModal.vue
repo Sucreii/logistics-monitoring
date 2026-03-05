@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { useAuthStore } from 'src/stores/LoginAuth';
 import type { Trips } from 'src/utils/static/types';
 
+const authStore = useAuthStore();
 const emit = defineEmits(['update:modelValue']);
 const closeDialog = () => {
   emit('update:modelValue', false);
@@ -14,14 +16,14 @@ const props = defineProps<{
 
 <template>
   <q-dialog :model-value="props.modelValue" @update:model-value="emit('update:modelValue', $event)">
-    <q-card style="min-width: 400px">
+    <q-card style="min-width: 550px">
       <q-form>
         <q-card-section>
           <div class="row q-col-gutter-sm">
-            <div class="col-6">
+            <div class="col-4">
               <q-input :model-value="props.row?.truck?.id" label="Truck Name" outlined readonly />
             </div>
-            <div class="col-6">
+            <div class="col-4">
               <q-input
                 :model-value="props.row?.truck?.operator"
                 label="Driver Name"
@@ -29,10 +31,23 @@ const props = defineProps<{
                 readonly
               />
             </div>
+            <div class="col-4">
+              <q-input
+                :model-value="props.row?.base_rate.toLocaleString()"
+                label="Base Rate"
+                outlined
+                readonly
+              />
+            </div>
           </div>
         </q-card-section>
 
-        <q-card-section v-if="props.row?.financeSummary?.length">
+        <q-card-section
+          v-if="
+            props.row?.financeSummary?.length &&
+            ['Super Admin', 'Admin'].includes(authStore.roleLabel)
+          "
+        >
           <div class="text-overline text-weight-bolder text-primary">Finance Summary</div>
 
           <div

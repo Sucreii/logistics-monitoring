@@ -18,8 +18,8 @@ const selectedRow = ref<Trucks | null>(null);
 const graphTrucks = getTruckStorables();
 const columns: QTableColumn[] = [
   { name: 'id', label: 'Truck ID', field: 'id', align: 'left' },
-  { name: 'operator', label: 'Driver Name', field: 'operator', align: 'left' },
-  //   { name: 'is_archived', label: 'Status', field: 'is_archived', align: 'left' },
+  // { name: 'operator', label: 'Driver Name', field: 'operator', align: 'left' },
+  // { name: 'is_archived', label: 'Status', field: 'is_archived', align: 'left' },
   { name: 'date_added', label: 'Date Added', field: 'date_added', align: 'left' },
   { name: 'action', label: 'Action', field: 'action', align: 'center' },
 ];

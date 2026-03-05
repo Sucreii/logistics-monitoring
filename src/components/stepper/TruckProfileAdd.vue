@@ -19,7 +19,7 @@ truckForm.value.date_added = date.formatDate(now, 'YYYY-MM-DD');
 
         <div class="col-12">
           <q-input
-            v-if="field.type === 'date'"
+            v-if="field.variant === 'date'"
             v-model="truckInfo.date_added"
             outlined
             dense
@@ -44,6 +44,7 @@ truckForm.value.date_added = date.formatDate(now, 'YYYY-MM-DD');
             :type="field.type"
             :placeholder="field.placeholder"
             :rules="field.rules"
+            class="input-uppercase"
             dense
             outlined
             clearable

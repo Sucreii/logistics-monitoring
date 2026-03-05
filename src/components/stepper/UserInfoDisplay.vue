@@ -1,37 +1,42 @@
 <script lang="ts" setup>
-// import { ref } from 'vue'
 import { usersForm } from 'src/stores/AllPostReactive';
+import { computed } from 'vue';
 
 const userInfo = usersForm;
-console.log('User Info: ', userInfo);
+const usersInfoArr = computed(() => [
+  { label: 'Username', modelValue: userInfo.value.username, col: `6` },
+  { label: 'Role', modelValue: userInfo.value.username, col: `6` },
+  { label: 'First Name', modelValue: userInfo.value.first_name, col: `6` },
+  { label: 'Last Name', modelValue: userInfo.value.last_name, col: `6` },
+]);
+
+const roleLabel = (role_id: number | string | null | undefined) => {
+  const roles: Record<number, string> = {
+    1: 'Super Admin',
+    2: 'Admin',
+    3: 'Worker',
+    4: 'Viewer',
+  };
+  return roles[Number(role_id)] || 'Viewer';
+};
 </script>
 
 <template>
   <div class="row q-col-gutter-md">
-    <div class="col-6">
-      <q-input :model-value="userInfo.first_name" label="First Name" outlined readonly />
-    </div>
-
-    <div class="col-6">
-      <q-input :model-value="userInfo.last_name" label="Last Name" outlined readonly />
-    </div>
-
-    <div class="col-6">
-      <q-input :model-value="userInfo.username" label="Username" outlined readonly />
-    </div>
-
-    <div class="col-6">
+    <div v-for="item in usersInfoArr" :key="item.label" :class="`col-${item.col}`">
       <q-input
-        :model-value="
-          userInfo.role_id === 1
-            ? 'Super Admin'
-            : userInfo.role_id === 2
-              ? 'Admin'
-              : userInfo.role_id === 3
-                ? 'Worker'
-                : 'Viewer'
-        "
-        label="Role ID"
+        v-if="item.label === 'Role'"
+        :model-value="roleLabel(item.modelValue)"
+        :label="item.label"
+        class="input-uppercase"
+        outlined
+        readonly
+      />
+      <q-input
+        v-else
+        :model-value="item.modelValue"
+        :label="item.label"
+        class="input-uppercase"
         outlined
         readonly
       />

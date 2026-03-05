@@ -16,6 +16,7 @@ import downloadTrip from 'src/layouts/trips/DownloadTrip.vue';
               </q-card-section>
 
               <tripsTable />
+
               <div class="row q-pa-md q-gutter-y-md">
                 <downloadTrip />
               </div>

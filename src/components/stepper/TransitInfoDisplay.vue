@@ -1,24 +1,25 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import { tripsForm2 } from 'src/stores/AllPostReactive';
+import { useAuthStore } from 'src/stores/LoginAuth';
 
 type SimpleTripsKeys = Exclude<keyof typeof userInfo, 'finances'>;
 const userInfo = tripsForm2;
+const authStore = useAuthStore();
 const fieldDisplayArr = computed(() => [
-  { key: 'container_id', label: 'Container ID', col: '6', modelVal: userInfo.container_id },
+  { key: 'truck_id', label: 'Truck Name', col: `3`, modelVal: userInfo.truck_id },
+  { key: 'container_id', label: 'Container ID', col: '3', modelVal: userInfo.container_id },
   { key: 'commodity', label: 'Commodity', col: `6`, modelVal: userInfo.commodity },
-  { key: 'truck_id', label: 'Truck Name', col: `4`, modelVal: userInfo.truck_id },
   { key: 'port_id', label: 'Port ID', col: `4`, modelVal: userInfo.port_id },
   { key: 'warehouse_id', label: 'Warehouse ID', col: `4`, modelVal: userInfo.warehouse_id },
-  { key: 'base_rate', label: 'Base Rate', col: `6`, modelVal: Number(userInfo.base_rate) },
-  { key: 'volumex', label: 'Volume X', col: `3`, modelVal: Number(userInfo.volumex) },
-  { key: 'volumey', label: 'Volume Y', col: `3`, modelVal: Number(userInfo.volumey) },
+  { key: 'volumex', label: 'Volume', col: `4`, modelVal: userInfo.volumex },
 ]);
 </script>
 <template>
-  <div class="row q-col-gutter-md q-mb-md">
+  <div class="row q-col-gutter-sm q-mb-md">
     <div v-for="field in fieldDisplayArr" :class="`col-${field.col}`" :key="field.key">
       <q-input
+        class="input-uppercase"
         :model-value="userInfo[field.key as SimpleTripsKeys]"
         :label="field.label"
         outlined
@@ -27,17 +28,36 @@ const fieldDisplayArr = computed(() => [
     </div>
   </div>
 
-  <q-separator />
+  <q-separator v-if="['Super Admin', 'Admin'].includes(authStore.roleLabel)" />
 
-  <div class="row q-col-gutter-sm q-mt-xs">
-    <div class="text-overline text-weight-bolder text-primary">Finance Summary</div>
+  <div
+    v-if="['Super Admin', 'Admin'].includes(authStore.roleLabel)"
+    class="row q-col-gutter-md q-mt-xs"
+  >
+    <div class="col-12 text-overline text-weight-bolder text-primary">Finance Summary</div>
+    <div class="col-6">
+      <q-input
+        class="input-uppercase"
+        label="Base Rate"
+        :model-value="Number(userInfo.base_rate)"
+        outlined
+        readonly
+      />
+    </div>
+
     <div
       v-for="(finance, index) in userInfo.finances"
-      class="col-12 row q-col-gutter-md items-center"
+      class="col-12 row q-col-gutter-sm items-center"
       :key="index"
     >
       <div class="col-6">
-        <q-input :model-value="finance.title" label="Description" readonly outlined />
+        <q-input
+          class="input-uppercase"
+          :model-value="finance.title"
+          label="Description"
+          readonly
+          outlined
+        />
       </div>
 
       <div class="col-6">

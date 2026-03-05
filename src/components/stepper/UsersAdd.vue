@@ -11,8 +11,6 @@ const roleOptions = [
   { label: 'Worker', value: 3 },
   { label: 'Viewer', value: 4 },
 ];
-
-console.log('User Info: ', userInfo);
 </script>
 
 <template>
@@ -44,6 +42,7 @@ console.log('User Info: ', userInfo);
             :type="field.model === 'password' ? (seePwd ? 'password' : 'text') : field.type"
             :placeholder="field.placeholder"
             :rules="field.rules"
+            class="input-uppercase"
             dense
             outlined
             clearable

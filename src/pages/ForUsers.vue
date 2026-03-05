@@ -22,9 +22,9 @@ const tableRows = computed(() => {
 });
 
 const columns: QTableColumn[] = [
-  { name: 'id', label: 'ID', field: 'id', align: 'left' },
-  { name: 'role', label: 'Role', field: (row) => row.role?.title ?? '', align: 'left' },
+  // { name: 'id', label: 'ID', field: 'id', align: 'left' },
   { name: 'username', label: 'Username', field: 'username', align: 'left' },
+  { name: 'role', label: 'Role', field: (row) => row.role?.title ?? '', align: 'left' },
   { name: 'first_name', label: 'First Name', field: 'first_name', align: 'left' },
   // { name: 'middle_name', label: 'Middle Name', field: 'middle_name', align: 'left' },
   { name: 'last_name', label: 'Last Name', field: 'last_name', align: 'left' },
@@ -122,7 +122,11 @@ const openUnArchiveModal = (row: Users) => {
               </q-card-section>
 
               <archiveUsers v-model="showModalHide" :row="selectedRow" />
-              <unArchiveUsers v-model="showModalUnHide" :row="selectedRow" @clear-row="selectedRow = null" />
+              <unArchiveUsers
+                v-model="showModalUnHide"
+                :row="selectedRow"
+                @clear-row="selectedRow = null"
+              />
             </q-card>
           </div>
         </div>

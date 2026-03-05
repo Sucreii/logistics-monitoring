@@ -11,13 +11,21 @@ export const shipmentForm = reactive({
   registry_no: '',
   port_id: '',
   shipping_line: '',
-  volumex: null as number | null,
-  volumey: null as number | null,
+  volumex: '',
+  volumey: '',
   estimated_time_arrival: '',
   customer_username: '',
   issuer_username: '',
-  // containers: [] as string[],
-  containers: [] as (string | { id: string | number })[],
+  actual_time_arrival: '',
+  // containers: [] as (string | { id: string | number })[],
+  containers: [
+    {
+      container_id: '',
+      // type: '',
+      // description: '',
+      warehouse_id: '',
+    },
+  ],
   finances: [
     {
       title: '',
@@ -36,14 +44,18 @@ export const shipmentForm2 = reactive({
   registry_no: '',
   port_id: '',
   shipping_line: '',
-  volumex: null as number | null,
-  volumey: null as number | null,
+  volumex: '',
+  volumey: '',
   estimated_time_arrival: '',
   customer_username: '',
   issuer_username: '',
-  // containers: [] as string[],
   // containers: [] as (string | { id: string | number })[],
-  containers: '',
+  containers: [
+    {
+      container_id: '',
+      warehouse_id: '',
+    },
+  ],
   finances: [
     {
       title: 'BILLING',
@@ -66,8 +78,7 @@ export const tripsForm = reactive({
   commodity: '',
   warehouse_id: '',
   base_rate: 0,
-  volumex: 0,
-  volumey: 0,
+  volumex: '',
   date_delivered: '',
   finances: [
     {
@@ -110,8 +121,7 @@ export const tripsForm2 = reactive({
   commodity: '',
   warehouse_id: '',
   base_rate: 0,
-  volumex: 0,
-  volumey: 0,
+  volumex: '',
   // date_delivered: '',
   finances: [
     {
@@ -146,7 +156,6 @@ export const tripsForm2 = reactive({
     },
   ],
 });
-
 
 export const pagination = ref({
   page: 1,

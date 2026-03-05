@@ -1,15 +1,15 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { Loading, QSpinnerIos } from 'quasar';
-import { useDocumentDialog } from 'src/utils/composables/dialog';
+// import { useDocumentDialog } from 'src/utils/composables/dialog';
 import { searchShipmentsItem } from 'src/stores/ShipmentStore';
 
 const searchValue = ref('');
 const searchShipStore = searchShipmentsItem();
-const { showCreatePortStoresDialog } = useDocumentDialog();
-const openDialog = () => {
-  showCreatePortStoresDialog();
-};
+// const { showCreatePortStoresDialog } = useDocumentDialog();
+// const openDialog = () => {
+//   showCreatePortStoresDialog();
+// };
 
 const handlSearchButton = async () => {
   if (!searchValue.value?.trim()) return;
@@ -41,7 +41,7 @@ const handleClear = () => {
     <div class="row">
       <q-input
         @keyup.enter="handlSearchButton"
-        @clear="handleClear"  
+        @clear="handleClear"
         class="rounded-input q-mr-sm"
         v-model="searchValue"
         placeholder="Search"
@@ -61,7 +61,7 @@ const handleClear = () => {
     </div>
 
     <div class="row">
-      <q-btn
+      <!-- <q-btn
         @click="openDialog"
         icon-right="add_box"
         color="white"
@@ -71,7 +71,7 @@ const handleClear = () => {
         flat
         dense
         push
-      />
+      /> -->
     </div>
   </div>
 </template>

@@ -19,7 +19,7 @@ const statisticsCard = computed(() => {
 
   return [
     {
-      title: 'Total Pending',
+      title: 'Total Shipment',
       caption: 'The item or request has been received but is not yet processed or dispatched.',
       value: dashboard.stats.TotalPending,
       icon: 'sym_o_deployed_code_history',
@@ -39,9 +39,9 @@ const statisticsCard = computed(() => {
       icon: 'sym_o_inventory',
     },
     {
-      title: 'Total Notification',
+      title: 'Trucks Available',
       caption: 'The item or request has been received but is not yet processed or dispatched.',
-      value: '0',
+      value: dashboard.stats.TotalTrucks,
       icon: 'sym_o_chat',
     },
   ];

@@ -2,7 +2,14 @@ import { ref } from 'vue';
 import { defineStore } from 'pinia';
 import { HTTP_API } from 'src/boot/axios';
 import { apolloClient } from 'src/boot/apollo';
-import { shipmentForm, truckForm, tripsForm, storablesForm, shipmentForm2, tripsForm2 } from 'src/stores/AllPostReactive';
+import {
+  shipmentForm,
+  truckForm,
+  tripsForm,
+  storablesForm,
+  shipmentForm2,
+  tripsForm2,
+} from 'src/stores/AllPostReactive';
 import type {
   Shipment,
   Users,
@@ -11,37 +18,36 @@ import type {
   DashboardStats,
   Trips,
   SearchShipmentType,
-  SearchTripType
+  SearchTripType,
 } from 'src/utils/static/types';
 import gql from 'graphql-tag';
 
 const GET_PAGINATED_SHIPMENTS = gql`
-  query FindAllShipments($skip: Int!, $take: Int!) {
+  query GetPaginated($skip: Int!, $take: Int!) {
     shipments(skip: $skip, take: $take) {
+      totalCount
+      hasMore
       items {
+        selectivity
         id
         blno
-        selectivity
+        commodity
+        shipping_line
         reference
         contract_no
         registry_no
-        shipping_line
+        estimated_time_arrival
+        actual_time_arrival
         entry_no
         status
         volumex
         volumey
         port_id
-        warehouse_id
         containers {
           id
-          type
-          description
+          warehouse_id
         }
         customer {
-          id
-          username
-        }
-        issuer {
           id
           username
         }
@@ -51,8 +57,6 @@ const GET_PAGINATED_SHIPMENTS = gql`
           value
         }
       }
-      totalCount
-      hasMore
     }
   }
 `;
@@ -148,16 +152,15 @@ const GET_TRUCK_STORABLES = gql`
 `;
 
 const POST_NEW_SHIPMENTINFO = gql`
-  mutation CreateShipment($input: CreateShipmentInput!) {
+  mutation CreateNewShipment($input: CreateShipmentInput!) {
     createShipment(input: $input) {
       id
-      blno
       selectivity
+      blno
       reference
       port_id
-      warehouse_id
-      shipping_line
       status
+      commodity
       customer {
         id
         username
@@ -173,6 +176,7 @@ const POST_NEW_SHIPMENTINFO = gql`
         id
         type
         date_created
+        warehouse_id
       }
       financeSummary {
         title
@@ -316,80 +320,76 @@ const SEARCH_SHIPMENTS = gql`
 `;
 
 const SEARCH_TRIPS = gql`
-query GetPaginatedTrips($query: String) {
-  searchTrips(query: $query) {
-    totalCount
-    hasMore
-    items{
+  query GetPaginatedTrips($query: String) {
+    searchTrips(query: $query) {
+      totalCount
+      hasMore
+      items {
         id
         commodity
         date_delivered
         truck {
-            id
-            operator
+          id
+          operator
         }
         warehouse {
-            id
-            description
+          id
+          description
         }
         port {
-            id
-            description
+          id
+          description
         }
         container {
-            id
-            description
+          id
+          description
         }
         financeSummary {
-            title
-            type
-            value
+          title
+          type
+          value
         }
+      }
     }
   }
-}
-`
+`;
 
 const UPDATE_SHIPMENT = gql`
   mutation UpdateMyShipment($input: UpdateShipmentInput!) {
-  updateShipment(input: $input) {
-    id
-    selectivity
-    blno
-    reference
-    shipping_line
-    port_id
-    warehouse_id
-    status
-    containers {
-        id
-        type
-        description
-    }
-    customer{
+    updateShipment(input: $input) {
+      id
+      selectivity
+      blno
+      reference
+      port_id
+      status
+      commodity
+      customer {
         id
         username
-    }
-    issuer{
+      }
+      issuer {
         id
         username
-    }
-    volumex
-    volumey
-    estimated_time_arrival
-    containers {
-        id 
+      }
+      volumex
+      volumey
+      estimated_time_arrival
+      actual_time_arrival
+      containers {
+        id
         type
         date_created
-    }
-    financeSummary {
-      title
-      value
-      type
+        warehouse_id
+      }
+      financeSummary {
+        title
+        value
+        type
+      }
     }
   }
-}
-`
+`;
 
 const UPDATE_TRIP = gql`
   mutation UpdateMyTrip($input: UpdateTripInput!) {
@@ -401,24 +401,24 @@ const UPDATE_TRIP = gql`
       volumey
       date_delivered
       truck {
-          id
-          operator
-          is_archived
-          date_added
+        id
+        operator
+        is_archived
+        date_added
       }
       container {
-          id
-          type
-          description
-          date_created
+        id
+        type
+        description
+        date_created
       }
       port {
-          id
-          type
-          description
-          date_created
+        id
+        type
+        description
+        date_created
       }
-      
+
       financeSummary {
         title
         type
@@ -426,7 +426,7 @@ const UPDATE_TRIP = gql`
       }
     }
   }
-`
+`;
 
 // - - - - - - - - - - API CALL - - - - - - - - -
 export const getDashStats = defineStore('dashStats', () => {
@@ -536,7 +536,6 @@ export const getAllUsers = defineStore('users', {
           this.totalCount = data.user.totalCount;
           this.hasMore = data.user.hasMore;
         }
-        console.log('USERS RESPONSE: ', data);
       } catch (error) {
         console.error('Error fetching Users data: ', error);
       } finally {
@@ -610,7 +609,6 @@ export const getTruckStorables = defineStore('truckStorables', {
         if (data?.trucks?.items) {
           this.trucks = data.trucks.items;
         }
-        console.log('TRUCK RESPONSE: ', data);
       } catch (error) {
         console.error('Fetching Port Error: ', error);
       } finally {
@@ -627,18 +625,6 @@ export const useShipmentInfo = defineStore('postShipment', {
 
   actions: {
     async submitShipment() {
-      // const payload = {
-      //   ...shipmentForm2,
-      //   // containers: shipmentForm2.containers.map(c => typeof c === 'object' ? String(c.id) : String(c)),
-      //   containers: Array.isArray(shipmentForm2.containers) ? shipmentForm2.containers : [],
-
-      //   finances: shipmentForm2.finances.map((f) => ({
-      //     title: f.title,
-      //     type: f.type,
-      //     value: Number(f.value),
-      //   })),
-      // };
-
       const input = {
         blno: shipmentForm2.blno,
         selectivity: shipmentForm2.selectivity,
@@ -648,25 +634,27 @@ export const useShipmentInfo = defineStore('postShipment', {
         port_id: shipmentForm2.port_id,
         warehouse_id: shipmentForm2.warehouse_id,
         shipping_line: shipmentForm2.shipping_line,
-        volumex: Number(shipmentForm2.volumex),
-        volumey: Number(shipmentForm2.volumey),
+        volumex: shipmentForm2.volumex,
+        volumey: shipmentForm2.volumey,
         customer_username: shipmentForm2.customer_username,
         issuer_username: shipmentForm2.issuer_username,
         estimated_time_arrival: shipmentForm2.estimated_time_arrival,
-
-        containers: shipmentForm2.containers
-          ? shipmentForm2.containers
-            .split(',')
-            .map(c => c.trim())
-            .filter(c => c !== '')
-          : [],
-
+        // containers: shipmentForm2.containers
+        //   ? shipmentForm2.containers
+        //       .split(',')
+        //       .map((c) => c.trim())
+        //       .filter((c) => c !== '')
+        //   : [],
+        containers: shipmentForm2.containers.map((f) => ({
+          container_id: f.container_id,
+          warehouse_id: f.warehouse_id,
+        })),
         finances: shipmentForm2.finances.map((f) => ({
           title: f.title,
           type: f.type,
           value: Number(f.value),
         })),
-      }
+      };
       // console.log('I AM PAYLOAD SHIPMENT: ', input)
 
       const { data } = await apolloClient.mutate({
@@ -688,7 +676,7 @@ export const useTransitInfo = defineStore('postTransit', {
     async createTrip() {
       const payload = {
         ...tripsForm2,
-
+        base_rate: Number(tripsForm2.base_rate),
         finances: tripsForm2.finances.map((f) => ({
           title: f.title,
           type: f.type,
@@ -751,8 +739,8 @@ export const useUsersInfo = defineStore('postUsers', {
           variables: {
             input: {
               ...shipmentForm,
-              volumex: Number(shipmentForm.volumex),
-              volumey: Number(shipmentForm.volumey),
+              volumex: shipmentForm.volumex,
+              volumey: shipmentForm.volumey,
             },
           },
         });
@@ -940,10 +928,10 @@ export const updateShipmentForm = defineStore('updateShipmentForm', {
       try {
         const payload = {
           ...shipmentForm,
-          volumex: Number(shipmentForm.volumex),
-          volumey: Number(shipmentForm.volumey),
-          containers: Array.isArray(shipmentForm.containers) ? shipmentForm.containers : []
-        }
+          volumex: shipmentForm.volumex,
+          volumey: shipmentForm.volumey,
+          containers: Array.isArray(shipmentForm.containers) ? shipmentForm.containers : [],
+        };
 
         const { data } = await apolloClient.mutate({
           mutation: UPDATE_SHIPMENT,
@@ -970,28 +958,25 @@ export const updateTripsForm = defineStore('updateTripsForm', {
 
   actions: {
     async submitUpdateTrip() {
-      if (this.loading) return
+      if (this.loading) return;
       this.loading = true;
 
       try {
         const payload = {
           ...tripsForm,
           base_rate: Number(tripsForm.base_rate),
-          volumex: Number(tripsForm.volumex),
-          volumey: Number(tripsForm.volumey),
-          finances: tripsForm.finances.map(f => ({
+          volumex: tripsForm.volumex,
+          finances: tripsForm.finances.map((f) => ({
             title: f.title,
             type: f.type,
-            value: Number(f.value)
-          }))
-        }
-
-        console.log('TRIPS PAYLOAD: ', payload)
+            value: Number(f.value),
+          })),
+        };
 
         const { data } = await apolloClient.mutate({
           mutation: UPDATE_TRIP,
           variables: { input: payload },
-          fetchPolicy: 'no-cache'
+          fetchPolicy: 'no-cache',
         });
 
         return data.updateTrip;

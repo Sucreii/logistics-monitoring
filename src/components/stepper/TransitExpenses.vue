@@ -13,18 +13,31 @@ const addFinance = () => {
 const removeFinance = (index: number) => {
   tripsForm2.finances.splice(index, 1);
 };
-
-console.log('Transit Expenses: ', shipInfo);
 </script>
 <template>
   <div class="q-col-gutter-md">
+    <div class="row justify-start">
+      <q-input
+        :rules="[
+          (val) => (val !== null && val !== '') || 'Value is required',
+          (val) => parseFloat(val) > 0 || 'Value cannot be zero',
+        ]"
+        v-model="shipInfo.base_rate"
+        type="number"
+        label="Base Rate"
+        dense
+        outlined
+        clearable
+      />
+    </div>
+    <!-- - - - - - - - - - - ADD EXPENSES - - - - - - - - - - -->
     <div class="row justify-end q-mb-sm">
       <q-btn @click="addFinance" label="Add" color="primary" icon="add" />
     </div>
 
     <div v-for="(finance, index) in tripsForm2.finances" :key="index" class="row q-col-gutter-sm">
       <div class="col-4">
-        <q-input v-model="finance.title" label="Title" dense outlined />
+        <q-input class="input-uppercase" v-model="finance.title" label="Title" dense outlined />
       </div>
 
       <div class="col-3">
@@ -46,8 +59,9 @@ console.log('Transit Expenses: ', shipInfo);
       <div class="col-4">
         <q-input
           v-model.number="finance.value"
-          :rules="[ 
-            val => (val !== null && val !== '') || 'Value is required'
+          :rules="[
+            (val) => (val !== null && val !== '') || 'Value is required',
+            (val) => val !== 0 || 'Value cannot be zero',
           ]"
           label="Value"
           type="number"

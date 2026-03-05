@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useQuasar, QForm, useDialogPluginComponent, Loading, QSpinnerIos } from 'quasar';
 import { useTransitInfo, getAllTrips } from 'src/stores/ShipmentStore';
 import { tripsForm } from 'src/stores/AllPostReactive';
+import { useAuthStore } from 'src/stores/LoginAuth';
 import transitDetailsForm from 'src/components/stepper/TransitDetails.vue';
 import transitExpenses from 'src/components/stepper/TransitExpenses.vue';
 import transitDisplay from 'src/components/stepper/TransitInfoDisplay.vue';
@@ -11,12 +12,19 @@ const { dialogRef, onDialogHide } = useDialogPluginComponent();
 const step = ref(1);
 const loading = ref(false);
 const $q = useQuasar();
+const authStore = useAuthStore();
 const transitStore = useTransitInfo();
 const graphTrips = getAllTrips();
 const FINAL_STEP = 3;
 const transitAddForm = ref<InstanceType<typeof QForm> | null>(null);
 const transitFinanceFormRef = ref<InstanceType<typeof QForm> | null>(null);
 const transitDisplayInfoFormRef = ref<InstanceType<typeof QForm> | null>(null);
+
+const showFinanceStep = computed(() => {
+  const roleId = authStore.roleLabel;
+
+  return roleId === 'Admin' || roleId === 'Super Admin';
+});
 
 const nextStep = async () => {
   if (step.value === 1) {
@@ -26,8 +34,11 @@ const nextStep = async () => {
       $q.notify({ type: 'warning', position: 'top', message: 'Please complete all fields.' });
       return;
     }
-
-    step.value++;
+    if (showFinanceStep.value) {
+      step.value++;
+    } else {
+      step.value = 3;
+    }
   } else if (step.value === 2) {
     const isValid = await transitFinanceFormRef.value?.validate();
 
@@ -61,31 +72,31 @@ const submitAll = async () => {
   try {
     const res = await transitStore.createTrip();
 
-    if(res.error){
-        $q.notify({
+    if (res.error) {
+      $q.notify({
         type: 'negative',
         position: 'top',
-        message: 'Error creating shipment',
+        message: 'Error creating Transit',
         timeout: 3000,
       });
     }
 
-    if(res.id){
+    if (res.id) {
       $q.notify({
-      type: 'positive',
-      position: 'top',
-      message: 'Successfully created shipment',
-      timeout: 3000,
-    });
+        type: 'positive',
+        position: 'top',
+        message: 'Successfully created Transit',
+        timeout: 3000,
+      });
     }
   } catch (err) {
     console.error('Error adding new Transit: ', err);
-      $q.notify({
-        type: 'negative',
-        position: 'top',
-        message: 'Error creating shipment',
-        timeout: 3000,
-      });
+    $q.notify({
+      type: 'negative',
+      position: 'top',
+      message: 'Error creating Transit',
+      timeout: 3000,
+    });
   } finally {
     Loading.hide();
     onDialogHide();
@@ -164,9 +175,9 @@ const submitAll = async () => {
 
 <style lang="scss" scoped>
 .create-shipment-card {
-  width: 750px;
-  max-width: 80vw;
-  border-radius: 24px;
+  width: 700px;
+  max-width: 75vw;
+  border-radius: 5px;
 
   .scroll-area {
     height: 600px;

@@ -68,9 +68,11 @@ export interface Shipment {
   shipping_line: string;
   port_id: string;
   status: string;
-  volumex: number;
-  volumey: number;
+  volumex: string;
+  volumey: string;
+  reference: string;
   estimated_time_arrival: string;
+  actual_time_arrival: string;
   issuer: {
     id: string;
     username: string;
@@ -81,14 +83,20 @@ export interface Shipment {
   };
   containers: {
     id: string;
-    type: string;
-    description: string;
+    // type: string;
+    // description: string;
+    warehouse_id: string;
   }[];
   financeSummary: {
     title: string;
     type: string;
     value: number;
   }[];
+}
+
+export interface shipmentContainers {
+  container_id: string;
+  warehouse_id: string;
 }
 
 export interface SearchShipmentType {
@@ -146,8 +154,7 @@ export interface Trips {
   id: string;
   commodity: string;
   base_rate: number;
-  volumex: number;
-  volumey: number;
+  volumex: string;
   date_delivered: string;
   truck: {
     id: string;
@@ -204,6 +211,7 @@ export interface DashboardStats {
   TotalPending: number;
   TotalTransit: number;
   TotalDelivered: number;
+  TotalTrucks: number;
 }
 
 export interface MonthlySalesRow {
