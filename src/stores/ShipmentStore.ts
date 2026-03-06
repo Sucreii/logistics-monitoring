@@ -190,6 +190,7 @@ const POST_NEW_SHIPMENTINFO = gql`
 const POST_NEW_TRANSITINFO = gql`
   mutation CreateNewTrip($input: CreateTripInput!) {
     createTrip(input: $input) {
+      id
       commodity
       base_rate
       volumex

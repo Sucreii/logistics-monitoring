@@ -71,6 +71,7 @@ const submitAll = async () => {
 
   try {
     const res = await transitStore.createTrip();
+    console.log(res)
 
     if (res.error) {
       $q.notify({
@@ -157,13 +158,8 @@ const submitAll = async () => {
           <!-- - - - - - - - - - - BUTTON - - - - - - - - - - -->
           <template v-slot:navigation>
             <q-stepper-navigation>
-              <q-btn
-                v-if="step === FINAL_STEP"
-                @click="submitAll"
-                :loading="transitStore.loading"
-                color="primary"
-                label="Submit"
-              />
+              <q-btn v-if="step === FINAL_STEP" @click="submitAll" :loading="transitStore.loading" color="primary"
+                label="Submit" />
               <q-btn v-else @click="nextStep" :loading="loading" color="primary" label="Proceed" />
             </q-stepper-navigation>
           </template>
