@@ -64,31 +64,31 @@ export const linksArr: {
   routeName: string;
   docDialog: DialogKey;
 }[] = [
-  {
-    label: 'Add new Shipments',
-    routeName: 'home.shipments',
-    icon: 'add_shopping_cart',
-    docDialog: 'shipments',
-  },
-  {
-    label: 'Add new Trips',
-    routeName: 'home.trips',
-    icon: 'local_shipping',
-    docDialog: 'trips',
-  },
-  {
-    label: 'Add new Users',
-    routeName: 'home.users',
-    icon: 'person_add',
-    docDialog: 'users',
-  },
-  {
-    label: 'Add new Truck Profile',
-    routeName: 'home.trucks',
-    icon: 'contact_emergency',
-    docDialog: 'trucks',
-  },
-];
+    {
+      label: 'Add new Shipments',
+      routeName: 'home.shipments',
+      icon: 'add_shopping_cart',
+      docDialog: 'shipments',
+    },
+    {
+      label: 'Add new Trips',
+      routeName: 'home.trips',
+      icon: 'local_shipping',
+      docDialog: 'trips',
+    },
+    {
+      label: 'Add new Users',
+      routeName: 'home.users',
+      icon: 'person_add',
+      docDialog: 'users',
+    },
+    {
+      label: 'Add new Truck Profile',
+      routeName: 'home.trucks',
+      icon: 'contact_emergency',
+      docDialog: 'trucks',
+    },
+  ];
 
 export const portArr = [
   { label: 'MIP', value: 'MIP' },
@@ -96,6 +96,7 @@ export const portArr = [
   { label: 'CDO', value: 'CDO' },
   { label: 'DAVAO', value: 'DAVAO' },
   { label: 'CEBU', value: 'CEBU' },
+  { label: 'MNL', value: 'MNL' },
 ];
 
 export const selectivityArr = [

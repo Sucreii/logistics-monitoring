@@ -10,25 +10,17 @@ const addFinance = () => {
   });
 };
 
-const removeFinance = (index: number) => {
-  tripsForm2.finances.splice(index, 1);
-};
+// const removeFinance = (index: number) => {
+//   tripsForm2.finances.splice(index, 1);
+// };
 </script>
 <template>
   <div class="q-col-gutter-md">
     <div class="row justify-start">
-      <q-input
-        :rules="[
-          (val) => (val !== null && val !== '') || 'Value is required',
-          (val) => parseFloat(val) > 0 || 'Value cannot be zero',
-        ]"
-        v-model="shipInfo.base_rate"
-        type="number"
-        label="Base Rate"
-        dense
-        outlined
-        clearable
-      />
+      <q-input :rules="[
+        (val) => (val !== null && val !== '') || 'Value is required',
+        (val) => parseFloat(val) > 0 || 'Value cannot be zero',
+      ]" v-model="shipInfo.base_rate" type="number" label="Base Rate" dense outlined clearable />
     </div>
     <!-- - - - - - - - - - - ADD EXPENSES - - - - - - - - - - -->
     <div class="row justify-end q-mb-sm">
@@ -37,49 +29,23 @@ const removeFinance = (index: number) => {
 
     <div v-for="(finance, index) in tripsForm2.finances" :key="index" class="row q-col-gutter-sm">
       <div class="col-4">
-        <q-input class="input-uppercase" v-model="finance.title" label="Title" dense outlined />
+        <q-input class="input-uppercase" v-model="finance.title" label="Title" dense readonly outlined />
       </div>
 
       <div class="col-3">
-        <q-select
-          v-model="finance.type"
-          :options="[
-            { label: 'Amount', value: 'amount' },
-            { label: 'Percentage', value: 'percentage' },
-          ]"
-          label="Type"
-          emit-value
-          map-options
-          dense
-          outlined
-          clearable
-        />
+        <q-input class="input-uppercase" v-model="finance.type" emit-value map-options dense outlined readonly />
       </div>
 
       <div class="col-4">
-        <q-input
-          v-model.number="finance.value"
-          :rules="[
-            (val) => (val !== null && val !== '') || 'Value is required',
-            (val) => val !== 0 || 'Value cannot be zero',
-          ]"
-          label="Value"
-          type="number"
-          dense
-          outlined
-          clearable
-        />
+        <q-input v-model.number="finance.value" :rules="[
+          (val) => (val !== null && val !== '') || 'Value is required',
+          (val) => val !== 0 || 'Value cannot be zero',
+        ]" label="Value" type="number" dense outlined clearable />
       </div>
 
       <div class="col-1">
-        <q-btn
-          v-if="tripsForm2.finances.length > 1"
-          @click="removeFinance(index)"
-          icon="delete"
-          color="negative"
-          flat
-          dense
-        />
+        <!-- <q-btn v-if="tripsForm2.finances.length > 1" @click="removeFinance(index)" icon="delete" color="negative" flat
+          dense /> -->
       </div>
     </div>
   </div>
