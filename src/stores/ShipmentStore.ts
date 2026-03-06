@@ -9,6 +9,7 @@ import {
   storablesForm,
   shipmentForm2,
   tripsForm2,
+  usersForm,
 } from 'src/stores/AllPostReactive';
 import type {
   Shipment,
@@ -626,31 +627,25 @@ export const useShipmentInfo = defineStore('postShipment', {
   actions: {
     async submitShipment() {
       const input = {
-        blno: shipmentForm2.blno,
-        selectivity: shipmentForm2.selectivity,
-        contract_no: shipmentForm2.contract_no?.trim() || null,
-        entry_no: shipmentForm2.entry_no,
-        registry_no: shipmentForm2.registry_no,
-        port_id: shipmentForm2.port_id,
-        warehouse_id: shipmentForm2.warehouse_id,
-        shipping_line: shipmentForm2.shipping_line,
-        volumex: shipmentForm2.volumex,
-        volumey: shipmentForm2.volumey,
-        customer_username: shipmentForm2.customer_username,
-        issuer_username: shipmentForm2.issuer_username,
+        blno: shipmentForm2.blno.toUpperCase(),
+        selectivity: shipmentForm2.selectivity.toUpperCase(),
+        contract_no: shipmentForm2.contract_no?.trim().toUpperCase() || null,
+        entry_no: shipmentForm2.entry_no.toUpperCase(),
+        registry_no: shipmentForm2.registry_no.toUpperCase(),
+        port_id: shipmentForm2.port_id.toUpperCase(),
+        warehouse_id: shipmentForm2.warehouse_id.toUpperCase(),
+        shipping_line: shipmentForm2.shipping_line.toUpperCase(),
+        volumex: shipmentForm2.volumex.toUpperCase(),
+        volumey: shipmentForm2.volumey.toUpperCase(),
+        customer_username: shipmentForm2.customer_username.toUpperCase(),
+        issuer_username: shipmentForm2.issuer_username.toUpperCase(),
         estimated_time_arrival: shipmentForm2.estimated_time_arrival,
-        // containers: shipmentForm2.containers
-        //   ? shipmentForm2.containers
-        //       .split(',')
-        //       .map((c) => c.trim())
-        //       .filter((c) => c !== '')
-        //   : [],
         containers: shipmentForm2.containers.map((f) => ({
-          container_id: f.container_id,
-          warehouse_id: f.warehouse_id,
+          container_id: f.container_id.toUpperCase(),
+          warehouse_id: f.warehouse_id.toUpperCase(),
         })),
         finances: shipmentForm2.finances.map((f) => ({
-          title: f.title,
+          title: f.title.toUpperCase(),
           type: f.type,
           value: Number(f.value),
         })),
@@ -675,10 +670,15 @@ export const useTransitInfo = defineStore('postTransit', {
   actions: {
     async createTrip() {
       const payload = {
-        ...tripsForm2,
+        container_id: tripsForm2.container_id.toUpperCase(),
+        truck_id: tripsForm2.truck_id.toUpperCase(),
+        port_id: tripsForm2.port_id.toUpperCase(),
+        commodity: tripsForm2.commodity.toUpperCase(),
+        volumex: tripsForm2.volumex.toUpperCase(),
+        warehouse_id: tripsForm2.warehouse_id.toUpperCase(),
         base_rate: Number(tripsForm2.base_rate),
         finances: tripsForm2.finances.map((f) => ({
-          title: f.title,
+          title: f.title.toUpperCase(),
           type: f.type,
           value: Number(f.value),
         })),
@@ -731,16 +731,17 @@ export const useUsersInfo = defineStore('postUsers', {
     async submitUser() {
       // const $q = useQuasar();
       this.loading = true;
-      console.log(typeof shipmentForm.volumex, typeof shipmentForm.volumey);
 
       try {
         const { data } = await apolloClient.mutate({
           mutation: POST_NEW_USERSINFO,
           variables: {
             input: {
-              ...shipmentForm,
-              volumex: shipmentForm.volumex,
-              volumey: shipmentForm.volumey,
+              username: usersForm.value.username.toUpperCase(),
+              password: usersForm.value.password.toUpperCase(),
+              first_name: usersForm.value.first_name.toUpperCase(),
+              last_name: usersForm.value.last_name.toUpperCase(),
+              role_id: usersForm.value.role_id,
             },
           },
         });
