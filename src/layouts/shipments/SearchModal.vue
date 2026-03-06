@@ -113,7 +113,7 @@ watch(
       shipmentForm.volumey = newVal.volumey;
       shipmentForm.shipping_line = newVal.shipping_line;
       shipmentForm.customer_username = newVal.customer?.username || '';
-      shipmentForm.issuer_username = newVal.issuer?.username || '';
+      // shipmentForm.issuer_username = newVal.issuer?.username || '';
       shipmentForm.estimated_time_arrival = newVal.estimated_time_arrival || '';
       shipmentForm.actual_time_arrival = newVal.actual_time_arrival || '';
       // shipmentForm.containers = newVal.containers.map((c) => c.id);
@@ -142,21 +142,38 @@ const updateNewShipmentInfo = async () => {
 
   try {
     const response = await updateShipInfo.submitUpdateShipment();
+
+    if (response.id) {
+      $q.notify({
+        type: 'positive',
+        position: 'top',
+        message: 'Shipment info updated successfully!',
+        timeout: 3000,
+      });
+    }
+
+    if (response.error) {
+      console.log('SHIPMENT UPDATE ERROR RESPONSE: ', response);
+      $q.notify({
+        type: 'negative',
+        position: 'top',
+        message: 'Error updating shipment',
+        timeout: 3000,
+      });
+    }
+
+  } catch (err) {
+    console.error('SHIPMENT UPDATE ERROR RESPONSE: ', err);
     $q.notify({
-      type: 'positive',
+      type: 'negative',
       position: 'top',
-      message: response.data.message || 'Shipment info updated successfully!',
+      message: 'Error updating shipment',
       timeout: 3000,
     });
-
-    console.log('SENT UPDATE INFO: ', response);
-  } catch (err) {
-    console.error('Error on updating Shipment Info: ', err);
     throw err;
   } finally {
     Loading.hide();
     closeDialog();
-
     await graphShipment.fetchShipments();
   }
 };
@@ -169,174 +186,82 @@ const updateNewShipmentInfo = async () => {
           <div class="text-overline text-weight-bolder text-primary">Edit Shipment Info</div>
           <div class="row q-col-gutter-sm">
             <div v-for="item in inputArr" :key="item.key" :class="'col-' + item.colSpace">
-              <q-select
-                v-if="item.inputVModel === 'port_id'"
-                v-model="shipmentForm[item.inputVModel]"
-                :readonly="!['Super Admin'].includes(authStore.roleLabel)"
-                :options="portSelectOptions"
-                :label="item.label"
-                emit-value
-                map-options
-                outlined
-              />
+              <q-select v-if="item.inputVModel === 'port_id'" v-model="shipmentForm[item.inputVModel]"
+                :readonly="!['Super Admin'].includes(authStore.roleLabel)" :options="portSelectOptions"
+                :label="item.label" emit-value map-options outlined />
 
-              <q-select
-                v-else-if="item.inputVModel === 'selectivity'"
-                v-model="shipmentForm[item.inputVModel]"
+              <q-select v-else-if="item.inputVModel === 'selectivity'" v-model="shipmentForm[item.inputVModel]"
                 :input-class="`text-${props.row?.selectivity.toLowerCase()}`"
-                :readonly="!['Super Admin'].includes(authStore.roleLabel)"
-                :options="selectivitySelectOptions"
-                :label="item.label"
-                emit-value
-                map-options
-                outlined
-              />
+                :readonly="!['Super Admin'].includes(authStore.roleLabel)" :options="selectivitySelectOptions"
+                :label="item.label" emit-value map-options outlined />
 
-              <q-select
-                v-else-if="item.inputVModel === 'status'"
-                v-model="shipmentForm[item.inputVModel]"
-                :readonly="!['Super Admin'].includes(authStore.roleLabel)"
-                :options="statusSelectOptions"
-                :label="item.label"
-                emit-value
-                map-options
-                outlined
-              />
+              <q-select v-else-if="item.inputVModel === 'status'" v-model="shipmentForm[item.inputVModel]"
+                :readonly="!['Super Admin'].includes(authStore.roleLabel)" :options="statusSelectOptions"
+                :label="item.label" emit-value map-options outlined />
 
-              <q-select
-                v-else-if="item.inputVModel === 'volumey'"
-                v-model="shipmentForm[item.inputVModel]"
-                :readonly="!['Super Admin'].includes(authStore.roleLabel)"
-                :options="sizeSelectOptions"
-                :label="item.label"
-                emit-value
-                map-options
-                outlined
-              />
+              <q-select v-else-if="item.inputVModel === 'volumey'" v-model="shipmentForm[item.inputVModel]"
+                :readonly="!['Super Admin'].includes(authStore.roleLabel)" :options="sizeSelectOptions"
+                :label="item.label" emit-value map-options outlined />
 
-              <q-select
-                v-else-if="item.inputVModel === 'customer_username'"
-                v-model="shipmentForm[item.inputVModel]"
-                :readonly="!['Super Admin'].includes(authStore.roleLabel)"
-                :options="userSelectOptions"
-                :label="item.label"
-                emit-value
-                map-options
-                outlined
-              />
+              <q-select v-else-if="item.inputVModel === 'customer_username'" v-model="shipmentForm[item.inputVModel]"
+                :readonly="!['Super Admin'].includes(authStore.roleLabel)" :options="userSelectOptions"
+                :label="item.label" emit-value map-options outlined />
 
-              <q-input
-                v-else-if="item.inputVModel === 'estimated_time_arrival'"
-                :model-value="shipmentForm[item.inputVModel]?.split('T')[0]"
-                :label="item.label"
-                type="date"
-                class="input-uppercase"
-                outlined
-                readonly
-              />
+              <q-input v-else-if="item.inputVModel === 'estimated_time_arrival'"
+                :model-value="shipmentForm[item.inputVModel]?.split('T')[0]" :label="item.label" type="date"
+                class="input-uppercase" outlined readonly />
 
-              <q-input
-                v-else-if="item.inputVModel === 'actual_time_arrival'"
-                v-model="shipmentForm[item.inputVModel]"
-                :readonly="!['Super Admin'].includes(authStore.roleLabel)"
-                :label="item.label"
-                type="date"
-                class="input-uppercase"
-                stack-label
-                outlined
-              />
+              <q-input v-else-if="item.inputVModel === 'actual_time_arrival'" v-model="shipmentForm[item.inputVModel]"
+                :readonly="!['Super Admin'].includes(authStore.roleLabel)" :label="item.label" type="date"
+                class="input-uppercase" stack-label outlined />
 
-              <q-input
-                v-else
-                v-model="shipmentForm[item.inputVModel] as any"
-                :readonly="!['Super Admin'].includes(authStore.roleLabel)"
-                :label="item.label"
-                type="text"
-                class="input-uppercase"
-                outlined
-              />
+              <q-input v-else v-model="shipmentForm[item.inputVModel] as any"
+                :readonly="!['Super Admin'].includes(authStore.roleLabel)" :label="item.label" type="text"
+                class="input-uppercase" outlined />
             </div>
           </div>
 
           <div v-if="shipmentForm.containers?.length" class="q-pt-sm">
-            <div
-              v-for="(item, index) in shipmentForm.containers"
-              :key="index"
-              class="row q-col-gutter-sm q-mb-sm"
-            >
+            <div v-for="(item, index) in shipmentForm.containers" :key="index" class="row q-col-gutter-sm q-mb-sm">
               <div class="col-6">
-                <q-input
-                  v-model="item.container_id"
-                  :readonly="!['Super Admin'].includes(authStore.roleLabel)"
-                  class="input-uppercase"
-                  label="Container ID"
-                  outlined
-                />
+                <q-input v-model="item.container_id" :readonly="!['Super Admin'].includes(authStore.roleLabel)"
+                  class="input-uppercase" label="Container ID" outlined />
               </div>
 
               <div class="col-6">
-                <q-input
-                  v-model="item.warehouse_id"
-                  :readonly="!['Super Admin'].includes(authStore.roleLabel)"
-                  class="input-uppercase"
-                  label="Warehouse"
-                  outlined
-                />
+                <q-input v-model="item.warehouse_id" :readonly="!['Super Admin'].includes(authStore.roleLabel)"
+                  class="input-uppercase" label="Warehouse" outlined />
               </div>
             </div>
           </div>
 
-          <div
-            v-if="
-              shipmentForm.finances?.length &&
-              ['Super Admin', 'Admin'].includes(authStore.roleLabel)
-            "
-          >
+          <div v-if="
+            shipmentForm.finances?.length &&
+            ['Super Admin', 'Admin'].includes(authStore.roleLabel)
+          ">
             <div class="text-overline text-weight-bolder text-primary q-pt-sm">Finance Summary</div>
-            <div
-              v-for="(item, index) in shipmentForm.finances"
-              :key="index"
-              class="row q-col-gutter-sm q-mb-sm"
-            >
+            <div v-for="(item, index) in shipmentForm.finances" :key="index" class="row q-col-gutter-sm q-mb-sm">
               <div class="col-8">
-                <q-input
-                  v-model="item.title"
-                  :readonly="!['Super Admin'].includes(authStore.roleLabel)"
-                  class="input-uppercase"
-                  label="Title"
-                  outlined
-                />
+                <q-input v-model="item.title" :readonly="!['Super Admin'].includes(authStore.roleLabel)"
+                  class="input-uppercase" label="Title" outlined />
               </div>
 
               <div class="col-4">
-                <q-input
-                  :model-value="
-                    item.type === 'percentage'
-                      ? (item.value * 100).toFixed(2)
-                      : Number(item.value).toFixed(2)
-                  "
-                  @update:model-value="
+                <q-input :model-value="item.type === 'percentage'
+                  ? (item.value * 100).toFixed(2)
+                  : Number(item.value).toFixed(2)
+                  " @update:model-value="
                     (val) =>
                       (item.value = item.type === 'percentage' ? Number(val) / 100 : Number(val))
-                  "
-                  :prefix="item.type === 'percentage' ? '%' : '₱'"
-                  :readonly="!['Super Admin'].includes(authStore.roleLabel)"
-                  label="Value"
-                  type="number"
-                  outlined
-                />
+                  " :prefix="item.type === 'percentage' ? '%' : '₱'"
+                  :readonly="!['Super Admin'].includes(authStore.roleLabel)" label="Value" type="number" outlined />
               </div>
             </div>
           </div>
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn
-            outline
-            label="Update Shipment Info"
-            style="color: green"
-            @click="updateNewShipmentInfo"
-          />
+          <q-btn outline label="Update Shipment Info" style="color: green" @click="updateNewShipmentInfo" />
           <q-btn outline style="color: red" label="Close" @click="closeDialog" />
         </q-card-actions>
       </q-form>
