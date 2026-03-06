@@ -928,6 +928,7 @@ export const updateShipmentForm = defineStore('updateShipmentForm', {
       try {
         const payload = {
           ...shipmentForm,
+          actual_time_arrival: shipmentForm.actual_time_arrival || null,
           volumex: shipmentForm.volumex,
           volumey: shipmentForm.volumey,
           containers: Array.isArray(shipmentForm.containers) ? shipmentForm.containers : [],

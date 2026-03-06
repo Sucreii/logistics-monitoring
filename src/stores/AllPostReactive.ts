@@ -15,7 +15,7 @@ export const shipmentForm = reactive({
   volumey: '',
   estimated_time_arrival: '',
   customer_username: '',
-  issuer_username: '',
+  // issuer_username: '',
   actual_time_arrival: '',
   // containers: [] as (string | { id: string | number })[],
   containers: [
