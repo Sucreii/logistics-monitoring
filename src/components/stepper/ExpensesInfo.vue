@@ -20,56 +20,25 @@ const removeFinance = (index: number) => {
       <q-btn @click="addFinance" label="Add" color="primary" icon="add" />
     </div>
 
-    <div
-      v-for="(finance, index) in shipmentForm2.finances"
-      :key="index"
-      class="row q-col-gutter-sm"
-    >
+    <div v-for="(finance, index) in shipmentForm2.finances" :key="index" class="row q-col-gutter-sm">
       <div class="col-4">
         <q-input v-model="finance.title" class="input-uppercase" label="Title" dense outlined />
       </div>
 
       <div class="col-3">
-        <q-select
-          v-model="finance.type"
-          :options="[
-            { label: 'Amount', value: 'amount' },
-            { label: 'Percentage', value: 'percentage' },
-          ]"
-          class="input-uppercase"
-          label="Type"
-          emit-value
-          map-options
-          dense
-          outlined
-          clearable
-        />
+        <q-input v-model="finance.type" class="input-uppercase" emit-value map-options dense outlined readonly />
       </div>
 
       <div class="col-4">
-        <q-input
-          v-model.number="finance.value"
-          :rules="[
-            (val) => (val !== null && val !== '') || 'Value is required',
-            (val) => val !== 0 || 'Value cannot be zero',
-          ]"
-          label="Value"
-          type="number"
-          dense
-          outlined
-          clearable
-        />
+        <q-input v-model.number="finance.value" :rules="[
+          (val) => (val !== null && val !== '') || 'Value is required',
+          (val) => val !== 0 || 'Value cannot be zero',
+        ]" label="Value" type="number" dense outlined clearable />
       </div>
 
       <div class="col-1">
-        <q-btn
-          v-if="shipmentForm2.finances.length > 1"
-          @click="removeFinance(index)"
-          icon="delete"
-          color="negative"
-          flat
-          dense
-        />
+        <q-btn v-if="shipmentForm2.finances.length > 1" @click="removeFinance(index)" icon="delete" color="negative"
+          flat dense />
       </div>
     </div>
   </div>
