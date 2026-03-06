@@ -48,16 +48,34 @@ const submitUser = async () => {
   });
 
   try {
-    await useTrucks.submitTrucking();
+    const res = await useTrucks.submitTrucking();
+    if (res.id) {
+      $q.notify({
+        type: 'positive',
+        position: 'top',
+        message: 'New Truck Profile has been added successfully',
+        timeout: 3000,
+      });
+    }
 
+    if (res.error) {
+      console.log("TRUCK ADD ERROR RESPONSE: ", res);
+      $q.notify({
+        type: 'negative',
+        position: 'top',
+        message: 'Error adding new Truck Profile',
+        timeout: 3000,
+      });
+    }
+
+  } catch (err) {
+    console.error('TRUCK ADD ERROR RESPONSE: ', err);
     $q.notify({
-      type: 'positive',
+      type: 'negative',
       position: 'top',
-      message: 'New Truck Profile has been added successfully',
+      message: 'Error adding new Truck Profile',
       timeout: 3000,
     });
-  } catch (err) {
-    console.error('Error adding new Truck Profile: ', err);
   } finally {
     Loading.hide();
     onDialogHide();
@@ -85,23 +103,13 @@ const submitUser = async () => {
 
       <div class="q-px-md">
         <q-stepper v-model="step" ref="stepper" color="primary" animated dense flat>
-          <q-step
-            :name="1"
-            title="Add Truck Profile"
-            icon="sym_o_unknown_document"
-            :done="step > 1"
-          >
+          <q-step :name="1" title="Add Truck Profile" icon="sym_o_unknown_document" :done="step > 1">
             <q-form class="flex" ref="newTrucksAddForm" @submit.prevent="nextStep">
               <truckAddForm />
             </q-form>
           </q-step>
 
-          <q-step
-            :name="2"
-            :done="step > 2"
-            title="Truck Information"
-            icon="sym_o_bar_chart_4_bars"
-          >
+          <q-step :name="2" :done="step > 2" title="Truck Information" icon="sym_o_bar_chart_4_bars">
             <q-form ref="truckDisplayFormRef" @submit.prevent="nextStep">
               <truckInfoDisplay />
             </q-form>
@@ -110,13 +118,8 @@ const submitUser = async () => {
           <!-- - - - - - - - - - - BUTTON - - - - - - - - - - -->
           <template v-slot:navigation>
             <q-stepper-navigation>
-              <q-btn
-                v-if="step === FINAL_STEP"
-                @click="submitUser"
-                :loading="useTrucks.loading"
-                color="primary"
-                label="Submit"
-              />
+              <q-btn v-if="step === FINAL_STEP" @click="submitUser" :loading="useTrucks.loading" color="primary"
+                label="Submit" />
               <q-btn v-else @click="nextStep" :loading="loading" color="primary" label="Proceed" />
             </q-stepper-navigation>
           </template>

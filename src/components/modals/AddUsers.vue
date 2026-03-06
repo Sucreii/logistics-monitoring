@@ -63,16 +63,33 @@ const submitUser = async () => {
     };
 
     const result = await usersStore.createUser(payload);
-    console.log('Create User result: ', result);
 
+    if (result.error) {
+      console.log("USER ADD ERROR RESPONSE: ", result);
+      $q.notify({
+        type: 'negative',
+        position: 'top',
+        message: 'Error adding new user',
+        timeout: 3000,
+      });
+    }
+
+    if (result.id) {
+      $q.notify({
+        type: 'positive',
+        position: 'top',
+        message: 'New User has been added successfully',
+        timeout: 3000,
+      });
+    }
+  } catch (err) {
+    console.error('USER ADD ERROR RESPONSE: ', err);
     $q.notify({
-      type: 'positive',
+      type: 'negative',
       position: 'top',
-      message: 'New User has been added successfully',
+      message: 'Error adding new user',
       timeout: 3000,
     });
-  } catch (err) {
-    console.error('Error adding new User: ', err);
   } finally {
     await graphUsers.fetchUsers();
 
@@ -108,12 +125,7 @@ const submitUser = async () => {
             </q-form>
           </q-step>
 
-          <q-step
-            :name="2"
-            :done="step > 2"
-            title=" User Information"
-            icon="sym_o_bar_chart_4_bars"
-          >
+          <q-step :name="2" :done="step > 2" title=" User Information" icon="sym_o_bar_chart_4_bars">
             <q-form ref="shipFinanceFormRef" @submit.prevent="nextStep">
               <userInfoDisplay />
             </q-form>
@@ -122,13 +134,8 @@ const submitUser = async () => {
           <!-- - - - - - - - - - - BUTTON - - - - - - - - - - -->
           <template v-slot:navigation>
             <q-stepper-navigation>
-              <q-btn
-                v-if="step === FINAL_STEP"
-                @click="submitUser"
-                :loading="usersStore.loading"
-                color="primary"
-                label="Submit"
-              />
+              <q-btn v-if="step === FINAL_STEP" @click="submitUser" :loading="usersStore.loading" color="primary"
+                label="Submit" />
               <q-btn v-else @click="nextStep" :loading="loading" color="primary" label="Proceed" />
             </q-stepper-navigation>
           </template>
