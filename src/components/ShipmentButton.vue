@@ -35,7 +35,7 @@ const btnLabel = computed(() => {
   if (route.name === 'home.shipments') return 'Create Shipment';
   if (route.name === 'home.trips') return 'Add Transit';
   if (route.name === 'home.users') return 'Add New User';
-  if (route.name === 'home.trucks') return 'Add Profile Driver';
+  if (route.name === 'home.trucks') return 'Add New Truck';
   return '';
 });
 
@@ -50,17 +50,7 @@ const btnIcon = computed(() => {
 
 <template>
   <div>
-    <q-btn
-      v-if="btnVisibility"
-      class="q-pa-sm bg-primary"
-      color="white"
-      :label="btnLabel"
-      :icon-right="btnIcon"
-      flat
-      dense
-      no-caps
-      push
-      @click="openDialog"
-    />
+    <q-btn v-if="btnVisibility" class="q-pa-sm bg-primary" color="white" :label="btnLabel" :icon-right="btnIcon" flat
+      dense no-caps push @click="openDialog" />
   </div>
 </template>

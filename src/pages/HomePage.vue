@@ -40,7 +40,7 @@ const statisticsCard = computed(() => {
     },
     {
       title: 'Trucks Available',
-      caption: 'The item or request has been received but is not yet processed or dispatched.',
+      caption: 'The number of trucks currently available for transport and ready to be assigned for delivery operations.',
       value: dashboard.stats.TotalTrucks,
       icon: 'sym_o_chat',
     },
@@ -53,6 +53,7 @@ const statisticsCard = computed(() => {
   display: flex;
   justify-content: center !important;
   align-items: center !important;
+
   .stats-card {
     display: flex;
     flex-direction: column;
