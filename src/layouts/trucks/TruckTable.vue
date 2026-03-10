@@ -7,6 +7,7 @@ import type { Trucks } from 'src/utils/static/types';
 import filterForm from '../../layouts/trips/FilterForm.vue';
 import truckHideModal from './TruckArchive.vue';
 import truckUnHideModal from './TruckUnArchive.vue';
+import { useAuthStore } from 'src/stores/LoginAuth';
 
 onMounted(async () => {
   await graphTrucks.fetchTruckStores();
@@ -16,13 +17,23 @@ const showModalHide = ref(false);
 const showModalUnHide = ref(false);
 const selectedRow = ref<Trucks | null>(null);
 const graphTrucks = getTruckStorables();
-const columns: QTableColumn[] = [
-  { name: 'id', label: 'Truck ID', field: 'id', align: 'left' },
-  // { name: 'operator', label: 'Driver Name', field: 'operator', align: 'left' },
-  { name: 'date_added', label: 'Date Added', field: 'date_added', align: 'left' },
-  { name: 'is_archived', label: 'Status', field: 'is_archived', align: 'left' },
-  { name: 'action', label: 'Action', field: 'action', align: 'center' },
-];
+const authStore = useAuthStore();
+const columns = computed<QTableColumn[]>(() => {
+  if (authStore.roleLabel === 'Super Admin') {
+    return [
+      { name: 'id', label: 'Truck ID', field: 'id', align: 'left' },
+      { name: 'date_added', label: 'Date Added', field: 'date_added', align: 'left' },
+      { name: 'is_archived', label: 'Status', field: 'is_archived', align: 'left' },
+      { name: 'action', label: 'Action', field: 'action', align: 'center' },
+    ]
+  }
+
+  return [
+    { name: 'id', label: 'Truck ID', field: 'id', align: 'left' },
+    { name: 'date_added', label: 'Date Added', field: 'date_added', align: 'left' },
+    { name: 'is_archived', label: 'Status', field: 'is_archived', align: 'left' },
+  ]
+})
 
 const tableRows = computed(() => {
   return graphTrucks.trucks.length > 0
